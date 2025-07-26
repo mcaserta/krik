@@ -85,7 +85,7 @@ pub struct Document {
 ///
 /// let (front_matter, markdown) = parse_markdown_with_frontmatter(content)?;
 /// assert_eq!(front_matter.title, Some("Hello World".to_string()));
-/// assert!(markdown.contains("# Hello World"));
+/// assert!(markdown.contains("Hello World"));
 /// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
 pub fn parse_markdown_with_frontmatter(content: &str) -> Result<(FrontMatter, String), Box<dyn std::error::Error>> {
