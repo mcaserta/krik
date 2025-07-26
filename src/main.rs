@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = Command::new("kk")
-        .version("0.1.3")
+        .version("0.1.4")
         .author("Krik Static Site Generator")
         .about("A fast static site generator with markdown support")
         .arg(
