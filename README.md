@@ -70,6 +70,14 @@ cargo build --release
 
 The executable will be available at `target/release/kk`.
 
+### With Cargo
+
+If you have Rust and Cargo installed, you can install Krik globally:
+
+```bash
+cargo install krik
+```
+
 ## 🔧 Usage
 
 ### Basic Usage
@@ -88,9 +96,9 @@ kk --input /path/to/content --output /path/to/site --theme /path/to/theme
 
 ### Command Line Options
 
-- `-i, --input <DIR>`: Input directory containing markdown files (default: current directory)
+- `-i, --input <DIR>`: Input directory containing markdown files (default: `content`)
 - `-o, --output <DIR>`: Output directory for generated HTML files (default: `_site`)
-- `-t, --theme <DIR>`: Theme directory path (optional)  
+- `-t, --theme <DIR>`: Theme directory path (default: `themes/default`) 
 
 ## 📁 Content Organization
 
