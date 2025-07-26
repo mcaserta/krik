@@ -1,0 +1,8 @@
+name = "default"
+version = "1.0.0"
+description = "Default Krik theme"
+
+[templates]
+page = "page"
+post = "post"
+index = "index"

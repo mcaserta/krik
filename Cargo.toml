@@ -1,0 +1,37 @@
+[package]
+name = "krik"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["Krik Contributors"]
+description = "A fast static site generator written in Rust with internationalization, theming, and modern web features"
+documentation = "https://docs.rs/krik"
+readme = "README.md"
+homepage = "https://github.com/example/krik"
+repository = "https://github.com/example/krik"
+license = "MIT"
+keywords = ["static-site", "generator", "markdown", "blog", "website"]
+categories = ["command-line-utilities", "web-programming"]
+exclude = [
+    "_site/*",
+    "content/*",
+    "target/*",
+    ".git/*",
+    "*.png",
+    "CLAUDE.md"
+]
+
+[[bin]]
+name = "kk"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+pulldown-cmark = "0.12"
+clap = { version = "4.0", features = ["derive"] }
+walkdir = "2.3"
+chrono = { version = "0.4", features = ["serde"] }
+tera = "1.20"
+toml = "0.8"
+regex = "1.10"

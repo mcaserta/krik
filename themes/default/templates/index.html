@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="{{ lang | default(value="en") }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site_title | default(value="Blog") }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ assets_path }}/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="{{ site_title | default(value="Blog") }} - Feed" href="{{ feed_path }}">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <span class="site-title">{{ site_title | default(value="Blog") }}</span>
+            <div class="nav-controls">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                {% for page in page_links %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </aside>
+
+        <main class="main-content index">
+            <header>
+                <h1>{{ site_title | default(value="Blog") }}</h1>
+            </header>
+            <ul class="post-list">
+            {% for post in posts %}
+                <li class="post-item">
+                    <h2><a href="{{ post.url }}">{{ post.title | default(value="Untitled") }}</a></h2>
+                    <div class="post-meta">
+                        {% if post.date %}{{ post.date | date(format="%B %d, %Y") }}{% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script src="{{ assets_path }}/js/main.js"></script>
+</body>
+</html>
