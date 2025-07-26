@@ -1,70 +1,42 @@
 # Krik - Static Site Generator
 
-Krik is a fast static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with internationalization support and modern theming.
+Fast Rust static site generator with Markdown, i18n, themes, and modern web features. Builds to executable `kk`.
 
-## Project Overview
+## Architecture
 
-The software is called `krik` and builds to an executable named `kk`.
+- `src/main.rs` - CLI entry point
+- `src/generator/mod.rs` - Site generation and HTML output
+- `src/parser/mod.rs` - Markdown and front matter parsing
+- `src/theme/mod.rs` - Theme system and templates
+- `src/site/mod.rs` - Site configuration
+- `src/i18n/mod.rs` - Internationalization
 
-## Core Architecture
+## Features
 
-The project is structured using Rust best practices with the following modules:
+### Core
+- GitHub Flavored Markdown with tables, footnotes, code blocks
+- YAML front matter with custom fields
+- Draft support via `draft: true`
+- Automatic asset copying
+- Site config via `site.toml`
 
-- `src/main.rs` - CLI entry point and argument parsing
-- `src/generator/mod.rs` - Core site generation logic and HTML output
-- `src/parser/mod.rs` - Markdown parsing and front matter extraction
-- `src/theme/mod.rs` - Theme system and template rendering
-- `src/site/mod.rs` - Site configuration management
-- `src/i18n/mod.rs` - Internationalization support
+### Content & Templates
+- Posts (`content/posts/`) and pages (`content/pages/`)
+- Tera templating with layout override
+- Automatic content type detection
 
-## Current Features (Implemented)
+### Theme & i18n
+- Light/dark mode with OS detection
+- Language detection from `file.lang.md`
+- Supported: en, it, es, fr, de, pt, ja, zh, ru, ar
+- Responsive design with accessibility
 
-### ✅ Core Functionality
-- **Markdown Processing**: Full GitHub Flavored Markdown support with tables, footnotes, strikethrough, and code blocks
-- **YAML Front Matter**: Rich metadata support with custom fields
-- **HTML5 Output**: Valid, semantic HTML generation
-- **Draft Support**: Exclude files from processing with `draft: true` in front matter
-- **Directory Structure**: Preserves content organization in generated site
-- **Non-Markdown Files**: Automatic copying of images, CSS, and other assets
-- **Site Configuration**: Global settings via `site.toml` (excluded from output)
-
-### ✅ Content Types & Templates
-- **Blog Posts**: Files in `content/posts/` use post template with tags and navigation
-- **Pages**: Files in `content/pages/` or root use page template
-- **Automatic Detection**: Content type determined by directory structure
-- **Layout Override**: Manual template selection via `layout` field in front matter
-- **Template System**: Tera-based templating with unified layout system
-
-### ✅ Theme System
-- **File-Based Architecture**: Templates, CSS, and JavaScript in separate files
-- **Asset Management**: Automatic copying of theme assets to output directory
-- **Light/Dark Mode**: OS preference detection with manual toggle
-- **Theme Persistence**: User preferences saved in localStorage
-- **Responsive Design**: Mobile-first approach with modern CSS
-- **CSS Custom Properties**: Easy color customization
-
-### ✅ Internationalization (i18n)
-- **Filename Suffix**: Language detection from `file.lang.md` pattern
-- **Language Selector**: Dropdown showing available translations
-- **Default Language**: English as fallback with proper language names
-- **Translation Links**: Automatic navigation between language versions
-- **Supported Languages**: en, it, es, fr, de, pt, ja, zh, ru, ar
-
-### ✅ Advanced Features
-- **Table of Contents**: Auto-generated TOC with `toc: true` in front matter
-- **Footnote Navigation**: Bidirectional linking with smooth scrolling
-- **Scroll-to-Top Button**: Smart visibility based on scroll position
-- **Atom Feed**: RFC 4287 compliant feed with xml:base support
-- **Sidebar Navigation**: Page links with alphabetical sorting
-- **Timestamp Handling**: File modification time with YAML override support
-
-### ✅ Navigation & UX
-- **Smart Relative Links**: Depth-aware navigation across directory structures
-- **Language Switching**: Seamless transition between translations
-- **Theme Toggle**: Fixed-position button with sun/moon icons
-- **Smooth Animations**: CSS transitions for theme changes and scrolling
-- **Keyboard Accessibility**: Proper ARIA labels and focus handling
-- **Mobile Optimization**: Touch-friendly interfaces and responsive layouts
+### Advanced
+- Table of contents with `toc: true`
+- Bidirectional footnote navigation
+- Scroll-to-top button
+- RFC 4287 Atom feeds with xml:base
+- Smart relative links across directory depths
 
 ## Configuration
 
@@ -152,3 +124,4 @@ The default theme includes:
 ## Release Process Memories
 
 - Incrementing the version number should be done before checking git for uncommitted changes as the version number needs to be incremented before pushing to github and crates.io
+- Don't forget to also stage and commit the claude.md file when releasing the software
