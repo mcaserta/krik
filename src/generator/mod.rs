@@ -289,7 +289,7 @@ impl SiteGenerator {
         Ok(())
     }
 
-    fn generate_toc_and_content(&self, content: &str) -> (String, String) {
+    fn generate_toc_and_content(&self, content: &str, title: Option<&str>) -> (String, String) {
         // First, generate normal HTML content
         let mut options = Options::empty();
         options.insert(Options::ENABLE_TABLES);
@@ -335,6 +335,18 @@ impl SiteGenerator {
             modified_html = modified_html.replace(old_heading, &new_heading);
         }
         
+        // Remove duplicate H1 heading if it matches the page title
+        if let Some(title) = title {
+            let h1_regex = Regex::new(r"<h1[^>]*>([^<]+)</h1>").unwrap();
+            if let Some(cap) = h1_regex.captures(&modified_html) {
+                let h1_text = cap[1].trim();
+                if h1_text == title {
+                    // Remove the first H1 heading that matches the title
+                    modified_html = h1_regex.replace(&modified_html, "").to_string();
+                }
+            }
+        }
+
         // Generate TOC HTML
         let toc_html = if toc_items.is_empty() {
             String::new()
@@ -369,8 +381,8 @@ impl SiteGenerator {
             .and_then(|v| v.as_bool())
             .unwrap_or(false);
 
-        let (toc_html, html_content) = if toc_enabled {
-            self.generate_toc_and_content(&document.content)
+        let (toc_html, mut html_content) = if toc_enabled {
+            self.generate_toc_and_content(&document.content, document.front_matter.title.as_deref())
         } else {
             let mut options = Options::empty();
             options.insert(Options::ENABLE_TABLES);
@@ -381,6 +393,18 @@ impl SiteGenerator {
             html::push_html(&mut html_content, parser);
             (String::new(), html_content)
         };
+
+        // Remove duplicate H1 heading if it matches the page title
+        if let Some(title) = &document.front_matter.title {
+            let h1_regex = Regex::new(r"<h1[^>]*>([^<]+)</h1>").unwrap();
+            if let Some(cap) = h1_regex.captures(&html_content) {
+                let h1_text = cap[1].trim();
+                if h1_text == title {
+                    // Remove the first H1 heading that matches the title
+                    html_content = h1_regex.replace(&html_content, "").to_string();
+                }
+            }
+        }
 
         let mut context = Context::new();
         context.insert("title", &document.front_matter.title);

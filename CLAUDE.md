@@ -1,59 +1,26 @@
 # Krik - Static Site Generator
 
-Fast Rust static site generator with Markdown, i18n, themes, and modern web features. Builds to executable `kk`.
-
-## Architecture
-
-- `src/main.rs` - CLI entry point
-- `src/generator/mod.rs` - Site generation and HTML output
-- `src/parser/mod.rs` - Markdown and front matter parsing
-- `src/theme/mod.rs` - Theme system and templates
-- `src/site/mod.rs` - Site configuration
-- `src/i18n/mod.rs` - Internationalization
+Fast Rust static site generator. Builds to `kk` executable.
 
 ## Features
-
-### Core
 - GitHub Flavored Markdown with tables, footnotes, code blocks
-- YAML front matter with custom fields
-- Draft support via `draft: true`
-- Automatic asset copying
-- Site config via `site.toml`
-
-### Content & Templates
-- Posts (`content/posts/`) and pages (`content/pages/`)
-- Tera templating with layout override
-- Automatic content type detection
-
-### Theme & i18n
+- YAML front matter with layout override
 - Light/dark mode with OS detection
-- Language detection from `file.lang.md`
-- Supported: en, it, es, fr, de, pt, ja, zh, ru, ar
-- Responsive design with accessibility
-
-### Advanced
-- Table of contents with `toc: true`
-- Bidirectional footnote navigation
-- Scroll-to-top button
-- RFC 4287 Atom feeds with xml:base
-- Smart relative links across directory depths
-- Theme-aware syntax highlighting with Prism.js (100+ languages)
+- i18n via `file.lang.md` (en, it, es, fr, de, pt, ja, zh, ru, ar)
+- Development server with live reload (can be disabled with `--no-live-reload`)
+- TOC generation, footnotes, scroll-to-top
+- Atom feeds, syntax highlighting
+- Mobile-friendly hamburger menu for responsive navigation
 
 ## Usage
 ```bash
 cargo build --release
-./target/release/kk  # Uses content/ → _site/
+./target/release/kk                         # Generate once
+./target/release/kk server --port 3000      # Dev server with live reload
+./target/release/kk server --no-live-reload # Dev server without live reload (mobile-safe)
 ```
 
-## Structure
-```
-content/posts/*.md → post template
-content/pages/*.md → page template  
-site.toml → config (title, base_url)
-file.lang.md → translations
-```
-
-Front matter: title, date, layout, tags, toc, draft
+Structure: `content/posts/*.md` → post template, `content/pages/*.md` → page template
 
 ## Release Workflow
 

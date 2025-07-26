@@ -16,6 +16,9 @@
         <nav class="top-nav">
             <a href="{{ home_path }}" class="site-title">{{ site_title | default(value="Blog") }}</a>
             <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
                 {% if available_translations and available_translations | length > 1 %}
                 <div class="language-selector">
                     <select onchange="switchLanguage(this.value)">
@@ -32,6 +35,15 @@
                 </button>
             </div>
         </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                {% for page in page_links %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
 
         <aside class="sidebar">
             <ul class="page-links">

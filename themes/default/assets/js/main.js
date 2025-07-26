@@ -102,6 +102,44 @@ function switchLanguage(lang) {
     window.location.href = newPath;
 }
 
+// Mobile menu functionality
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.classList.toggle('show');
+    }
+}
+
+// Close mobile menu when clicking outside or on a link
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerBtn = document.querySelector('.hamburger-menu');
+    
+    if (mobileMenu && hamburgerBtn) {
+        // Close menu when clicking on a link
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('show');
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!mobileMenu.contains(event.target) && !hamburgerBtn.contains(event.target)) {
+                mobileMenu.classList.remove('show');
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                mobileMenu.classList.remove('show');
+            }
+        });
+    }
+});
+
 // Scroll to top functionality
 document.addEventListener('DOMContentLoaded', function() {
     const scrollToTopBtn = document.getElementById('scroll-to-top');
