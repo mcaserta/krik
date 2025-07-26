@@ -30,11 +30,14 @@ impl Theme {
         let config: ThemeConfig = toml::from_str(&config_content)?;
         
         let templates_path = theme_path.join("templates");
-        let templates = if templates_path.exists() {
+        let mut templates = if templates_path.exists() {
             Tera::new(&format!("{}/**/*.html", templates_path.display()))?
         } else {
             Self::default_templates()
         };
+        
+        // Disable auto-escaping for HTML templates
+        templates.autoescape_on(vec![]);
 
         Ok(Theme {
             config,
@@ -61,7 +64,11 @@ index = "index"
         let themes_path = PathBuf::from("themes/default/templates");
         if themes_path.exists() {
             match Tera::new(&format!("{}/**/*.html", themes_path.display())) {
-                Ok(tera) => return tera,
+                Ok(mut tera) => {
+                    // Disable auto-escaping for HTML templates
+                    tera.autoescape_on(vec![]);
+                    return tera;
+                },
                 Err(_) => {
                     // If loading fails, fall back to empty Tera (will use hardcoded fallback)
                 }
@@ -69,7 +76,9 @@ index = "index"
         }
 
         // Return empty Tera as fallback (file-based templates will be loaded if available)
-        Tera::default()
+        let mut tera = Tera::default();
+        tera.autoescape_on(vec![]);
+        tera
     }
 
     pub fn render_page(&self, template_name: &str, context: &Context) -> Result<String, Box<dyn std::error::Error>> {

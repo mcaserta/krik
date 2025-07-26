@@ -680,7 +680,7 @@ impl SiteGenerator {
         
         // Add xml:base attribute if base_url is configured
         if let Some(base_url) = self.site_config.get_base_url() {
-            feed_content.push_str(&format!("<feed xmlns=\"http://www.w3.org/2005/Atom\" xml:base=\"{}\">\n", escape_xml(&base_url)));
+            feed_content.push_str(&format!("<feed xmlns=\"http://www.w3.org/2005/Atom\" xml:base=\"{}\">\n", escape_xml_url(&base_url)));
         } else {
             feed_content.push_str("<feed xmlns=\"http://www.w3.org/2005/Atom\">\n");
         }
@@ -719,8 +719,8 @@ impl SiteGenerator {
             
             feed_content.push_str("  <entry>\n");
             feed_content.push_str(&format!("    <title>{}</title>\n", escape_xml(title)));
-            feed_content.push_str(&format!("    <link href=\"{}\"/>\n", escape_xml(&url)));
-            feed_content.push_str(&format!("    <id>{}</id>\n", escape_xml(&url)));
+            feed_content.push_str(&format!("    <link href=\"{}\"/>\n", escape_xml_url(&url)));
+            feed_content.push_str(&format!("    <id>{}</id>\n", escape_xml_url(&url)));
             feed_content.push_str(&format!("    <updated>{}</updated>\n", date.to_rfc3339()));
             feed_content.push_str(&format!("    <content type=\"html\">{}</content>\n", escape_xml(&html_content)));
             feed_content.push_str("  </entry>\n");
@@ -742,5 +742,14 @@ fn escape_xml(text: &str) -> String {
         .replace('>', "&gt;")
         .replace('"', "&quot;")
         .replace('\'', "&#39;")
+}
+
+fn escape_xml_url(text: &str) -> String {
+    // For URLs in XML attributes, we only need to escape &, <, >, and quotes
+    // Forward slashes are valid and should not be escaped
+    text.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
 }
 
