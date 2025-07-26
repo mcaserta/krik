@@ -78,6 +78,35 @@ If you have Rust and Cargo installed, you can install Krik globally:
 cargo install krik
 ```
 
+### Setup Required Theme
+
+Before generating your first site, you need to copy the default theme to the root directory of your input site:
+
+```bash
+# If installed from source
+cp -r themes/ /path/to/your/site/root/
+
+# If installed via cargo, download the theme from the repository
+wget https://github.com/mcaserta/krik/archive/main.zip
+unzip main.zip
+cp -r krik-main/themes/ /path/to/your/site/root/
+rm -rf main.zip krik-main/
+```
+
+Your site root directory should have this structure:
+```
+your-site/
+├── content/
+│   ├── site.toml
+│   ├── posts/
+│   └── pages/
+└── themes/
+    └── default/
+        ├── theme.toml
+        ├── templates/
+        └── assets/
+```
+
 ## 🔧 Usage
 
 ### Basic Usage
@@ -370,7 +399,8 @@ _site/
 
 ### 📝 Markdown Enhancements
 - **Tables**: Full support with responsive styling and alternating row colors
-- **Code Blocks**: Syntax highlighting ready with proper `<code>` structure
+- **Code Blocks**: Theme-aware syntax highlighting with Prism.js supporting 100+ languages
+- **Syntax Highlighting**: Automatic light/dark theme switching, graceful fallback on unsupported browsers
 - **Footnotes**: Clickable footnote references with smooth scroll return links
 - **Strikethrough**: ~~Text~~ with proper `<del>` tags
 - **Task Lists**: Checkbox support for todo items

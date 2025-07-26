@@ -37,79 +37,23 @@ Fast Rust static site generator with Markdown, i18n, themes, and modern web feat
 - Scroll-to-top button
 - RFC 4287 Atom feeds with xml:base
 - Smart relative links across directory depths
+- Theme-aware syntax highlighting with Prism.js (100+ languages)
 
-## Configuration
-
-### Site Configuration (`site.toml`)
-```toml
-title = "Site Title"
-base_url = "https://example.com"  # Optional, enables xml:base in feeds
-```
-
-### Front Matter Options
-```yaml
----
-title: "Page Title"
-date: 2024-01-15T10:30:00Z  # ISO 8601 format
-layout: post  # Template override (post, page, or custom)
-tags: ["tag1", "tag2"]  # Array of tags
-toc: true  # Enable table of contents
-draft: false  # Set to true to exclude from site
-custom_field: "value"  # Any additional metadata
----
-```
-
-## Content Organization
-
-```
-content/
-├── site.toml           # Site configuration (not copied to output)
-├── posts/              # Blog posts (uses 'post' template)
-│   ├── sample.md
-│   └── sample.it.md    # Italian translation
-├── pages/              # Static pages (uses 'page' template)
-│   └── about.md
-├── images/             # Static files (copied as-is)
-│   └── logo.png
-└── any-file.md         # Root level files (uses 'page' template)
-```
-
-## Generated Output
-
-```
-_site/
-├── index.html          # Homepage with post listing
-├── feed.xml           # Atom feed with xml:base support
-├── assets/            # Theme assets
-│   ├── css/main.css   # Stylesheet with scroll-to-top styles
-│   └── js/main.js     # JavaScript with footnote & scroll functionality
-├── posts/
-│   ├── sample.html    # Post with tags, navigation, scroll-to-top
-│   └── sample.it.html # Italian translation
-└── images/
-    └── logo.png       # Static assets preserved
-```
-
-## Build & Usage
-
+## Usage
 ```bash
-# Build the project
 cargo build --release
-
-# Generate site from current directory
-./target/release/kk
-
-# Generate with custom paths
-./target/release/kk --input ./content --output ./_site --theme ./themes/custom
+./target/release/kk  # Uses content/ → _site/
 ```
 
-## Theme Customization
+## Structure
+```
+content/posts/*.md → post template
+content/pages/*.md → page template  
+site.toml → config (title, base_url)
+file.lang.md → translations
+```
 
-The default theme includes:
-- Responsive CSS with light/dark mode support
-- JavaScript for theme switching, footnotes, and scroll-to-top
-- Tera templates for index, post, and page layouts
-- Modern typography and accessibility features
+Front matter: title, date, layout, tags, toc, draft
 
 ## Release Workflow
 
