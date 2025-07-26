@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = Command::new("kk")
-        .version("0.1.0")
+        .version("0.1.2")
         .author("Krik Static Site Generator")
         .about("A fast static site generator with markdown support")
         .arg(
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .long("input")
                 .value_name("DIR")
                 .help("Input directory containing markdown files")
-                .default_value("."),
+                .default_value("content"),
         )
         .arg(
             Arg::new("output")
