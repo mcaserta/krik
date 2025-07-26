@@ -675,6 +675,11 @@ impl SiteGenerator {
         let site_title = self.site_config.get_site_title();
         let now = chrono::Utc::now();
         
+        // Get the most recent post date for the feed's updated timestamp
+        let feed_updated = posts.first()
+            .and_then(|post| post.front_matter.date)
+            .unwrap_or(now);
+        
         let mut feed_content = String::new();
         feed_content.push_str("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         
@@ -688,7 +693,7 @@ impl SiteGenerator {
         feed_content.push_str(&format!("  <title>{}</title>\n", escape_xml(&site_title)));
         feed_content.push_str("  <link href=\"feed.xml\" rel=\"self\"/>\n");
         feed_content.push_str("  <link href=\"index.html\"/>\n");
-        feed_content.push_str(&format!("  <updated>{}</updated>\n", now.to_rfc3339()));
+        feed_content.push_str(&format!("  <updated>{}</updated>\n", feed_updated.to_rfc3339()));
         feed_content.push_str(&format!("  <id>feed.xml</id>\n"));
         
         for post in posts {

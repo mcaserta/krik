@@ -138,3 +138,17 @@ The default theme includes:
 - JavaScript for theme switching, footnotes, and scroll-to-top
 - Tera templates for index, post, and page layouts
 - Modern typography and accessibility features
+
+## Release Workflow
+
+- When releasing the software, automatically:
+  - Increment version number in CLI output for `-V` option
+  - Update version in `Cargo.toml`
+  - Commit changes to git
+  - Push to GitHub
+  - Publish to crates.io using `cargo publish`
+  - **Make sure everything is committed in git before releasing the software**
+
+## Release Process Memories
+
+- Incrementing the version number should be done before checking git for uncommitted changes as the version number needs to be incremented before pushing to github and crates.io
