@@ -48,6 +48,7 @@ pub mod site;
 pub mod server;
 pub mod init;
 pub mod content;
+pub mod cli;
 
 pub use parser::*;
 pub use theme::*;

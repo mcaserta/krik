@@ -40,7 +40,7 @@ pub struct FrontMatter {
 /// Represents a single Markdown file that has been parsed and is ready
 /// for processing into HTML. Contains both the front matter metadata
 /// and the Markdown content body.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Document {
     /// Parsed YAML front matter containing metadata
     pub front_matter: FrontMatter,
