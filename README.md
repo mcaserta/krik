@@ -52,7 +52,7 @@ Krik a powerful static site generator.
 ### From Source
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/mcaserta/krik.git
 cd krik
 cargo build --release
 ```
