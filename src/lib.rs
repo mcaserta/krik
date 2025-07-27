@@ -46,6 +46,8 @@ pub mod i18n;
 pub mod generator;
 pub mod site;
 pub mod server;
+pub mod init;
+pub mod content;
 
 pub use parser::*;
 pub use theme::*;

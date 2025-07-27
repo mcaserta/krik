@@ -1,12 +1,14 @@
 use clap::{Arg, Command};
 use krik::generator::SiteGenerator;
 use krik::server::DevServer;
+use krik::init::init_site;
+use krik::content::{create_post, create_page};
 use std::path::PathBuf;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = Command::new("kk")
-        .version("0.1.5")
+        .version("0.1.6")
         .author("Krik Static Site Generator")
         .about("A fast static site generator with markdown support")
         .subcommand(
@@ -50,6 +52,71 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .action(clap::ArgAction::SetTrue),
                 ),
         )
+        .subcommand(
+            Command::new("init")
+                .about("Initialize a new Krik site with default content and theme")
+                .arg(
+                    Arg::new("directory")
+                        .help("Directory to initialize (default: current directory)")
+                        .value_name("DIR")
+                        .default_value("."),
+                )
+                .arg(
+                    Arg::new("force")
+                        .long("force")
+                        .short('f')
+                        .help("Overwrite existing files")
+                        .action(clap::ArgAction::SetTrue),
+                ),
+        )
+        .subcommand(
+            Command::new("post")
+                .about("Create a new blog post")
+                .arg(
+                    Arg::new("title")
+                        .help("Post title")
+                        .value_name("TITLE")
+                        .default_value("New post"),
+                )
+                .arg(
+                    Arg::new("filename")
+                        .long("filename")
+                        .short('f')
+                        .help("Custom filename (without .md extension)")
+                        .value_name("NAME"),
+                )
+                .arg(
+                    Arg::new("content-dir")
+                        .long("content-dir")
+                        .help("Content directory path")
+                        .value_name("DIR")
+                        .default_value("content"),
+                ),
+        )
+        .subcommand(
+            Command::new("page")
+                .about("Create a new page")
+                .arg(
+                    Arg::new("title")
+                        .help("Page title")
+                        .value_name("TITLE")
+                        .default_value("New page"),
+                )
+                .arg(
+                    Arg::new("filename")
+                        .long("filename")
+                        .short('f')
+                        .help("Custom filename (without .md extension)")
+                        .value_name("NAME"),
+                )
+                .arg(
+                    Arg::new("content-dir")
+                        .long("content-dir")
+                        .help("Content directory path")
+                        .value_name("DIR")
+                        .default_value("content"),
+                ),
+        )
         .arg(
             Arg::new("input")
                 .short('i')
@@ -88,6 +155,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             let server = DevServer::new(input_dir, output_dir, theme_dir, port, !no_live_reload);
             server.start().await?;
+        }
+        Some(("init", init_matches)) => {
+            let directory = PathBuf::from(init_matches.get_one::<String>("directory").unwrap());
+            let force = init_matches.get_flag("force");
+            
+            init_site(&directory, force)?;
+        }
+        Some(("post", post_matches)) => {
+            let title = post_matches.get_one::<String>("title").unwrap();
+            let filename = post_matches.get_one::<String>("filename");
+            let content_dir = PathBuf::from(post_matches.get_one::<String>("content-dir").unwrap());
+            
+            create_post(&content_dir, title, filename)?;
+        }
+        Some(("page", page_matches)) => {
+            let title = page_matches.get_one::<String>("title").unwrap();
+            let filename = page_matches.get_one::<String>("filename");
+            let content_dir = PathBuf::from(page_matches.get_one::<String>("content-dir").unwrap());
+            
+            create_page(&content_dir, title, filename)?;
         }
         _ => {
             // Default behavior: generate site once

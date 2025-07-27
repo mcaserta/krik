@@ -11,6 +11,17 @@ This page provides comprehensive documentation for using Krik, the static site g
 
 ### Installation
 
+#### From Crates.io (Recommended)
+
+```bash
+# Install globally from crates.io
+cargo install krik
+
+# No additional setup required - themes and content are embedded!
+```
+
+#### From Source
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -22,14 +33,57 @@ cargo build --release
 # The executable will be at target/release/kk
 ```
 
-### Basic Usage
+### Getting Started
+
+#### Initialize a New Site
+
+Create a new Krik site with sample content and default theme:
+
+```bash
+kk init my-blog             # Create new site in 'my-blog' directory
+cd my-blog
+kk server                   # Start development server
+```
+
+Or initialize in the current directory:
+
+```bash
+kk init                     # Initialize in current directory
+kk init --force             # Overwrite existing files
+```
+
+#### Create Content
+
+Create new blog posts and pages quickly:
+
+```bash
+kk post "My Great Post"           # Create new blog post
+kk post                           # Create with default title "New post"
+kk post "Custom Post" -f my-slug  # Custom filename
+
+kk page "About Us"                # Create new page
+kk page                           # Create with default title "New page" 
+kk page "Contact" -f contact      # Custom filename
+```
+
+#### Development Server
+
+Start the development server with live reload:
+
+```bash
+kk server                    # Start on port 3000 with live reload
+kk server --port 8080        # Custom port
+kk server --no-live-reload   # Disable live reload (useful for mobile devices)
+```
+
+#### Generate Static Site
 
 ```bash
 # Generate site from current directory
-./target/release/kk
+kk
 
 # Generate with custom paths
-./target/release/kk --input ./content --output ./_site
+kk --input ./content --output ./_site --theme ./themes/custom
 ```
 
 ## Content Organization
@@ -230,17 +284,65 @@ The theme uses CSS custom properties for easy customization:
 }
 ```
 
-## Command Line Options
+## Command Line Reference
+
+### Main Commands
 
 ```bash
-kk [OPTIONS]
+kk [OPTIONS]              # Generate static site
+kk init [DIR]             # Initialize new site
+kk post [TITLE]           # Create new blog post
+kk page [TITLE]           # Create new page
+kk server [OPTIONS]       # Start development server
+```
+
+### Global Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-i, --input <DIR>` | Input directory | `content` |
+| `-o, --output <DIR>` | Output directory | `_site` |
+| `-t, --theme <DIR>` | Theme directory | `themes/default` |
+| `-h, --help` | Show help | |
+| `-V, --version` | Show version | |
+
+### Init Command
+
+```bash
+kk init [DIR] [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `[DIR]` | Directory to initialize (default: current directory) |
+| `-f, --force` | Overwrite existing files |
+
+### Post/Page Commands
+
+```bash
+kk post [TITLE] [OPTIONS]
+kk page [TITLE] [OPTIONS]
 ```
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-i, --input <DIR>` | Input directory | Current directory |
+| `[TITLE]` | Content title | "New post" / "New page" |
+| `-f, --filename <NAME>` | Custom filename (without .md) | Generated from title |
+| `--content-dir <DIR>` | Content directory path | `content` |
+
+### Server Command
+
+```bash
+kk server [OPTIONS]
+```
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-i, --input <DIR>` | Input directory | `content` |
 | `-o, --output <DIR>` | Output directory | `_site` |
 | `-t, --theme <DIR>` | Theme directory | `themes/default` |
+| `-p, --port <PORT>` | Server port | `3000` |
+| `--no-live-reload` | Disable live reload | Live reload enabled |
 
 ## Generated Output
 

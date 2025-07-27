@@ -61,6 +61,9 @@ function toggleTheme() {
 | Themes | ✅ | Light/dark mode |
 | i18n | ✅ | Multi-language |
 | Feeds | ✅ | Atom/RSS feeds |
+| Dev Server | ✅ | Live reload & file watching |
+| Site Init | ✅ | Embedded content & themes |
+| Content Creation | ✅ | Quick post & page generation |
 
 ### Footnotes
 
@@ -80,11 +83,33 @@ On longer pages like this one, you'll see a scroll-to-top button appear in the b
 
 ### Navigation
 
-The sidebar shows all pages on your site, and posts like this one include a "Back to Home" link for easy navigation.
+The sidebar shows all pages on your site, and posts like this one include a "Back to Home" link for easy navigation. On mobile devices, the sidebar transforms into a convenient hamburger menu.
+
+### Development Server
+
+Krik includes a powerful development server with live reload functionality:
+
+```bash
+kk server                    # Start with live reload
+kk server --no-live-reload   # Mobile-safe mode for Safari/iPad
+```
+
+The server automatically watches for changes and refreshes your browser, making development fast and efficient.
+
+### Content Creation
+
+Create new content quickly with built-in commands:
+
+```bash
+kk post "My New Blog Post"   # Create a new blog post
+kk page "About Us"           # Create a new page
+```
+
+Both commands generate files with proper front matter and helpful starter content.
 
 ---
 
-This is just the beginning! Check out the other posts and pages to see more features in action.
+This is just the beginning! Check out the other posts and pages to see more features in action, or try the new commands to create your own content.
 
 [^1]: This is the first footnote. Click the return arrow (↩) to go back to the text.
 

@@ -1,6 +1,6 @@
 [package]
 name = "krik"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 rust-version = "1.70"
 authors = ["Mirko Caserta", "Krik Contributors"]
@@ -42,3 +42,5 @@ notify = "6.0"
 serde_json = "1.0"
 futures-util = "0.3"
 local-ip-address = "0.6"
+# Init command dependencies
+include_dir = "0.7"

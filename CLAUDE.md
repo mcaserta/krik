@@ -11,10 +11,14 @@ Fast Rust static site generator. Builds to `kk` executable.
 - TOC generation, footnotes, scroll-to-top
 - Atom feeds, syntax highlighting
 - Mobile-friendly hamburger menu for responsive navigation
+- Site initialization with embedded content and themes (`kk init`)
+- Content creation commands for posts and pages (`kk post`, `kk page`)
 
 ## Usage
 ```bash
 cargo build --release
+./target/release/kk init my-blog
+cd my blog
 ./target/release/kk                         # Generate once
 ./target/release/kk server --port 3000      # Dev server with live reload
 ./target/release/kk server --no-live-reload # Dev server without live reload (mobile-safe)

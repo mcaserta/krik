@@ -44,12 +44,31 @@ The executable will be available at `target/release/kk`.
 cargo install krik
 ```
 
-Copy themes from the repository to your site root:
+## 🔧 Usage
+
+### Initialize New Site
+
+Create a new Krik site with sample content and default theme:
+
 ```bash
-cp -r themes/ /path/to/your/site/
+kk init                     # Initialize in current directory
+kk init my-blog             # Initialize in new directory
+kk init my-blog --force     # Overwrite existing files
 ```
 
-## 🔧 Usage
+### Create Content
+
+Create new blog posts and pages quickly:
+
+```bash
+kk post "My Great Post"           # Create new blog post
+kk post                           # Create with default title "New post"
+kk post "Custom Post" -f my-slug  # Custom filename
+
+kk page "About Us"                # Create new page
+kk page                           # Create with default title "New page" 
+kk page "Contact" -f contact      # Custom filename
+```
 
 ### Basic Usage
 
