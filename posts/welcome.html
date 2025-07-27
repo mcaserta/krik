@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Krik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                
+                <div class="language-selector">
+                    <select onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" selected>
+                            English
+                        </option>
+                        
+                        <option value="it" >
+                            Italiano
+                        </option>
+                        
+                    </select>
+                </div>
+                
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+        <aside class="toc-sidebar">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul><li class="toc-h1"><a href="#welcome-to-krik">Welcome to Krik</a></li><li class="toc-h2"><a href="#table-of-contents">Table of Contents</a></li><li class="toc-h2"><a href="#markdown-features">Markdown Features</a></li><li class="toc-h3"><a href="#text-formatting">Text Formatting</a></li><li class="toc-h3"><a href="#lists">Lists</a></li><li class="toc-h3"><a href="#code-blocks">Code Blocks</a></li><li class="toc-h3"><a href="#tables">Tables</a></li><li class="toc-h3"><a href="#footnotes">Footnotes</a></li><li class="toc-h2"><a href="#advanced-features">Advanced Features</a></li><li class="toc-h3"><a href="#theme-system">Theme System</a></li><li class="toc-h3"><a href="#scroll-to-top">Scroll to Top</a></li><li class="toc-h3"><a href="#navigation">Navigation</a></li><li class="toc-h3"><a href="#development-server">Development Server</a></li><li class="toc-h3"><a href="#content-creation">Content Creation</a></li></ul>
+            </div>
+        </aside>
+        
+
+        <main class="main-content">
+            <div class="back-link">
+                <a href="../index.html">← Back to Home</a>
+            </div>
+            <header>
+                <h1>Welcome to Krik</h1>
+                <div class="meta">January 15, 2024</div>
+            </header>
+            <article>
+<p>Welcome to the <strong>Krik</strong> static site generator! This post demonstrates many of the features available in this fast, Rust-powered static site generator.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<p>This post has a table of contents enabled via <code>toc: true</code> in the front matter. You should see a TOC in the sidebar with clickable links to each section.</p>
+<h2 id="markdown-features">Markdown Features</h2>
+<p>Krik supports full <strong>GitHub Flavored Markdown</strong> with many enhancements:</p>
+<h3 id="text-formatting">Text Formatting</h3>
+<p>You can use <em>italic text</em>, <strong>bold text</strong>, <del>strikethrough</del>, and <code>inline code</code>.</p>
+<h3 id="lists">Lists</h3>
+<p>Unordered lists:</p>
+<ul>
+<li>First item</li>
+<li>Second item
+<ul>
+<li>Nested item</li>
+<li>Another nested item</li>
+</ul>
+</li>
+<li>Third item</li>
+</ul>
+<p>Ordered lists:</p>
+<ol>
+<li>First step</li>
+<li>Second step</li>
+<li>Third step</li>
+</ol>
+<h3 id="code-blocks">Code Blocks</h3>
+<pre><code class="language-rust">fn main() {
+    println!("Hello, Krik!");
+}
+</code></pre>
+<pre><code class="language-javascript">// Theme toggle functionality
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+}
+</code></pre>
+<h3 id="tables">Tables</h3>
+<table><thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody>
+<tr><td>Markdown</td><td>✅</td><td>Full GFM support</td></tr>
+<tr><td>Themes</td><td>✅</td><td>Light/dark mode</td></tr>
+<tr><td>i18n</td><td>✅</td><td>Multi-language</td></tr>
+<tr><td>Feeds</td><td>✅</td><td>Atom/RSS feeds</td></tr>
+<tr><td>Dev Server</td><td>✅</td><td>Live reload &amp; file watching</td></tr>
+<tr><td>Site Init</td><td>✅</td><td>Embedded content &amp; themes</td></tr>
+<tr><td>Content Creation</td><td>✅</td><td>Quick post &amp; page generation</td></tr>
+</tbody></table>
+<h3 id="footnotes">Footnotes</h3>
+<p>This is a paragraph with a footnote<sup class="footnote-reference"><a href="#1">1</a></sup>. You can click on it to jump to the definition, and then click the return arrow to come back.</p>
+<p>Here's another footnote<sup class="footnote-reference"><a href="#second">2</a></sup> with different content.</p>
+<h2 id="advanced-features">Advanced Features</h2>
+<h3 id="theme-system">Theme System</h3>
+<p>The site automatically detects your OS theme preference and switches between light and dark modes. Try toggling your system theme or use the theme button in the top navigation!</p>
+<h3 id="scroll-to-top">Scroll to Top</h3>
+<p>On longer pages like this one, you'll see a scroll-to-top button appear in the bottom-right corner when you scroll down. It provides smooth scrolling back to the top.</p>
+<h3 id="navigation">Navigation</h3>
+<p>The sidebar shows all pages on your site, and posts like this one include a "Back to Home" link for easy navigation. On mobile devices, the sidebar transforms into a convenient hamburger menu.</p>
+<h3 id="development-server">Development Server</h3>
+<p>Krik includes a powerful development server with live reload functionality:</p>
+<pre><code class="language-bash">kk server                    # Start with live reload
+kk server --no-live-reload   # Mobile-safe mode for Safari/iPad
+</code></pre>
+<p>The server automatically watches for changes and refreshes your browser, making development fast and efficient.</p>
+<h3 id="content-creation">Content Creation</h3>
+<p>Create new content quickly with built-in commands:</p>
+<pre><code class="language-bash">kk post "My New Blog Post"   # Create a new blog post
+kk page "About Us"           # Create a new page
+</code></pre>
+<p>Both commands generate files with proper front matter and helpful starter content.</p>
+<hr />
+<p>This is just the beginning! Check out the other posts and pages to see more features in action, or try the new commands to create your own content.</p>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>This is the first footnote. Click the return arrow (↩) to go back to the text.</p>
+</div>
+<div class="footnote-definition" id="second"><sup class="footnote-definition-label">2</sup>
+<p>This is the second footnote with some additional content to show how multiple footnotes work.</p>
+</div>
+</article>
+            
+            <div class="tags">
+                <span class="tag">welcome</span><span class="tag">static-site</span><span class="tag">rust</span>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script>
+        window.krikBaseName = 'welcome';
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+</body>
+</html>

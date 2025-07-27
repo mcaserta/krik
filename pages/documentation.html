@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+        <aside class="toc-sidebar">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul><li class="toc-h1"><a href="#krik-documentation">Krik Documentation</a></li><li class="toc-h2"><a href="#quick-start">Quick Start</a></li><li class="toc-h3"><a href="#installation">Installation</a></li><li class="toc-h4"><a href="#from-crates-io--recommended">From Crates.io (Recommended)</a></li><li class="toc-h4"><a href="#from-source">From Source</a></li><li class="toc-h3"><a href="#getting-started">Getting Started</a></li><li class="toc-h4"><a href="#initialize-a-new-site">Initialize a New Site</a></li><li class="toc-h4"><a href="#create-content">Create Content</a></li><li class="toc-h4"><a href="#development-server">Development Server</a></li><li class="toc-h4"><a href="#generate-static-site">Generate Static Site</a></li><li class="toc-h2"><a href="#content-organization">Content Organization</a></li><li class="toc-h3"><a href="#directory-structure">Directory Structure</a></li><li class="toc-h3"><a href="#site-configuration">Site Configuration</a></li><li class="toc-h2"><a href="#front-matter">Front Matter</a></li><li class="toc-h3"><a href="#front-matter-fields">Front Matter Fields</a></li><li class="toc-h2"><a href="#templates-and-layouts">Templates and Layouts</a></li><li class="toc-h3"><a href="#automatic-template-selection">Automatic Template Selection</a></li><li class="toc-h3"><a href="#manual-template-override">Manual Template Override</a></li><li class="toc-h3"><a href="#template-features">Template Features</a></li><li class="toc-h2"><a href="#internationalization--i18n">Internationalization (i18n)</a></li><li class="toc-h3"><a href="#creating-translations">Creating Translations</a></li><li class="toc-h3"><a href="#supported-languages">Supported Languages</a></li><li class="toc-h3"><a href="#language-navigation">Language Navigation</a></li><li class="toc-h2"><a href="#advanced-features">Advanced Features</a></li><li class="toc-h3"><a href="#table-of-contents">Table of Contents</a></li><li class="toc-h3"><a href="#footnotes">Footnotes</a></li><li class="toc-h3"><a href="#scroll-to-top-button">Scroll-to-Top Button</a></li><li class="toc-h3"><a href="#atom-feed-generation">Atom Feed Generation</a></li><li class="toc-h2"><a href="#theme-system">Theme System</a></li><li class="toc-h3"><a href="#light-dark-mode">Light/Dark Mode</a></li><li class="toc-h3"><a href="#customization">Customization</a></li><li class="toc-h2"><a href="#command-line-reference">Command Line Reference</a></li><li class="toc-h3"><a href="#main-commands">Main Commands</a></li><li class="toc-h3"><a href="#global-options">Global Options</a></li><li class="toc-h3"><a href="#init-command">Init Command</a></li><li class="toc-h3"><a href="#post-page-commands">Post/Page Commands</a></li><li class="toc-h3"><a href="#server-command">Server Command</a></li><li class="toc-h2"><a href="#generated-output">Generated Output</a></li><li class="toc-h3"><a href="#example-output-structure">Example Output Structure</a></li><li class="toc-h2"><a href="#best-practices">Best Practices</a></li><li class="toc-h3"><a href="#content-organization-1">Content Organization</a></li><li class="toc-h3"><a href="#front-matter-1">Front Matter</a></li><li class="toc-h3"><a href="#performance">Performance</a></li><li class="toc-h3"><a href="#accessibility">Accessibility</a></li></ul>
+            </div>
+        </aside>
+        
+
+        <main class="main-content">
+            <header>
+                <h1>Documentation</h1>
+                <div class="meta">July 26, 2025</div>
+            </header>
+            <article><h1 id="krik-documentation">Krik Documentation</h1>
+<p>This page provides comprehensive documentation for using Krik, the static site generator.</p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="installation">Installation</h3>
+<h4 id="from-crates-io--recommended">From Crates.io (Recommended)</h4>
+<pre><code class="language-bash"># Install globally from crates.io
+cargo install krik
+
+# No additional setup required - themes and content are embedded!
+</code></pre>
+<h4 id="from-source">From Source</h4>
+<pre><code class="language-bash"># Clone the repository
+git clone &lt;repository-url&gt;
+cd krik
+
+# Build the project
+cargo build --release
+
+# The executable will be at target/release/kk
+</code></pre>
+<h3 id="getting-started">Getting Started</h3>
+<h4 id="initialize-a-new-site">Initialize a New Site</h4>
+<p>Create a new Krik site with sample content and default theme:</p>
+<pre><code class="language-bash">kk init my-blog             # Create new site in 'my-blog' directory
+cd my-blog
+kk server                   # Start development server
+</code></pre>
+<p>Or initialize in the current directory:</p>
+<pre><code class="language-bash">kk init                     # Initialize in current directory
+kk init --force             # Overwrite existing files
+</code></pre>
+<h4 id="create-content">Create Content</h4>
+<p>Create new blog posts and pages quickly:</p>
+<pre><code class="language-bash">kk post "My Great Post"           # Create new blog post
+kk post                           # Create with default title "New post"
+kk post "Custom Post" -f my-slug  # Custom filename
+
+kk page "About Us"                # Create new page
+kk page                           # Create with default title "New page" 
+kk page "Contact" -f contact      # Custom filename
+</code></pre>
+<h4 id="development-server">Development Server</h4>
+<p>Start the development server with live reload:</p>
+<pre><code class="language-bash">kk server                    # Start on port 3000 with live reload
+kk server --port 8080        # Custom port
+kk server --no-live-reload   # Disable live reload (useful for mobile devices)
+</code></pre>
+<h4 id="generate-static-site">Generate Static Site</h4>
+<pre><code class="language-bash"># Generate site from current directory
+kk
+
+# Generate with custom paths
+kk --input ./content --output ./_site --theme ./themes/custom
+</code></pre>
+<h2 id="content-organization">Content Organization</h2>
+<h3 id="directory-structure">Directory Structure</h3>
+<pre><code>content/
+├── site.toml           # Site configuration
+├── posts/              # Blog posts
+│   ├── hello.md
+│   └── hello.es.md     # Spanish translation
+├── pages/              # Static pages
+│   └── about.md
+└── images/             # Static assets
+    └── logo.png
+</code></pre>
+<h3 id="site-configuration">Site Configuration</h3>
+<p>Create a <code>site.toml</code> file in your content directory:</p>
+<pre><code class="language-toml">title = "My Website"
+base_url = "https://example.com"  # Optional, for feed generation
+</code></pre>
+<p><strong>Configuration Options:</strong></p>
+<ul>
+<li><code>title</code>: Site title (displayed in navigation and feeds)</li>
+<li><code>base_url</code>: Base URL for proper Atom feed link resolution</li>
+</ul>
+<h2 id="front-matter">Front Matter</h2>
+<p>All markdown files can include YAML front matter for metadata:</p>
+<pre><code class="language-yaml">---
+title: "Page Title"
+date: 2024-01-15T10:30:00Z
+layout: post
+tags: ["rust", "web", "static-site"]
+toc: true
+draft: false
+custom_field: "custom value"
+---
+
+# Your content here
+</code></pre>
+<h3 id="front-matter-fields">Front Matter Fields</h3>
+<table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>title</code></td><td>String</td><td>Page/post title</td></tr>
+<tr><td><code>date</code></td><td>ISO 8601</td><td>Publication date (falls back to file mtime)</td></tr>
+<tr><td><code>layout</code></td><td>String</td><td>Template to use (<code>post</code>, <code>page</code>, or custom)</td></tr>
+<tr><td><code>tags</code></td><td>Array</td><td>Tags for categorization</td></tr>
+<tr><td><code>toc</code></td><td>Boolean</td><td>Enable table of contents generation</td></tr>
+<tr><td><code>draft</code></td><td>Boolean</td><td>Skip file from processing when <code>true</code></td></tr>
+<tr><td>Custom fields</td><td>Any</td><td>Additional metadata accessible in templates</td></tr>
+</tbody></table>
+<h2 id="templates-and-layouts">Templates and Layouts</h2>
+<h3 id="automatic-template-selection">Automatic Template Selection</h3>
+<ul>
+<li><strong>Posts</strong>: Files in <code>content/posts/</code> use the <code>post</code> template</li>
+<li><strong>Pages</strong>: Files in <code>content/pages/</code> or root use the <code>page</code> template</li>
+<li><strong>Index</strong>: Homepage uses the <code>index</code> template</li>
+</ul>
+<h3 id="manual-template-override">Manual Template Override</h3>
+<p>Use the <code>layout</code> field in front matter:</p>
+<pre><code class="language-yaml">---
+title: "Special Page"
+layout: custom
+---
+</code></pre>
+<h3 id="template-features">Template Features</h3>
+<ul>
+<li><strong>Post Template</strong>: Tags, "Back to Home" link, language selector, scroll-to-top</li>
+<li><strong>Page Template</strong>: Clean layout, language selector (if translations available), scroll-to-top</li>
+<li><strong>Index Template</strong>: Post listing, theme toggle, scroll-to-top</li>
+</ul>
+<h2 id="internationalization--i18n">Internationalization (i18n)</h2>
+<h3 id="creating-translations">Creating Translations</h3>
+<p>Add language codes to filenames:</p>
+<ul>
+<li><code>hello.md</code> - Default language (English)</li>
+<li><code>hello.it.md</code> - Italian translation</li>
+<li><code>hello.es.md</code> - Spanish translation</li>
+<li><code>hello.fr.md</code> - French translation</li>
+</ul>
+<h3 id="supported-languages">Supported Languages</h3>
+<table><thead><tr><th>Code</th><th>Language</th><th>Native Name</th></tr></thead><tbody>
+<tr><td><code>en</code></td><td>English</td><td>English</td></tr>
+<tr><td><code>it</code></td><td>Italian</td><td>Italiano</td></tr>
+<tr><td><code>es</code></td><td>Spanish</td><td>Español</td></tr>
+<tr><td><code>fr</code></td><td>French</td><td>Français</td></tr>
+<tr><td><code>de</code></td><td>German</td><td>Deutsch</td></tr>
+<tr><td><code>pt</code></td><td>Portuguese</td><td>Português</td></tr>
+<tr><td><code>ja</code></td><td>Japanese</td><td>日本語</td></tr>
+<tr><td><code>zh</code></td><td>Chinese</td><td>中文</td></tr>
+<tr><td><code>ru</code></td><td>Russian</td><td>Русский</td></tr>
+<tr><td><code>ar</code></td><td>Arabic</td><td>العربية</td></tr>
+</tbody></table>
+<h3 id="language-navigation">Language Navigation</h3>
+<p>Pages with translations automatically show a language selector dropdown in the navigation bar.</p>
+<h2 id="advanced-features">Advanced Features</h2>
+<h3 id="table-of-contents">Table of Contents</h3>
+<p>Enable TOC generation with <code>toc: true</code> in front matter:</p>
+<pre><code class="language-yaml">---
+title: "Long Article"
+toc: true
+---
+</code></pre>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Automatic ID generation for headings</li>
+<li>Hierarchical structure preservation</li>
+<li>Clickable navigation links</li>
+<li>Smooth scrolling to sections</li>
+</ul>
+<h3 id="footnotes">Footnotes</h3>
+<p>Krik supports enhanced footnotes with bidirectional navigation:</p>
+<pre><code class="language-markdown">This has a footnote[^1].
+
+[^1]: This is the footnote content.
+</code></pre>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Click footnote numbers to jump to definitions</li>
+<li>Click return arrows (↩) to return to text</li>
+<li>Smooth scrolling for all footnote navigation</li>
+</ul>
+<h3 id="scroll-to-top-button">Scroll-to-Top Button</h3>
+<p>Automatically appears on longer pages with smart visibility:</p>
+<ul>
+<li>Hidden by default until scrolling &gt;300px</li>
+<li>Fixed position in bottom-right corner</li>
+<li>Smooth scrolling animation</li>
+<li>Theme-aware styling</li>
+<li>Mobile-optimized size and positioning</li>
+</ul>
+<h3 id="atom-feed-generation">Atom Feed Generation</h3>
+<p>Krik automatically generates an RFC 4287 compliant Atom feed at <code>feed.xml</code>:</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Only includes posts (content with <code>post</code> template)</li>
+<li>Limited to 20 most recent posts</li>
+<li>Full HTML content with proper XML escaping</li>
+<li>xml:base support when <code>base_url</code> is configured</li>
+<li>Proper metadata (titles, dates, IDs)</li>
+</ul>
+<h2 id="theme-system">Theme System</h2>
+<h3 id="light-dark-mode">Light/Dark Mode</h3>
+<p><strong>Automatic Detection:</strong></p>
+<ul>
+<li>Detects OS theme preference via CSS <code>prefers-color-scheme</code></li>
+<li>Supports all major platforms (Windows, macOS, Linux, iOS, Android)</li>
+<li>Real-time updates when OS theme changes</li>
+</ul>
+<p><strong>Manual Toggle:</strong></p>
+<ul>
+<li>Theme button (🌙/☀️) in top navigation</li>
+<li>Saves preference to localStorage</li>
+<li>Overrides automatic detection</li>
+<li>Smooth 0.3s transitions</li>
+</ul>
+<h3 id="customization">Customization</h3>
+<p>The theme uses CSS custom properties for easy customization:</p>
+<pre><code class="language-css">:root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --link-color: #0066cc;
+    /* ... more variables */
+}
+</code></pre>
+<h2 id="command-line-reference">Command Line Reference</h2>
+<h3 id="main-commands">Main Commands</h3>
+<pre><code class="language-bash">kk [OPTIONS]              # Generate static site
+kk init [DIR]             # Initialize new site
+kk post [TITLE]           # Create new blog post
+kk page [TITLE]           # Create new page
+kk server [OPTIONS]       # Start development server
+</code></pre>
+<h3 id="global-options">Global Options</h3>
+<table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
+<tr><td><code>-i, --input &lt;DIR&gt;</code></td><td>Input directory</td><td><code>content</code></td></tr>
+<tr><td><code>-o, --output &lt;DIR&gt;</code></td><td>Output directory</td><td><code>_site</code></td></tr>
+<tr><td><code>-t, --theme &lt;DIR&gt;</code></td><td>Theme directory</td><td><code>themes/default</code></td></tr>
+<tr><td><code>-h, --help</code></td><td>Show help</td><td></td></tr>
+<tr><td><code>-V, --version</code></td><td>Show version</td><td></td></tr>
+</tbody></table>
+<h3 id="init-command">Init Command</h3>
+<pre><code class="language-bash">kk init [DIR] [OPTIONS]
+</code></pre>
+<table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>[DIR]</code></td><td>Directory to initialize (default: current directory)</td></tr>
+<tr><td><code>-f, --force</code></td><td>Overwrite existing files</td></tr>
+</tbody></table>
+<h3 id="post-page-commands">Post/Page Commands</h3>
+<pre><code class="language-bash">kk post [TITLE] [OPTIONS]
+kk page [TITLE] [OPTIONS]
+</code></pre>
+<table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
+<tr><td><code>[TITLE]</code></td><td>Content title</td><td>"New post" / "New page"</td></tr>
+<tr><td><code>-f, --filename &lt;NAME&gt;</code></td><td>Custom filename (without .md)</td><td>Generated from title</td></tr>
+<tr><td><code>--content-dir &lt;DIR&gt;</code></td><td>Content directory path</td><td><code>content</code></td></tr>
+</tbody></table>
+<h3 id="server-command">Server Command</h3>
+<pre><code class="language-bash">kk server [OPTIONS]
+</code></pre>
+<table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
+<tr><td><code>-i, --input &lt;DIR&gt;</code></td><td>Input directory</td><td><code>content</code></td></tr>
+<tr><td><code>-o, --output &lt;DIR&gt;</code></td><td>Output directory</td><td><code>_site</code></td></tr>
+<tr><td><code>-t, --theme &lt;DIR&gt;</code></td><td>Theme directory</td><td><code>themes/default</code></td></tr>
+<tr><td><code>-p, --port &lt;PORT&gt;</code></td><td>Server port</td><td><code>3000</code></td></tr>
+<tr><td><code>--no-live-reload</code></td><td>Disable live reload</td><td>Live reload enabled</td></tr>
+</tbody></table>
+<h2 id="generated-output">Generated Output</h2>
+<p>Krik generates a complete static site with:</p>
+<ul>
+<li><strong>HTML files</strong>: Preserving directory structure</li>
+<li><strong>Language variants</strong>: <code>file.lang.html</code> for translations</li>
+<li><strong>Static assets</strong>: Images, CSS, etc. copied as-is</li>
+<li><strong>Theme assets</strong>: CSS and JavaScript from theme directory</li>
+<li><strong>Atom feed</strong>: <code>feed.xml</code> with proper link resolution</li>
+<li><strong>Navigation</strong>: TOCs, footnote links, scroll-to-top buttons</li>
+</ul>
+<h3 id="example-output-structure">Example Output Structure</h3>
+<pre><code>_site/
+├── index.html          # Homepage
+├── feed.xml           # Atom feed
+├── assets/            # Theme assets
+│   ├── css/main.css
+│   └── js/main.js
+├── posts/
+│   ├── hello.html
+│   └── hello.es.html  # Translation
+├── pages/
+│   └── about.html
+└── images/
+    └── logo.png       # Static assets
+</code></pre>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="content-organization-1">Content Organization</h3>
+<ul>
+<li>Use <code>posts/</code> for blog entries and time-sensitive content</li>
+<li>Use <code>pages/</code> for static pages like About, Contact, etc.</li>
+<li>Keep assets organized in subdirectories</li>
+<li>Use consistent naming conventions for translations</li>
+</ul>
+<h3 id="front-matter-1">Front Matter</h3>
+<ul>
+<li>Always include a <code>title</code> for better navigation</li>
+<li>Use <code>date</code> for posts to ensure proper chronological ordering</li>
+<li>Add <code>tags</code> to posts for better categorization</li>
+<li>Enable <code>toc</code> for longer articles with multiple sections</li>
+</ul>
+<h3 id="performance">Performance</h3>
+<ul>
+<li>Optimize images before adding to content</li>
+<li>Use appropriate image formats (WebP when possible)</li>
+<li>Keep individual posts/pages to reasonable lengths</li>
+<li>Use drafts (<code>draft: true</code>) for work-in-progress content</li>
+</ul>
+<h3 id="accessibility">Accessibility</h3>
+<ul>
+<li>Use proper heading hierarchy (H1 → H2 → H3)</li>
+<li>Include alt text for images</li>
+<li>Ensure good color contrast in custom themes</li>
+<li>Test with keyboard navigation</li>
+</ul>
+<hr />
+<p>This documentation covers all major features of Krik. For more examples, check out the other posts and pages in this demo site!</p>
+</article>
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script>
+        window.krikBaseName = 'documentation';
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+</body>
+</html>

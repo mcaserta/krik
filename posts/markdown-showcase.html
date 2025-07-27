@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Feature Showcase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+        <aside class="toc-sidebar">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul><li class="toc-h1"><a href="#markdown-feature-showcase">Markdown Feature Showcase</a></li><li class="toc-h2"><a href="#basic-text-formatting">Basic Text Formatting</a></li><li class="toc-h2"><a href="#headings">Headings</a></li><li class="toc-h3"><a href="#this-is-h3">This is H3</a></li><li class="toc-h4"><a href="#this-is-h4">This is H4</a></li><li class="toc-h5"><a href="#this-is-h5">This is H5</a></li><li class="toc-h6"><a href="#this-is-h6">This is H6</a></li><li class="toc-h2"><a href="#code-blocks">Code Blocks</a></li><li class="toc-h3"><a href="#syntax-highlighting-ready">Syntax Highlighting Ready</a></li><li class="toc-h2"><a href="#lists-and-task-lists">Lists and Task Lists</a></li><li class="toc-h3"><a href="#unordered-lists">Unordered Lists</a></li><li class="toc-h3"><a href="#ordered-lists">Ordered Lists</a></li><li class="toc-h3"><a href="#task-lists">Task Lists</a></li><li class="toc-h2"><a href="#tables">Tables</a></li><li class="toc-h2"><a href="#blockquotes">Blockquotes</a></li><li class="toc-h3"><a href="#blockquotes-with-headings">Blockquotes with headings</a></li><li class="toc-h2"><a href="#horizontal-rules">Horizontal Rules</a></li><li class="toc-h2"><a href="#links">Links</a></li><li class="toc-h3"><a href="#reference-links">Reference Links</a></li><li class="toc-h2"><a href="#images">Images</a></li><li class="toc-h2"><a href="#footnotes-in-detail">Footnotes in Detail</a></li><li class="toc-h2"><a href="#escaping-characters">Escaping Characters</a></li></ul>
+            </div>
+        </aside>
+        
+
+        <main class="main-content">
+            <div class="back-link">
+                <a href="../index.html">← Back to Home</a>
+            </div>
+            <header>
+                <h1>Markdown Feature Showcase</h1>
+                <div class="meta">January 20, 2024</div>
+            </header>
+            <article>
+<p>This post demonstrates all the markdown features supported by Krik, including some advanced formatting options.</p>
+<h2 id="basic-text-formatting">Basic Text Formatting</h2>
+<p>Here are the basic text formatting options:</p>
+<ul>
+<li><strong>Bold text</strong> using <code>**bold**</code></li>
+<li><em>Italic text</em> using <code>*italic*</code></li>
+<li><del>Strikethrough text</del> using <code>~~strikethrough~~</code></li>
+<li><code>Inline code</code> using backticks</li>
+<li>You can also combine <em><strong>bold and italic</strong></em> text</li>
+</ul>
+<h2 id="headings">Headings</h2>
+<p>Krik supports all heading levels from H1 to H6. Since this post has TOC enabled, you can see how they're organized in the table of contents.</p>
+<h3 id="this-is-h3">This is H3</h3>
+<h4 id="this-is-h4">This is H4</h4>
+<h5 id="this-is-h5">This is H5</h5>
+<h6 id="this-is-h6">This is H6</h6>
+<h2 id="code-blocks">Code Blocks</h2>
+<h3 id="syntax-highlighting-ready">Syntax Highlighting Ready</h3>
+<pre><code class="language-rust">// Rust code example
+struct Config {
+    title: String,
+    base_url: Option&lt;String&gt;,
+}
+
+impl Config {
+    fn new(title: &amp;str) -&gt; Self {
+        Self {
+            title: title.to_string(),
+            base_url: None,
+        }
+    }
+}
+</code></pre>
+<pre><code class="language-python"># Python code example
+def generate_site(input_dir, output_dir):
+    """Generate static site from markdown files."""
+    for file in input_dir.glob("**/*.md"):
+        process_markdown_file(file, output_dir)
+    
+    print("Site generated successfully!")
+</code></pre>
+<pre><code class="language-html">&lt;!-- HTML code example --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Krik Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello, World!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 id="lists-and-task-lists">Lists and Task Lists</h2>
+<h3 id="unordered-lists">Unordered Lists</h3>
+<ul>
+<li>First level item</li>
+<li>Another first level item
+<ul>
+<li>Second level item</li>
+<li>Another second level item
+<ul>
+<li>Third level item</li>
+<li>Another third level item</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Back to first level</li>
+</ul>
+<h3 id="ordered-lists">Ordered Lists</h3>
+<ol>
+<li>First numbered item</li>
+<li>Second numbered item
+<ol>
+<li>Nested numbered item</li>
+<li>Another nested item</li>
+</ol>
+</li>
+<li>Third numbered item</li>
+</ol>
+<h3 id="task-lists">Task Lists</h3>
+<ul>
+<li>[x] Completed task</li>
+<li>[x] Another completed task</li>
+<li>[ ] Incomplete task</li>
+<li>[ ] Another incomplete task
+<ul>
+<li>[x] Nested completed task</li>
+<li>[ ] Nested incomplete task</li>
+</ul>
+</li>
+</ul>
+<h2 id="tables">Tables</h2>
+<p>Here's a comprehensive table showing Krik's features:</p>
+<table><thead><tr><th>Feature Category</th><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody>
+<tr><td><strong>Core</strong></td><td>Markdown Processing</td><td>✅</td><td>Full GFM support</td></tr>
+<tr><td><strong>Core</strong></td><td>Front Matter</td><td>✅</td><td>YAML metadata</td></tr>
+<tr><td><strong>Core</strong></td><td>Draft Support</td><td>✅</td><td>Skip processing</td></tr>
+<tr><td><strong>Theme</strong></td><td>Light/Dark Mode</td><td>✅</td><td>Auto-detection + toggle</td></tr>
+<tr><td><strong>Theme</strong></td><td>Responsive Design</td><td>✅</td><td>Mobile-first approach</td></tr>
+<tr><td><strong>i18n</strong></td><td>Multi-language</td><td>✅</td><td>Filename-based detection</td></tr>
+<tr><td><strong>i18n</strong></td><td>Language Selector</td><td>✅</td><td>Dropdown navigation</td></tr>
+<tr><td><strong>Navigation</strong></td><td>TOC Generation</td><td>✅</td><td>Auto-generated from headings</td></tr>
+<tr><td><strong>Navigation</strong></td><td>Footnote Links</td><td>✅</td><td>Bidirectional navigation</td></tr>
+<tr><td><strong>Navigation</strong></td><td>Scroll to Top</td><td>✅</td><td>Smart visibility</td></tr>
+<tr><td><strong>Advanced</strong></td><td>Atom Feeds</td><td>✅</td><td>RFC 4287 compliant</td></tr>
+<tr><td><strong>Advanced</strong></td><td>Asset Copying</td><td>✅</td><td>Preserves structure</td></tr>
+</tbody></table>
+<h2 id="blockquotes">Blockquotes</h2>
+<blockquote>
+<p>This is a simple blockquote.</p>
+</blockquote>
+<blockquote>
+<p>This is a multi-line blockquote.
+It can span multiple lines and even include other markdown elements.</p>
+<p>Like <strong>bold text</strong> and <em>italic text</em>.</p>
+</blockquote>
+<blockquote>
+<h3 id="blockquotes-with-headings">Blockquotes with headings</h3>
+<p>You can include headings in blockquotes:</p>
+<ol>
+<li>Numbered lists</li>
+<li>Work too</li>
+</ol>
+<pre><code>Even code blocks!
+</code></pre>
+</blockquote>
+<h2 id="horizontal-rules">Horizontal Rules</h2>
+<p>You can create horizontal rules using three or more hyphens:</p>
+<hr />
+<p>Or three or more asterisks:</p>
+<hr />
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://www.rust-lang.org/">External link to Rust</a></li>
+<li><a href="welcome.html">Link to another post</a></li>
+<li><a href="https://www.rust-lang.org/" title="The Rust Programming Language">Link with title</a></li>
+</ul>
+<h3 id="reference-links">Reference Links</h3>
+<p>This is a paragraph with <a href="https://www.rust-lang.org/" title="Rust Programming Language">reference link</a> and another <a href="https://github.com/" title="GitHub">link</a>.</p>
+<h2 id="images">Images</h2>
+<p>Here's how images work (note: no actual image file in this demo):</p>
+<p><img src="../images/example.png" alt="Alt text for image" title="Optional title" /></p>
+<h2 id="footnotes-in-detail">Footnotes in Detail</h2>
+<p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create bidirectional links with smooth scrolling<sup class="footnote-reference"><a href="#complex-footnote">2</a></sup>.</p>
+<p>You can have multiple paragraphs in footnotes<sup class="footnote-reference"><a href="#multiline">3</a></sup>, and they support full markdown formatting.</p>
+<h2 id="escaping-characters">Escaping Characters</h2>
+<p>Sometimes you need to escape markdown characters: *not italic*, `not code`, [not a link].</p>
+<hr />
+<p>This covers most of the markdown features supported by Krik. The combination of these features with the theme system, internationalization, and advanced navigation makes Krik a powerful choice for static site generation.</p>
+<div class="footnote-definition" id="footnote1"><sup class="footnote-definition-label">1</sup>
+<p>This is a simple footnote that demonstrates the basic functionality.</p>
+</div>
+<div class="footnote-definition" id="complex-footnote"><sup class="footnote-definition-label">2</sup>
+<p>This footnote contains <strong>bold text</strong>, <em>italic text</em>, and even <code>inline code</code>. It shows how footnotes can contain rich formatting.</p>
+</div>
+<div class="footnote-definition" id="multiline"><sup class="footnote-definition-label">3</sup>
+<p>This is a multiline footnote.</p>
+<p>It can contain multiple paragraphs, code blocks, and other markdown elements:</p>
+<pre><code>code in footnotes works too!
+</code></pre>
+<p>Pretty neat, right?</p>
+</div>
+</article>
+            
+            <div class="tags">
+                <span class="tag">markdown</span><span class="tag">features</span><span class="tag">demo</span>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script>
+        window.krikBaseName = 'markdown-showcase';
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+</body>
+</html>

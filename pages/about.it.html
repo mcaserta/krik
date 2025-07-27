@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informazioni su Krik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                
+                <div class="language-selector">
+                    <select onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" >
+                            English
+                        </option>
+                        
+                        <option value="it" selected>
+                            Italiano
+                        </option>
+                        
+                    </select>
+                </div>
+                
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+
+        <main class="main-content">
+            <header>
+                <h1>Informazioni su Krik</h1>
+                <div class="meta">July 25, 2025</div>
+            </header>
+            <article>
+<p><strong>Krik</strong> è un generatore di siti statici veloce e moderno scritto in Rust che trasforma i file Markdown in siti web belli e responsive.</p>
+<h2>Perché Krik?</h2>
+<p>I generatori di siti statici sono diventati strumenti essenziali per creare siti web veloci e sicuri. Krik si distingue combinando:</p>
+<ul>
+<li><strong>Prestazioni</strong>: Costruito con Rust per massima velocità ed efficienza</li>
+<li><strong>Semplicità</strong>: Struttura intuitiva basata su file con configurazione minima</li>
+<li><strong>Funzionalità</strong>: Set di funzionalità completo inclusi i18n, temi e feed</li>
+<li><strong>Standard Web Moderni</strong>: HTML5, design responsive e accessibilità</li>
+</ul>
+<h2>Caratteristiche Principali</h2>
+<h3>Funzionalità Core</h3>
+<ul>
+<li>Supporto completo per GitHub Flavored Markdown</li>
+<li>Front matter YAML per i metadati</li>
+<li>Supporto per bozze per contenuti in corso d'opera</li>
+<li>Copia automatica e gestione degli asset</li>
+</ul>
+<h3>Internazionalizzazione</h3>
+<ul>
+<li>Rilevamento lingua basato su nome file (<code>file.lang.md</code>)</li>
+<li>Menu a tendina per selezione lingua</li>
+<li>Supporto per 10+ lingue con nomi appropriati</li>
+<li>Navigazione fluida tra le traduzioni</li>
+</ul>
+<h3>Sistema dei Temi</h3>
+<ul>
+<li>Rilevamento automatico modalità chiara/scura</li>
+<li>Toggle manuale del tema con persistenza</li>
+<li>Design responsive, mobile-first</li>
+<li>Proprietà CSS personalizzabili per facile customizzazione</li>
+</ul>
+<h3>Navigazione Avanzata</h3>
+<ul>
+<li>Indice generato automaticamente</li>
+<li>Navigazione bidirezionale delle note a piè di pagina</li>
+<li>Pulsante intelligente per tornare in alto</li>
+<li>Collegamento relativo consapevole della profondità</li>
+</ul>
+<h3>Funzionalità Contenuto</h3>
+<ul>
+<li>Generazione feed Atom (conforme RFC 4287)</li>
+<li>Supporto tag per i post</li>
+<li>Organizzazione contenuto basata su directory</li>
+<li>Selezione template personalizzata</li>
+</ul>
+<h2>Dettagli Tecnici</h2>
+<p>Krik è costruito con pratiche Rust moderne e sfrutta diverse eccellenti crate:</p>
+<ul>
+<li><strong>pulldown-cmark</strong>: Parser CommonMark veloce</li>
+<li><strong>tera</strong>: Motore di templating potente</li>
+<li><strong>serde</strong>: Framework di serializzazione</li>
+<li><strong>chrono</strong>: Gestione data e ora</li>
+<li><strong>walkdir</strong>: Iterazione ricorsiva directory</li>
+</ul>
+<h2>Iniziare</h2>
+<ol>
+<li><strong>Installa</strong>: Compila dal sorgente con <code>cargo build --release</code></li>
+<li><strong>Crea Contenuto</strong>: Aggiungi file Markdown a una directory <code>content/</code></li>
+<li><strong>Configura</strong>: <code>site.toml</code> opzionale per impostazioni globali</li>
+<li><strong>Genera</strong>: Esegui <code>kk</code> per generare il tuo sito</li>
+<li><strong>Pubblica</strong>: Carica la directory <code>_site/</code> su qualsiasi server web</li>
+</ol>
+<h2>Stato del Progetto</h2>
+<p>Krik è attivamente sviluppato e include tutte le funzionalità necessarie per un sito statico moderno:</p>
+<p>✅ Tutte le funzionalità core implementate<br />
+✅ Sistema temi completo con modalità chiara/scura<br />
+✅ Supporto internazionalizzazione completo<br />
+✅ Funzionalità navigazione e UX avanzate<br />
+✅ Generazione feed conforme agli standard<br />
+✅ Documentazione completa</p>
+<p>Il progetto segue il versioning semantico e mantiene la compatibilità all'indietro per le funzionalità stabili.</p>
+<hr />
+<p>Pronto a provare Krik? Controlla il <a href="../posts/welcome.html">post di Benvenuto</a> e la <a href="../posts/markdown-showcase.html">vetrina Markdown</a> per vedere più funzionalità in azione!</p>
+</article>
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script>
+        window.krikBaseName = 'about';
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+</body>
+</html>

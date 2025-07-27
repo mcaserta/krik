@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme System Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+
+        <main class="main-content">
+            <div class="back-link">
+                <a href="../index.html">← Back to Home</a>
+            </div>
+            <header>
+                <h1>Theme System Demo</h1>
+                <div class="meta">January 18, 2024</div>
+            </header>
+            <article>
+<p>This post showcases Krik's powerful theme system with automatic light/dark mode detection and smooth transitions.</p>
+<h2>Automatic Theme Detection</h2>
+<p>Krik automatically detects your operating system's theme preference:</p>
+<ul>
+<li><strong>macOS</strong>: Follows System Preferences → General → Appearance</li>
+<li><strong>Windows</strong>: Follows Settings → Personalization → Colors → Choose your color</li>
+<li><strong>Linux</strong>: Follows your desktop environment's theme setting</li>
+<li><strong>Mobile</strong>: Follows iOS/Android system theme</li>
+</ul>
+<h2>Manual Theme Toggle</h2>
+<p>Look for the 🌙/☀️ button in the top navigation bar. Clicking it will:</p>
+<ol>
+<li>Toggle between light and dark modes</li>
+<li>Save your preference to localStorage</li>
+<li>Override the automatic OS detection</li>
+<li>Animate the transition smoothly</li>
+</ol>
+<h2>Theme Features</h2>
+<h3>Color Scheme</h3>
+<p>The theme system uses CSS custom properties for easy customization:</p>
+<p><strong>Light Mode Colors:</strong></p>
+<ul>
+<li>Background: Clean white and light grays</li>
+<li>Text: Dark grays for excellent readability</li>
+<li>Links: Blue tones for accessibility</li>
+<li>Surfaces: Subtle shadows and borders</li>
+</ul>
+<p><strong>Dark Mode Colors:</strong></p>
+<ul>
+<li>Background: Deep grays and blacks</li>
+<li>Text: Light grays and whites</li>
+<li>Links: Lighter blue tones</li>
+<li>Surfaces: Darker shadows with subtle highlights</li>
+</ul>
+<h3>Responsive Design</h3>
+<p>The theme adapts to different screen sizes:</p>
+<ul>
+<li><strong>Desktop</strong>: Full sidebar navigation and wide content area</li>
+<li><strong>Tablet</strong>: Collapsible navigation with optimized spacing</li>
+<li><strong>Mobile</strong>: Touch-friendly interface with larger tap targets</li>
+</ul>
+<h3>Smooth Transitions</h3>
+<p>All theme changes animate smoothly with 0.3-second transitions on:</p>
+<ul>
+<li>Background colors</li>
+<li>Text colors</li>
+<li>Border colors</li>
+<li>Shadow effects</li>
+<li>Button states</li>
+</ul>
+<h2>Cross-Platform Support</h2>
+<p>The theme detection works across:</p>
+<ul>
+<li><strong>Browsers</strong>: Chrome, Firefox, Safari, Edge</li>
+<li><strong>Operating Systems</strong>: Windows, macOS, Linux, iOS, Android</li>
+<li><strong>Devices</strong>: Desktop, laptop, tablet, smartphone</li>
+</ul>
+<h2>Accessibility</h2>
+<p>The theme system is designed with accessibility in mind:</p>
+<ul>
+<li><strong>High Contrast</strong>: Both themes meet WCAG guidelines</li>
+<li><strong>Focus Indicators</strong>: Clear focus states for keyboard navigation</li>
+<li><strong>Screen Readers</strong>: Proper ARIA labels and semantic HTML</li>
+<li><strong>Color Independence</strong>: Information isn't conveyed by color alone</li>
+</ul>
+<p>Try switching between light and dark modes to see the smooth transitions in action!</p>
+</article>
+            
+            <div class="tags">
+                <span class="tag">themes</span><span class="tag">design</span><span class="tag">css</span>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script>
+        window.krikBaseName = 'theme-demo';
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+</body>
+</html>

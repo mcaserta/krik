@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benvenuto in Krik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body>
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                
+                <div class="language-selector">
+                    <select onchange="switchLanguage(this.value)">
+                        
+                        <option value="en" >
+                            English
+                        </option>
+                        
+                        <option value="it" selected>
+                            Italiano
+                        </option>
+                        
+                    </select>
+                </div>
+                
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+        <aside class="toc-sidebar">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul><li class="toc-h1"><a href="#benvenuto-in-krik">Benvenuto in Krik</a></li><li class="toc-h2"><a href="#indice">Indice</a></li><li class="toc-h2"><a href="#funzionalità-markdown">Funzionalità Markdown</a></li><li class="toc-h3"><a href="#formattazione-del-testo">Formattazione del Testo</a></li><li class="toc-h3"><a href="#liste">Liste</a></li><li class="toc-h3"><a href="#blocchi-di-codice">Blocchi di Codice</a></li><li class="toc-h3"><a href="#tabelle">Tabelle</a></li><li class="toc-h3"><a href="#note-a-piè-di-pagina">Note a piè di pagina</a></li><li class="toc-h2"><a href="#funzionalità-avanzate">Funzionalità Avanzate</a></li><li class="toc-h3"><a href="#sistema-dei-temi">Sistema dei Temi</a></li><li class="toc-h3"><a href="#scorri-in-alto">Scorri in Alto</a></li><li class="toc-h3"><a href="#navigazione">Navigazione</a></li></ul>
+            </div>
+        </aside>
+        
+
+        <main class="main-content">
+            <div class="back-link">
+                <a href="../index.html">← Back to Home</a>
+            </div>
+            <header>
+                <h1>Benvenuto in Krik</h1>
+                <div class="meta">January 15, 2024</div>
+            </header>
+            <article>
+<p>Benvenuto nel generatore di siti statici <strong>Krik</strong>! Questo post dimostra molte delle funzionalità disponibili in questo veloce generatore di siti statici basato su Rust.</p>
+<h2 id="indice">Indice</h2>
+<p>Questo post ha un indice abilitato tramite <code>toc: true</code> nel front matter. Dovresti vedere un indice nella barra laterale con link cliccabili per ogni sezione.</p>
+<h2 id="funzionalità-markdown">Funzionalità Markdown</h2>
+<p>Krik supporta completamente il <strong>GitHub Flavored Markdown</strong> con molti miglioramenti:</p>
+<h3 id="formattazione-del-testo">Formattazione del Testo</h3>
+<p>Puoi usare <em>testo corsivo</em>, <strong>testo grassetto</strong>, <del>testo barrato</del>, e <code>codice inline</code>.</p>
+<h3 id="liste">Liste</h3>
+<p>Liste non ordinate:</p>
+<ul>
+<li>Primo elemento</li>
+<li>Secondo elemento
+<ul>
+<li>Elemento annidato</li>
+<li>Altro elemento annidato</li>
+</ul>
+</li>
+<li>Terzo elemento</li>
+</ul>
+<p>Liste ordinate:</p>
+<ol>
+<li>Primo passo</li>
+<li>Secondo passo</li>
+<li>Terzo passo</li>
+</ol>
+<h3 id="blocchi-di-codice">Blocchi di Codice</h3>
+<pre><code class="language-rust">fn main() {
+    println!("Ciao, Krik!");
+}
+</code></pre>
+<pre><code class="language-javascript">// Funzionalità per cambiare tema
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+}
+</code></pre>
+<h3 id="tabelle">Tabelle</h3>
+<table><thead><tr><th>Funzionalità</th><th>Stato</th><th>Descrizione</th></tr></thead><tbody>
+<tr><td>Markdown</td><td>✅</td><td>Supporto GFM completo</td></tr>
+<tr><td>Temi</td><td>✅</td><td>Modalità chiara/scura</td></tr>
+<tr><td>i18n</td><td>✅</td><td>Multi-linguaggio</td></tr>
+<tr><td>Feed</td><td>✅</td><td>Feed Atom/RSS</td></tr>
+</tbody></table>
+<h3 id="note-a-piè-di-pagina">Note a piè di pagina</h3>
+<p>Questo è un paragrafo con una nota a piè di pagina<sup class="footnote-reference"><a href="#1">1</a></sup>. Puoi cliccarci sopra per andare alla definizione, e poi cliccare la freccia di ritorno per tornare indietro.</p>
+<p>Ecco un'altra nota a piè di pagina<sup class="footnote-reference"><a href="#seconda">2</a></sup> con contenuto diverso.</p>
+<h2 id="funzionalità-avanzate">Funzionalità Avanzate</h2>
+<h3 id="sistema-dei-temi">Sistema dei Temi</h3>
+<p>Il sito rileva automaticamente la preferenza del tema del tuo sistema operativo e cambia tra modalità chiara e scura. Prova a cambiare il tema del sistema o usa il pulsante del tema nella navigazione in alto!</p>
+<h3 id="scorri-in-alto">Scorri in Alto</h3>
+<p>Su pagine più lunghe come questa, vedrai apparire un pulsante "scorri in alto" nell'angolo in basso a destra quando scorri verso il basso. Fornisce uno scorrimento fluido di ritorno in alto.</p>
+<h3 id="navigazione">Navigazione</h3>
+<p>La barra laterale mostra tutte le pagine del tuo sito, e i post come questo includono un link "Torna alla Home" per una navigazione facile.</p>
+<hr />
+<p>Questo è solo l'inizio! Controlla gli altri post e pagine per vedere più funzionalità in azione.</p>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>Questa è la prima nota a piè di pagina. Clicca la freccia di ritorno (↩) per tornare al testo.</p>
+</div>
+<div class="footnote-definition" id="seconda"><sup class="footnote-definition-label">2</sup>
+<p>Questa è la seconda nota a piè di pagina con contenuto aggiuntivo per mostrare come funzionano più note a piè di pagina.</p>
+</div>
+</article>
+            
+            <div class="tags">
+                <span class="tag">benvenuto</span><span class="tag">sito-statico</span><span class="tag">rust</span>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    <script>
+        window.krikBaseName = 'welcome';
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+</body>
+</html>
