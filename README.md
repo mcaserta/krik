@@ -26,6 +26,15 @@ A fast static site generator written in Rust 🦀 that transforms Markdown files
 - Bidirectional footnote navigation with smooth scrolling
 - Smart scroll-to-top button and theme-aware syntax highlighting  
 
+## 🌐 Demo
+
+See Krik in action! My personal website is built with Krik and showcases real-world usage:
+
+- **Live Website**: [https://mirkocaserta.com](https://mirkocaserta.com) - A complete blog built with Krik
+- **Feature Demo**: [https://mirkocaserta.com/krik/](https://mirkocaserta.com/krik/) - Comprehensive demo showcasing all Krik features including themes, i18n, TOC, footnotes, and more
+
+The demo site includes example posts demonstrating markdown features, theme switching, internationalization, and all the advanced capabilities that make Krik a powerful static site generator.
+
 ## 📦 Installation
 
 ### From Source
