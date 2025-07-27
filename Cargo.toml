@@ -14,7 +14,6 @@ keywords = ["static-site", "generator", "markdown", "blog", "website"]
 categories = ["command-line-utilities", "web-programming"]
 exclude = [
     "_site/*",
-    "content/*",
     "target/*",
     ".git/*",
     "*.png",
