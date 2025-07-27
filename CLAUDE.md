@@ -3,6 +3,7 @@
 Fast Rust static site generator. Builds to `kk` executable.
 
 ## Features
+
 - GitHub Flavored Markdown with tables, footnotes, code blocks
 - YAML front matter with layout override
 - Light/dark mode with OS detection
@@ -15,6 +16,7 @@ Fast Rust static site generator. Builds to `kk` executable.
 - Content creation commands for posts and pages (`kk post`, `kk page`)
 
 ## Usage
+
 ```bash
 cargo build --release
 ./target/release/kk init my-blog
@@ -24,7 +26,8 @@ cd my blog
 ./target/release/kk server --no-live-reload # Dev server without live reload (mobile-safe)
 ```
 
-Structure: `content/posts/*.md` → post template, `content/pages/*.md` → page template
+Structure: `content/posts/*.md` → post template, `content/pages/*.md` → page
+template
 
 ## Release Workflow
 
@@ -40,5 +43,8 @@ Structure: `content/posts/*.md` → post template, `content/pages/*.md` → page
 
 ## Release Process Memories
 
-- Incrementing the version number should be done before checking git for uncommitted changes as the version number needs to be incremented before pushing to github and crates.io
-- Don't forget to also stage and commit the claude.md file when releasing the software
+- Incrementing the version number should be done before checking git for
+  uncommitted changes as the version number needs to be incremented before
+  pushing to github and crates.io
+- Don't forget to also stage and commit the claude.md file when releasing the
+  software
