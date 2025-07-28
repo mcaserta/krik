@@ -23,31 +23,55 @@ pub fn generate_pages(
     Ok(())
 }
 
+/// Calculate relative path based on document depth
+fn calculate_relative_path(file_path: &str, target: &str) -> String {
+    let path = std::path::Path::new(file_path);
+    let depth = path.components().count() - 1; // Subtract 1 for the file itself
+    
+    if depth == 0 {
+        // File is in root, target is relative to root
+        target.trim_start_matches('/').to_string()
+    } else {
+        // File is in subdirectory, need to go up
+        let up_dirs = "../".repeat(depth);
+        format!("{}{}", up_dirs, target.trim_start_matches('/'))
+    }
+}
+
 /// Add common site and path context to a Tera context
-fn add_site_context(context: &mut Context, site_config: &SiteConfig, language: &str) {
+fn add_site_context(context: &mut Context, site_config: &SiteConfig, language: &str, file_path: &str) {
     context.insert("site_title", &site_config.get_site_title());
     if let Some(ref base_url) = site_config.base_url {
         context.insert("base_url", base_url);
     }
-    context.insert("assets_path", "/assets");
-    context.insert("home_path", "/");
-    context.insert("feed_path", "/feed.xml");
+    
+    // Calculate relative paths based on file depth
+    let assets_path = calculate_relative_path(file_path, "/assets");
+    let home_path = calculate_relative_path(file_path, "/index.html");
+    let feed_path = calculate_relative_path(file_path, "/feed.xml");
+    
+    context.insert("assets_path", &assets_path);
+    context.insert("home_path", &home_path);
+    context.insert("feed_path", &feed_path);
     context.insert("lang", language);
 }
 
-/// Create page link HashMap for navigation
-fn create_page_link(document: &Document) -> HashMap<&str, String> {
+/// Create page link HashMap for navigation with relative paths
+fn create_page_link(document: &Document, current_file_path: &str) -> HashMap<String, String> {
     let mut page_link = HashMap::new();
-    page_link.insert("title", document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
-    page_link.insert("url", format!("/{}", document.file_path.replace(".md", ".html")));
+    let target_path = format!("/{}", document.file_path.replace(".md", ".html"));
+    let relative_url = calculate_relative_path(current_file_path, &target_path);
+    
+    page_link.insert("title".to_string(), document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
+    page_link.insert("url".to_string(), relative_url);
     page_link
 }
 
 /// Add page links context for navigation
-fn add_page_links_context(context: &mut Context, all_documents: &[Document]) {
-    let page_links: Vec<HashMap<&str, String>> = all_documents.iter()
+fn add_page_links_context(context: &mut Context, all_documents: &[Document], current_file_path: &str) {
+    let page_links: Vec<HashMap<String, String>> = all_documents.iter()
         .filter(|doc| !is_post(doc) && doc.language == "en")
-        .map(create_page_link)
+        .map(|doc| create_page_link(doc, current_file_path))
         .collect();
     context.insert("page_links", &page_links);
 }
@@ -72,7 +96,7 @@ pub fn generate_page(
     context.insert("base_name", &document.base_name);
     
     // Add site configuration and common paths
-    add_site_context(&mut context, site_config, &document.language);
+    add_site_context(&mut context, site_config, &document.language, &document.file_path);
 
     // Add custom frontmatter fields
     for (key, value) in &document.front_matter.extra {
@@ -103,7 +127,7 @@ pub fn generate_page(
 
     // Add sidebar pages and page links for navigation
     add_sidebar_context(&mut context, all_documents);
-    add_page_links_context(&mut context, all_documents);
+    add_page_links_context(&mut context, all_documents, &document.file_path);
 
     // Determine template to use
     let template_name = determine_template_name(document);
@@ -128,13 +152,16 @@ pub fn generate_page(
     Ok(())
 }
 
-/// Create post object for index page template
-fn create_post_object(document: &Document) -> HashMap<&str, String> {
+/// Create post object for index page template with relative paths
+fn create_post_object(document: &Document, current_file_path: &str) -> HashMap<String, String> {
     let mut post = HashMap::new();
-    post.insert("title", document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
-    post.insert("url", format!("/{}", document.file_path.replace(".md", ".html")));
+    let target_path = format!("/{}", document.file_path.replace(".md", ".html"));
+    let relative_url = calculate_relative_path(current_file_path, &target_path);
+    
+    post.insert("title".to_string(), document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
+    post.insert("url".to_string(), relative_url);
     if let Some(date) = document.front_matter.date {
-        post.insert("date", date.to_rfc3339());
+        post.insert("date".to_string(), date.to_rfc3339());
     }
     post
 }
@@ -148,8 +175,8 @@ pub fn generate_index(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut context = Context::new();
     
-    // Add site configuration and common paths
-    add_site_context(&mut context, site_config, "en");
+    // Add site configuration and common paths (index is always at root)
+    add_site_context(&mut context, site_config, "en", "index.html");
 
     // Filter and sort posts (only documents with 'post' layout or in posts directory, default language only)
     let mut post_docs: Vec<&Document> = documents.iter()
@@ -162,15 +189,15 @@ pub fn generate_index(
     });
 
     // Create post objects with URL and other template fields
-    let posts: Vec<HashMap<&str, String>> = post_docs.iter()
-        .map(|doc| create_post_object(doc))
+    let posts: Vec<HashMap<String, String>> = post_docs.iter()
+        .map(|doc| create_post_object(doc, "index.html"))
         .collect();
 
     context.insert("posts", &posts);
 
     // Add sidebar pages and page links for navigation
     add_sidebar_context(&mut context, documents);
-    add_page_links_context(&mut context, documents);
+    add_page_links_context(&mut context, documents, "index.html");
 
     
     // Render index template
@@ -206,7 +233,9 @@ fn add_language_context(context: &mut Context, document: &Document, all_document
             let mut translation = HashMap::new();
             translation.insert("lang", doc.language.clone());
             translation.insert("lang_name", get_language_name(&doc.language));
-            translation.insert("path", format!("/{}", doc.file_path.replace(".md", ".html")));
+            let target_path = format!("/{}", doc.file_path.replace(".md", ".html"));
+            let relative_path = calculate_relative_path(&document.file_path, &target_path);
+            translation.insert("path", relative_path);
             translation.insert("is_current", if doc.language == document.language { "true".to_string() } else { "false".to_string() });
             translation
         })
