@@ -6,15 +6,14 @@
     <title>Advanced Features Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
-    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="/feed.xml">
 </head>
 <body>
     <div class="layout-container">
         <nav class="top-nav">
-            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <a href="/" class="site-title">Krik Demo Site</a>
             <div class="nav-controls">
                 <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
@@ -30,11 +29,11 @@
         <div class="mobile-menu" id="mobile-menu">
             <ul class="mobile-page-links">
                 
-                <li><a href="../pages/about.html">About Krik</a></li>
+                <li><a href="/contact.html">Contact</a></li>
                 
-                <li><a href="../contact.html">Contact</a></li>
+                <li><a href="/pages/documentation.html">Documentation</a></li>
                 
-                <li><a href="../pages/documentation.html">Documentation</a></li>
+                <li><a href="/pages/about.html">About Krik</a></li>
                 
             </ul>
         </div>
@@ -42,11 +41,11 @@
         <aside class="sidebar">
             <ul class="page-links">
                 
-                <li><a href="../pages/about.html">About Krik</a></li>
+                <li><a href="/contact.html">Contact</a></li>
                 
-                <li><a href="../contact.html">Contact</a></li>
+                <li><a href="/pages/documentation.html">Documentation</a></li>
                 
-                <li><a href="../pages/documentation.html">Documentation</a></li>
+                <li><a href="/pages/about.html">About Krik</a></li>
                 
             </ul>
         </aside>
@@ -55,14 +54,34 @@
         <aside class="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
-                <ul><li class="toc-h1"><a href="#advanced-features-demo">Advanced Features Demo</a></li><li class="toc-h2"><a href="#image-support">Image Support</a></li><li class="toc-h3"><a href="#image-best-practices">Image Best Practices</a></li><li class="toc-h2"><a href="#complex-tables">Complex Tables</a></li><li class="toc-h2"><a href="#nested-lists-and-complex-formatting">Nested Lists and Complex Formatting</a></li><li class="toc-h3"><a href="#project-structure">Project Structure</a></li><li class="toc-h3"><a href="#advanced-markdown-features">Advanced Markdown Features</a></li><li class="toc-h4"><a href="#mixed-content-types">Mixed Content Types</a></li><li class="toc-h4"><a href="#code-with-explanation">Code with Explanation</a></li><li class="toc-h2"><a href="#feed-generation-details">Feed Generation Details</a></li><li class="toc-h3"><a href="#feed-metadata">Feed Metadata</a></li><li class="toc-h3"><a href="#post-entries">Post Entries</a></li><li class="toc-h3"><a href="#link-resolution">Link Resolution</a></li><li class="toc-h2"><a href="#performance-considerations">Performance Considerations</a></li><li class="toc-h3"><a href="#build-performance">Build Performance</a></li><li class="toc-h3"><a href="#runtime-performance">Runtime Performance</a></li><li class="toc-h2"><a href="#accessibility-features">Accessibility Features</a></li><li class="toc-h3"><a href="#semantic-structure">Semantic Structure</a></li><li class="toc-h3"><a href="#interactive-elements">Interactive Elements</a></li><li class="toc-h3"><a href="#content-accessibility">Content Accessibility</a></li></ul>
+                <ul class="toc">
+  <li><a href="#heading-0">Image Support</a></li>
+    <li><a href="#heading-1">Image Best Practices</a></li>
+  <li><a href="#heading-2">Complex Tables</a></li>
+  <li><a href="#heading-3">Nested Lists and Complex Formatting</a></li>
+    <li><a href="#heading-4">Project Structure</a></li>
+    <li><a href="#heading-5">Advanced Markdown Features</a></li>
+      <li><a href="#heading-6">Mixed Content Types</a></li>
+      <li><a href="#heading-7">Code with Explanation</a></li>
+  <li><a href="#heading-8">Feed Generation Details</a></li>
+    <li><a href="#heading-9">Feed Metadata</a></li>
+    <li><a href="#heading-10">Post Entries</a></li>
+    <li><a href="#heading-11">Link Resolution</a></li>
+  <li><a href="#heading-12">Performance Considerations</a></li>
+    <li><a href="#heading-13">Build Performance</a></li>
+    <li><a href="#heading-14">Runtime Performance</a></li>
+  <li><a href="#heading-15">Accessibility Features</a></li>
+    <li><a href="#heading-16">Semantic Structure</a></li>
+    <li><a href="#heading-17">Interactive Elements</a></li>
+    <li><a href="#heading-18">Content Accessibility</a></li>
+</ul>
             </div>
         </aside>
         
 
         <main class="main-content">
             <div class="back-link">
-                <a href="../index.html">← Back to Home</a>
+                <a href="/">← Back to Home</a>
             </div>
             <header>
                 <h1>Advanced Features Demo</h1>
@@ -70,10 +89,10 @@
             </header>
             <article>
 <p>This post demonstrates some of the more advanced features available in Krik, including image handling, complex markdown, and feed generation.</p>
-<h2 id="image-support">Image Support</h2>
+<h2 id="heading-0">Image Support</h2>
 <p>Krik automatically copies images and other static assets to the generated site:</p>
 <p><img src="../images/placeholder.svg" alt="Placeholder Image" title="This is a placeholder image" /></p>
-<h3 id="image-best-practices">Image Best Practices</h3>
+<h3 id="heading-1">Image Best Practices</h3>
 <p>When adding images to your posts:</p>
 <ul>
 <li>Store images in the <code>content/images/</code> directory</li>
@@ -82,8 +101,8 @@
 <li>Optionally include title text for tooltips</li>
 <li>Consider using relative paths from your post location</li>
 </ul>
-<h2 id="complex-tables">Complex Tables</h2>
-<p>Here's a more complex table showing Krik's architecture:</p>
+<h2 id="heading-2">Complex Tables</h2>
+<p>Here’s a more complex table showing Krik’s architecture:</p>
 <table><thead><tr><th>Component</th><th>Language</th><th>Purpose</th><th>Dependencies</th></tr></thead><tbody>
 <tr><td><strong>Parser</strong></td><td>Rust</td><td>Markdown → AST</td><td>pulldown-cmark, serde</td></tr>
 <tr><td><strong>Generator</strong></td><td>Rust</td><td>AST → HTML</td><td>tera, chrono</td></tr>
@@ -91,8 +110,8 @@
 <tr><td><strong>i18n</strong></td><td>Rust</td><td>Multi-language</td><td>HashMap collections</td></tr>
 <tr><td><strong>Feed</strong></td><td>Rust</td><td>Atom generation</td><td>XML serialization</td></tr>
 </tbody></table>
-<h2 id="nested-lists-and-complex-formatting">Nested Lists and Complex Formatting</h2>
-<h3 id="project-structure">Project Structure</h3>
+<h2 id="heading-3">Nested Lists and Complex Formatting</h2>
+<h3 id="heading-4">Project Structure</h3>
 <ol>
 <li>
 <p><strong>Core Engine</strong> (Rust)</p>
@@ -126,8 +145,8 @@
 </ul>
 </li>
 </ol>
-<h3 id="advanced-markdown-features">Advanced Markdown Features</h3>
-<h4 id="mixed-content-types">Mixed Content Types</h4>
+<h3 id="heading-5">Advanced Markdown Features</h3>
+<h4 id="heading-6">Mixed Content Types</h4>
 <p>You can combine different content types effectively:</p>
 <blockquote>
 <p><strong>Quote with formatting</strong>: This blockquote contains <em>italic</em>, <strong>bold</strong>, and <code>inline code</code>.</p>
@@ -140,8 +159,8 @@
 <pre><code class="language-rust">println!("Code in quotes!");
 </code></pre>
 </blockquote>
-<h4 id="code-with-explanation">Code with Explanation</h4>
-<p>Here's how the theme toggle works:</p>
+<h4 id="heading-7">Code with Explanation</h4>
+<p>Here’s how the theme toggle works:</p>
 <pre><code class="language-javascript">function toggleTheme() {
     // Get current theme or default to light
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -166,16 +185,16 @@
 <li>Provides smooth CSS transitions</li>
 <li>Works across page reloads</li>
 </ul>
-<h2 id="feed-generation-details">Feed Generation Details</h2>
+<h2 id="heading-8">Feed Generation Details</h2>
 <p>Krik automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
-<h3 id="feed-metadata">Feed Metadata</h3>
+<h3 id="heading-9">Feed Metadata</h3>
 <ul>
 <li>Site title from <code>site.toml</code></li>
 <li>Last updated timestamp</li>
 <li>Self-referencing links</li>
 <li>Unique feed ID</li>
 </ul>
-<h3 id="post-entries">Post Entries</h3>
+<h3 id="heading-10">Post Entries</h3>
 <ul>
 <li>Only posts (not pages) are included</li>
 <li>Limited to 20 most recent posts</li>
@@ -183,13 +202,13 @@
 <li>Individual post IDs and timestamps</li>
 <li>Tag information (when available)</li>
 </ul>
-<h3 id="link-resolution">Link Resolution</h3>
+<h3 id="heading-11">Link Resolution</h3>
 <p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute for proper link resolution:</p>
 <pre><code class="language-xml">&lt;feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com"&gt;
 </code></pre>
 <p>This ensures that relative links in your posts work correctly when viewed in feed readers.</p>
-<h2 id="performance-considerations">Performance Considerations</h2>
-<h3 id="build-performance">Build Performance</h3>
+<h2 id="heading-12">Performance Considerations</h2>
+<h3 id="heading-13">Build Performance</h3>
 <p>Krik is designed for speed:</p>
 <ul>
 <li><strong>Rust Performance</strong>: Native speed with zero-cost abstractions</li>
@@ -197,36 +216,36 @@
 <li><strong>Incremental Building</strong>: Only processes changed files (planned feature)</li>
 <li><strong>Memory Efficiency</strong>: Streaming processing for large sites</li>
 </ul>
-<h3 id="runtime-performance">Runtime Performance</h3>
+<h3 id="heading-14">Runtime Performance</h3>
 <p>The generated sites are optimized for performance:</p>
 <ul>
 <li><strong>Minimal CSS</strong>: No framework bloat, only necessary styles</li>
-<li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn't required</li>
+<li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn’t required</li>
 <li><strong>Responsive Images</strong>: Proper sizing and format recommendations</li>
 <li><strong>Static Assets</strong>: Everything is static, no server-side processing</li>
 </ul>
-<h2 id="accessibility-features">Accessibility Features</h2>
+<h2 id="heading-15">Accessibility Features</h2>
 <p>Krik generates accessible HTML by default:</p>
-<h3 id="semantic-structure">Semantic Structure</h3>
+<h3 id="heading-16">Semantic Structure</h3>
 <ul>
 <li>Proper heading hierarchy (H1 → H2 → H3)</li>
 <li>Landmark elements (nav, main, aside)</li>
 <li>List structures for navigation</li>
 </ul>
-<h3 id="interactive-elements">Interactive Elements</h3>
+<h3 id="heading-17">Interactive Elements</h3>
 <ul>
 <li>ARIA labels on buttons and controls</li>
 <li>Focus indicators for keyboard navigation</li>
 <li>Skip links for screen readers (planned)</li>
 </ul>
-<h3 id="content-accessibility">Content Accessibility</h3>
+<h3 id="heading-18">Content Accessibility</h3>
 <ul>
 <li>Alt text support for images</li>
 <li>Table headers and captions</li>
 <li>High contrast color schemes</li>
 </ul>
 <hr />
-<p>This demonstrates many of Krik's advanced capabilities. The combination of performance, features, and accessibility makes it an excellent choice for modern static sites.</p>
+<p>This demonstrates many of Krik’s advanced capabilities. The combination of performance, features, and accessibility makes it an excellent choice for modern static sites.</p>
 </article>
             
             <div class="tags">
@@ -244,7 +263,7 @@
     <script>
         window.krikBaseName = 'advanced-features';
     </script>
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/prism-init.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/prism-init.js"></script>
 </body>
 </html>
