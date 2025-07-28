@@ -23,16 +23,31 @@ pub fn generate_pages(
     Ok(())
 }
 
-/// Calculate relative path based on document depth
+/// Calculate relative path based on document depth and directory context
 fn calculate_relative_path(file_path: &str, target: &str) -> String {
-    let path = std::path::Path::new(file_path);
-    let depth = path.components().count() - 1; // Subtract 1 for the file itself
+    let current_path = std::path::Path::new(file_path);
+    let target_path = std::path::Path::new(target.trim_start_matches('/'));
+    
+    // Get the directory of the current file
+    let current_dir = current_path.parent().unwrap_or(std::path::Path::new(""));
+    let target_dir = target_path.parent().unwrap_or(std::path::Path::new(""));
+    
+    // If both files are in the same directory, just return the filename
+    if current_dir == target_dir {
+        return target_path.file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
+    }
+    
+    // Calculate depth from current directory to root
+    let depth = current_dir.components().count();
     
     if depth == 0 {
-        // File is in root, target is relative to root
+        // Current file is in root, target is relative to root
         target.trim_start_matches('/').to_string()
     } else {
-        // File is in subdirectory, need to go up
+        // Current file is in subdirectory, need to go up
         let up_dirs = "../".repeat(depth);
         format!("{}{}", up_dirs, target.trim_start_matches('/'))
     }
