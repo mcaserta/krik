@@ -23,6 +23,35 @@ pub fn generate_pages(
     Ok(())
 }
 
+/// Add common site and path context to a Tera context
+fn add_site_context(context: &mut Context, site_config: &SiteConfig, language: &str) {
+    context.insert("site_title", &site_config.get_site_title());
+    if let Some(ref base_url) = site_config.base_url {
+        context.insert("base_url", base_url);
+    }
+    context.insert("assets_path", "/assets");
+    context.insert("home_path", "/");
+    context.insert("feed_path", "/feed.xml");
+    context.insert("lang", language);
+}
+
+/// Create page link HashMap for navigation
+fn create_page_link(document: &Document) -> HashMap<&str, String> {
+    let mut page_link = HashMap::new();
+    page_link.insert("title", document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
+    page_link.insert("url", format!("/{}", document.file_path.replace(".md", ".html")));
+    page_link
+}
+
+/// Add page links context for navigation
+fn add_page_links_context(context: &mut Context, all_documents: &[Document]) {
+    let page_links: Vec<HashMap<&str, String>> = all_documents.iter()
+        .filter(|doc| !is_post(doc) && doc.language == "en")
+        .map(create_page_link)
+        .collect();
+    context.insert("page_links", &page_links);
+}
+
 /// Generate a single HTML page from a document
 pub fn generate_page(
     document: &Document,
@@ -40,21 +69,24 @@ pub fn generate_page(
     context.insert("date", &document.front_matter.date);
     context.insert("tags", &document.front_matter.tags);
     context.insert("language", &document.language);
+    context.insert("base_name", &document.base_name);
     
-    // Add site configuration
-    context.insert("site_title", &site_config.get_site_title());
-    if let Some(ref base_url) = site_config.base_url {
-        context.insert("base_url", base_url);
-    }
+    // Add site configuration and common paths
+    add_site_context(&mut context, site_config, &document.language);
 
     // Add custom frontmatter fields
     for (key, value) in &document.front_matter.extra {
         context.insert(key, value);
     }
 
+    // Remove duplicate title from content if it matches frontmatter title
+    let content_without_title = super::markdown::remove_duplicate_title(&document.content, document.front_matter.title.as_deref());
+    context.insert("content", &content_without_title);
+
     // Process TOC if enabled (check for toc field in frontmatter)
     if document.front_matter.extra.get("toc").and_then(|v| v.as_bool()).unwrap_or(false) {
-        let (toc_html, processed_content) = super::markdown::generate_toc_and_content(&document.content, document.front_matter.title.as_deref());
+        let current_content = context.get("content").unwrap().as_str().unwrap();
+        let (toc_html, processed_content) = super::markdown::generate_toc_and_content(current_content, document.front_matter.title.as_deref());
         context.insert("toc", &toc_html);
         context.insert("content", &processed_content);
     }
@@ -69,11 +101,13 @@ pub fn generate_page(
     // Add language translations
     add_language_context(&mut context, document, all_documents);
 
-    // Add sidebar pages
+    // Add sidebar pages and page links for navigation
     add_sidebar_context(&mut context, all_documents);
+    add_page_links_context(&mut context, all_documents);
 
     // Determine template to use
     let template_name = determine_template_name(document);
+    
     
     // Render template
     let rendered = theme.templates.render(&template_name, &context)
@@ -94,6 +128,17 @@ pub fn generate_page(
     Ok(())
 }
 
+/// Create post object for index page template
+fn create_post_object(document: &Document) -> HashMap<&str, String> {
+    let mut post = HashMap::new();
+    post.insert("title", document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
+    post.insert("url", format!("/{}", document.file_path.replace(".md", ".html")));
+    if let Some(date) = document.front_matter.date {
+        post.insert("date", date.to_rfc3339());
+    }
+    post
+}
+
 /// Generate the index page with post listings
 pub fn generate_index(
     documents: &[Document],
@@ -103,27 +148,31 @@ pub fn generate_index(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut context = Context::new();
     
-    // Add site configuration
-    context.insert("site_title", &site_config.title);
-    if let Some(ref base_url) = site_config.base_url {
-        context.insert("base_url", base_url);
-    }
+    // Add site configuration and common paths
+    add_site_context(&mut context, site_config, "en");
 
-    // Filter and sort posts (only documents with 'post' layout or in posts directory)
-    let mut posts: Vec<&Document> = documents.iter()
-        .filter(|doc| is_post(doc))
+    // Filter and sort posts (only documents with 'post' layout or in posts directory, default language only)
+    let mut post_docs: Vec<&Document> = documents.iter()
+        .filter(|doc| is_post(doc) && doc.language == "en")
         .collect();
     
-    posts.sort_by(|a, b| {
+    post_docs.sort_by(|a, b| {
         b.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC)
             .cmp(&a.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC))
     });
 
+    // Create post objects with URL and other template fields
+    let posts: Vec<HashMap<&str, String>> = post_docs.iter()
+        .map(|doc| create_post_object(doc))
+        .collect();
+
     context.insert("posts", &posts);
 
-    // Add sidebar pages
+    // Add sidebar pages and page links for navigation
     add_sidebar_context(&mut context, documents);
+    add_page_links_context(&mut context, documents);
 
+    
     // Render index template
     let rendered = theme.templates.render("index.html", &context)
         .map_err(|e| format!("Failed to render index template: {}", e))?;
@@ -149,28 +198,50 @@ fn add_navigation_context(context: &mut Context, document: &Document, _all_docum
 
 /// Add language context for translations
 fn add_language_context(context: &mut Context, document: &Document, all_documents: &[Document]) {
-    // Find other language versions of this document
+    // Find all language versions of this document (including current)
     let base_path = get_base_path(&std::path::Path::new(&document.file_path));
-    let translations: Vec<_> = all_documents.iter()
-        .filter(|doc| get_base_path(&std::path::Path::new(&doc.file_path)) == base_path && doc.language != document.language)
+    let mut available_translations: Vec<_> = all_documents.iter()
+        .filter(|doc| get_base_path(&std::path::Path::new(&doc.file_path)) == base_path)
         .map(|doc| {
             let mut translation = HashMap::new();
-            translation.insert("language", doc.language.clone());
-            translation.insert("path", format_output_path(&std::path::Path::new(&doc.file_path), &doc.language));
+            translation.insert("lang", doc.language.clone());
+            translation.insert("lang_name", get_language_name(&doc.language));
+            translation.insert("path", format!("/{}", doc.file_path.replace(".md", ".html")));
+            translation.insert("is_current", if doc.language == document.language { "true".to_string() } else { "false".to_string() });
             translation
         })
         .collect();
 
-    if !translations.is_empty() {
-        context.insert("translations", &translations);
+    // Sort by language code for consistent order
+    available_translations.sort_by(|a, b| a.get("lang").cmp(&b.get("lang")));
+
+    if available_translations.len() > 1 {
+        context.insert("available_translations", &available_translations);
+    }
+}
+
+/// Get display name for language code
+fn get_language_name(lang_code: &str) -> String {
+    match lang_code {
+        "en" => "English".to_string(),
+        "it" => "Italiano".to_string(),
+        "es" => "Español".to_string(),
+        "fr" => "Français".to_string(),
+        "de" => "Deutsch".to_string(),
+        "pt" => "Português".to_string(),
+        "ja" => "日本語".to_string(),
+        "zh" => "中文".to_string(),
+        "ru" => "Русский".to_string(),
+        "ar" => "العربية".to_string(),
+        _ => lang_code.to_uppercase(),
     }
 }
 
 /// Add sidebar context with page links
 fn add_sidebar_context(context: &mut Context, all_documents: &[Document]) {
-    // Get all pages (non-posts) for sidebar
+    // Get all pages (non-posts) for sidebar (default language only)
     let mut pages: Vec<_> = all_documents.iter()
-        .filter(|doc| !is_post(doc))
+        .filter(|doc| !is_post(doc) && doc.language == "en")
         .collect();
     
     // Sort pages alphabetically by title
@@ -231,19 +302,6 @@ fn get_base_path(path: &Path) -> String {
     }
 }
 
-/// Format output path for a document with language
-fn format_output_path(path: &Path, language: &str) -> String {
-    let mut html_path = path.with_extension("html");
-    
-    if language != "en" {
-        // Add language suffix to filename
-        let stem = html_path.file_stem().unwrap().to_string_lossy();
-        let new_name = format!("{}.{}.html", stem, language);
-        html_path.set_file_name(new_name);
-    }
-    
-    html_path.to_string_lossy().to_string()
-}
 
 #[cfg(test)]
 mod tests {

@@ -34,7 +34,8 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> Result<()
                 }
 
                 // Extract language from filename
-                let (language, base_name) = extract_language_from_filename(&path.to_string_lossy());
+                let filename_without_ext = path.file_stem().unwrap().to_string_lossy();
+                let (base_name, language) = extract_language_from_filename(&filename_without_ext);
                 
                 // Determine relative path from source directory
                 let relative_path = path.strip_prefix(source_dir)
@@ -116,6 +117,21 @@ pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, 
     }
 
     (toc_html, processed_content)
+}
+
+/// Remove duplicate H1 title from content if it matches the frontmatter title
+pub fn remove_duplicate_title(content: &str, title: Option<&str>) -> String {
+    if let Some(title) = title {
+        let h1_regex = Regex::new(r"<h1[^>]*>([^<]+)</h1>").unwrap();
+        if let Some(cap) = h1_regex.captures(content) {
+            let heading_text = &cap[1];
+            if heading_text.trim() == title.trim() {
+                // Remove the first H1 that matches the title
+                return h1_regex.replace(content, "").to_string();
+            }
+        }
+    }
+    content.to_string()
 }
 
 /// Process footnotes to add return navigation
