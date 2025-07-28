@@ -4,6 +4,8 @@ title: "About Krik"
 
 # About Krik
 
+![Krik logo](../images/krik.png)
+
 **Krik** is a fast, modern static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with built-in development tools and content management features.
 
 ## Why Krik?

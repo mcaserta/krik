@@ -7,6 +7,8 @@ toc: true
 
 # Welcome to Krik
 
+![Krik logo](../images/krik.png)
+
 Welcome to the **Krik** static site generator! This post demonstrates many of the features available in this fast, Rust-powered static site generator.
 
 ## Table of Contents

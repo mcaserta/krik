@@ -7,6 +7,8 @@ toc: true
 
 # Benvenuto in Krik
 
+![Krik logo](../images/krik.png)
+
 Benvenuto nel generatore di siti statici **Krik**! Questo post dimostra molte delle funzionalità disponibili in questo veloce generatore di siti statici basato su Rust.
 
 ## Indice

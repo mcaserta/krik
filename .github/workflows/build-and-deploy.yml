@@ -1,0 +1,78 @@
+name: Build and Deploy Site with Krik
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full clone needed for branch operations
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Install Krik
+        run: cargo install krik
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Run Krik to generate site
+        run: kk
+
+      - name: Deploy to gh-pages
+        run: |
+          # Create temporary directory for generated site
+          mkdir -p /tmp/generated-site
+          
+          # Copy generated files (adjust path as needed for Krik output)
+          if [ -d "_site" ]; then
+            cp -r _site/* /tmp/generated-site/
+          else
+            echo "Could not find generated site directory"
+            ls -la
+            exit 1
+          fi
+          
+          # Check if gh-pages branch exists
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            echo "gh-pages branch exists, checking it out"
+            git checkout gh-pages
+          else
+            echo "Creating new gh-pages branch"
+            git checkout --orphan gh-pages
+            git rm -rf .
+          fi
+          
+          # Clear existing content (except .git)
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
+          
+          # Copy new generated content
+          cp -r /tmp/generated-site/* .
+          
+          # Add .nojekyll to prevent GitHub from processing as Jekyll site
+          touch .nojekyll
+          
+          # Commit and push changes
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Deploy site generated on $(date)"
+            git push origin gh-pages
+            echo "Site deployed successfully to gh-pages branch"
+          fi
