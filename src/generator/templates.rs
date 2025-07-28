@@ -69,8 +69,17 @@ fn create_page_link(document: &Document, current_file_path: &str) -> HashMap<Str
 
 /// Add page links context for navigation
 fn add_page_links_context(context: &mut Context, all_documents: &[Document], current_file_path: &str) {
-    let page_links: Vec<HashMap<String, String>> = all_documents.iter()
+    let mut filtered_docs: Vec<_> = all_documents.iter()
         .filter(|doc| !is_post(doc) && doc.language == "en")
+        .collect();
+    
+    // Sort pages alphabetically by title
+    filtered_docs.sort_by(|a, b| {
+        a.front_matter.title.as_deref().unwrap_or("")
+            .cmp(b.front_matter.title.as_deref().unwrap_or(""))
+    });
+    
+    let page_links: Vec<HashMap<String, String>> = filtered_docs.iter()
         .map(|doc| create_page_link(doc, current_file_path))
         .collect();
     context.insert("page_links", &page_links);

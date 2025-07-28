@@ -41,6 +41,13 @@ template
   - Publish to crates.io using `cargo publish`
   - **Make sure everything is committed in git before releasing the software**
 
+## UI/UX Behaviors
+
+- **Sidebar Pages**: Pages in the sidebar are alphabetically ordered by title for consistent navigation
+- **Language Support**: Default language (English) content is shown in index and sidebar to avoid duplicates
+- **Relative Links**: All generated HTML uses relative paths for better portability across different hosting environments
+- **Title Deduplication**: H1 titles matching frontmatter titles are removed from content to prevent duplication
+
 ## Release Process Memories
 
 - Incrementing the version number should be done before checking git for
