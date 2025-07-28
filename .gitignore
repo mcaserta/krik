@@ -4,6 +4,7 @@ Cargo.lock
 
 # Generated site output
 /_site/
+_site*/
 
 # IDE files
 .vscode/
