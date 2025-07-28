@@ -637,6 +637,7 @@ It can span multiple lines and even include other markdown elements.</p>
     <published>2024-01-15T10:00:00+00:00</published>
     <content type="html"><![CDATA[
 <h1>Welcome to Krik</h1>
+<p><img src="../images/krik.png" alt="Krik logo" /></p>
 <p>Welcome to the <strong>Krik</strong> static site generator! This post demonstrates many of the features available in this fast, Rust-powered static site generator.</p>
 <h2>Table of Contents</h2>
 <p>This post has a table of contents enabled via <code>toc: true</code> in the front matter. You should see a TOC in the sidebar with clickable links to each section.</p>
