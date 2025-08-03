@@ -172,6 +172,88 @@ Tera-based templates with light/dark mode auto-detection and manual toggle.
 Templates automatically chosen based on directory (`posts/` → post template,
 `pages/` → page template). Override with `layout` field in front matter.
 
+## 🚀 Deployment
+
+### GitHub Pages
+
+Krik sites can be automatically deployed to GitHub Pages using GitHub Actions.
+Create `.github/workflows/build-and-deploy.yml`:
+
+```yaml
+name: Build and Deploy Site with Krik
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full clone needed for branch operations
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Install Krik
+        run: cargo install krik
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Run Krik to generate site
+        run: kk
+
+      - name: Deploy to gh-pages
+        run: |
+          mkdir -p /tmp/generated-site
+          cp -r _site/* /tmp/generated-site/
+
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf .
+          fi
+
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
+          cp -r /tmp/generated-site/* .
+          touch .nojekyll
+
+          git add .
+          if ! git diff --staged --quiet; then
+            git commit -m "Deploy site generated on $(date)"
+            git push origin gh-pages
+          fi
+```
+
+**Setup Steps:**
+
+1. Add the workflow file to your repository
+2. Ensure your site content is in the `content/` directory
+3. Enable GitHub Pages in repository settings, selecting "Deploy from a branch"
+   and choosing `gh-pages`
+4. Push to main branch to trigger deployment
+
+The workflow automatically:
+
+- Installs Rust and Krik
+- Generates your site with `kk`
+- Deploys to the `gh-pages` branch
+- Adds `.nojekyll` to prevent Jekyll processing
+
 ## Development
 
 ```bash

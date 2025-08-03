@@ -7,7 +7,8 @@ draft: true
 
 # This is a Draft Post
 
-This post has `draft: true` in its front matter, so it will be skipped during site generation.
+This post has `draft: true` in its front matter, so it will be skipped during
+site generation.
 
 This is useful for:
 
@@ -15,7 +16,8 @@ This is useful for:
 - Content that's not ready for publication
 - Testing new ideas without publishing them
 
-When you're ready to publish, simply change `draft: true` to `draft: false` or remove the draft field entirely.
+When you're ready to publish, simply change `draft: true` to `draft: false` or
+remove the draft field entirely.
 
 ## Draft Workflow
 
@@ -25,4 +27,5 @@ When you're ready to publish, simply change `draft: true` to `draft: false` or r
 4. When ready, set `draft: false`
 5. Regenerate the site
 
-This allows you to work on multiple articles without accidentally publishing unfinished content.
+This allows you to work on multiple articles without accidentally publishing
+unfinished content.

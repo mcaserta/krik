@@ -5,7 +5,8 @@ toc: true
 
 # Krik Documentation
 
-This page provides comprehensive documentation for using Krik, the static site generator.
+This page provides comprehensive documentation for using Krik, the static site
+generator.
 
 ## Quick Start
 
@@ -62,7 +63,7 @@ kk post                           # Create with default title "New post"
 kk post "Custom Post" -f my-slug  # Custom filename
 
 kk page "About Us"                # Create new page
-kk page                           # Create with default title "New page" 
+kk page                           # Create with default title "New page"
 kk page "Contact" -f contact      # Custom filename
 ```
 
@@ -130,21 +131,20 @@ toc: true
 draft: false
 custom_field: "custom value"
 ---
-
 # Your content here
 ```
 
 ### Front Matter Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `title` | String | Page/post title |
-| `date` | ISO 8601 | Publication date (falls back to file mtime) |
-| `layout` | String | Template to use (`post`, `page`, or custom) |
-| `tags` | Array | Tags for categorization |
-| `toc` | Boolean | Enable table of contents generation |
-| `draft` | Boolean | Skip file from processing when `true` |
-| Custom fields | Any | Additional metadata accessible in templates |
+| Field         | Type     | Description                                 |
+| ------------- | -------- | ------------------------------------------- |
+| `title`       | String   | Page/post title                             |
+| `date`        | ISO 8601 | Publication date (falls back to file mtime) |
+| `layout`      | String   | Template to use (`post`, `page`, or custom) |
+| `tags`        | Array    | Tags for categorization                     |
+| `toc`         | Boolean  | Enable table of contents generation         |
+| `draft`       | Boolean  | Skip file from processing when `true`       |
+| Custom fields | Any      | Additional metadata accessible in templates |
 
 ## Templates and Layouts
 
@@ -168,7 +168,8 @@ layout: custom
 ### Template Features
 
 - **Post Template**: Tags, "Back to Home" link, language selector, scroll-to-top
-- **Page Template**: Clean layout, language selector (if translations available), scroll-to-top
+- **Page Template**: Clean layout, language selector (if translations
+  available), scroll-to-top
 - **Index Template**: Post listing, theme toggle, scroll-to-top
 
 ## Internationalization (i18n)
@@ -184,22 +185,23 @@ Add language codes to filenames:
 
 ### Supported Languages
 
-| Code | Language | Native Name |
-|------|----------|-------------|
-| `en` | English | English |
-| `it` | Italian | Italiano |
-| `es` | Spanish | Español |
-| `fr` | French | Français |
-| `de` | German | Deutsch |
-| `pt` | Portuguese | Português |
-| `ja` | Japanese | 日本語 |
-| `zh` | Chinese | 中文 |
-| `ru` | Russian | Русский |
-| `ar` | Arabic | العربية |
+| Code | Language   | Native Name |
+| ---- | ---------- | ----------- |
+| `en` | English    | English     |
+| `it` | Italian    | Italiano    |
+| `es` | Spanish    | Español     |
+| `fr` | French     | Français    |
+| `de` | German     | Deutsch     |
+| `pt` | Portuguese | Português   |
+| `ja` | Japanese   | 日本語      |
+| `zh` | Chinese    | 中文        |
+| `ru` | Russian    | Русский     |
+| `ar` | Arabic     | العربية     |
 
 ### Language Navigation
 
-Pages with translations automatically show a language selector dropdown in the navigation bar.
+Pages with translations automatically show a language selector dropdown in the
+navigation bar.
 
 ## Advanced Features
 
@@ -215,6 +217,7 @@ toc: true
 ```
 
 **Features:**
+
 - Automatic ID generation for headings
 - Hierarchical structure preservation
 - Clickable navigation links
@@ -231,6 +234,7 @@ This has a footnote[^1].
 ```
 
 **Features:**
+
 - Click footnote numbers to jump to definitions
 - Click return arrows (↩) to return to text
 - Smooth scrolling for all footnote navigation
@@ -250,6 +254,7 @@ Automatically appears on longer pages with smart visibility:
 Krik automatically generates an RFC 4287 compliant Atom feed at `feed.xml`:
 
 **Features:**
+
 - Only includes posts (content with `post` template)
 - Limited to 20 most recent posts
 - Full HTML content with proper XML escaping
@@ -261,11 +266,13 @@ Krik automatically generates an RFC 4287 compliant Atom feed at `feed.xml`:
 ### Light/Dark Mode
 
 **Automatic Detection:**
+
 - Detects OS theme preference via CSS `prefers-color-scheme`
 - Supports all major platforms (Windows, macOS, Linux, iOS, Android)
 - Real-time updates when OS theme changes
 
 **Manual Toggle:**
+
 - Theme button (🌙/☀️) in top navigation
 - Saves preference to localStorage
 - Overrides automatic detection
@@ -277,10 +284,10 @@ The theme uses CSS custom properties for easy customization:
 
 ```css
 :root {
-    --bg-color: #ffffff;
-    --text-color: #333333;
-    --link-color: #0066cc;
-    /* ... more variables */
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --link-color: #0066cc;
+  /* ... more variables */
 }
 ```
 
@@ -298,13 +305,13 @@ kk server [OPTIONS]       # Start development server
 
 ### Global Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-i, --input <DIR>` | Input directory | `content` |
-| `-o, --output <DIR>` | Output directory | `_site` |
-| `-t, --theme <DIR>` | Theme directory | `themes/default` |
-| `-h, --help` | Show help | |
-| `-V, --version` | Show version | |
+| Option               | Description      | Default          |
+| -------------------- | ---------------- | ---------------- |
+| `-i, --input <DIR>`  | Input directory  | `content`        |
+| `-o, --output <DIR>` | Output directory | `_site`          |
+| `-t, --theme <DIR>`  | Theme directory  | `themes/default` |
+| `-h, --help`         | Show help        |                  |
+| `-V, --version`      | Show version     |                  |
 
 ### Init Command
 
@@ -312,10 +319,10 @@ kk server [OPTIONS]       # Start development server
 kk init [DIR] [OPTIONS]
 ```
 
-| Option | Description |
-|--------|-------------|
-| `[DIR]` | Directory to initialize (default: current directory) |
-| `-f, --force` | Overwrite existing files |
+| Option        | Description                                          |
+| ------------- | ---------------------------------------------------- |
+| `[DIR]`       | Directory to initialize (default: current directory) |
+| `-f, --force` | Overwrite existing files                             |
 
 ### Post/Page Commands
 
@@ -324,11 +331,11 @@ kk post [TITLE] [OPTIONS]
 kk page [TITLE] [OPTIONS]
 ```
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `[TITLE]` | Content title | "New post" / "New page" |
-| `-f, --filename <NAME>` | Custom filename (without .md) | Generated from title |
-| `--content-dir <DIR>` | Content directory path | `content` |
+| Option                  | Description                   | Default                 |
+| ----------------------- | ----------------------------- | ----------------------- |
+| `[TITLE]`               | Content title                 | "New post" / "New page" |
+| `-f, --filename <NAME>` | Custom filename (without .md) | Generated from title    |
+| `--content-dir <DIR>`   | Content directory path        | `content`               |
 
 ### Server Command
 
@@ -336,13 +343,13 @@ kk page [TITLE] [OPTIONS]
 kk server [OPTIONS]
 ```
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-i, --input <DIR>` | Input directory | `content` |
-| `-o, --output <DIR>` | Output directory | `_site` |
-| `-t, --theme <DIR>` | Theme directory | `themes/default` |
-| `-p, --port <PORT>` | Server port | `3000` |
-| `--no-live-reload` | Disable live reload | Live reload enabled |
+| Option               | Description         | Default             |
+| -------------------- | ------------------- | ------------------- |
+| `-i, --input <DIR>`  | Input directory     | `content`           |
+| `-o, --output <DIR>` | Output directory    | `_site`             |
+| `-t, --theme <DIR>`  | Theme directory     | `themes/default`    |
+| `-p, --port <PORT>`  | Server port         | `3000`              |
+| `--no-live-reload`   | Disable live reload | Live reload enabled |
 
 ## Generated Output
 
@@ -403,6 +410,134 @@ _site/
 - Ensure good color contrast in custom themes
 - Test with keyboard navigation
 
+## Deployment
+
+### GitHub Pages
+
+You can automatically deploy your Krik site to GitHub Pages using GitHub
+Actions. This workflow will build and deploy your site whenever you push to the
+main branch.
+
+#### Setup Steps
+
+1. **Create the workflow file**: Add `.github/workflows/build-and-deploy.yml` to
+   your repository:
+
+```yaml
+name: Build and Deploy Site with Krik
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full clone needed for branch operations
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Install Krik
+        run: cargo install krik
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Run Krik to generate site
+        run: kk
+
+      - name: Deploy to gh-pages
+        run: |
+          mkdir -p /tmp/generated-site
+          cp -r _site/* /tmp/generated-site/
+
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf .
+          fi
+
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
+          cp -r /tmp/generated-site/* .
+          touch .nojekyll
+
+          git add .
+          if ! git diff --staged --quiet; then
+            git commit -m "Deploy site generated on $(date)"
+            git push origin gh-pages
+          fi
+```
+
+2. **Enable GitHub Pages**:
+   - Go to your repository settings
+   - Navigate to "Pages" section
+   - Under "Source", select "Deploy from a branch"
+   - Choose the `gh-pages` branch
+   - Select "/ (root)" as the folder
+   - Click "Save"
+
+3. **Configure your site**: Ensure your content is in the `content/` directory
+   with proper structure
+
+4. **Deploy**: Push to your main branch to trigger the deployment
+
+#### What the Workflow Does
+
+The GitHub Actions workflow automatically:
+
+- **Installs dependencies**: Sets up Rust toolchain and installs Krik from
+  crates.io
+- **Generates the site**: Runs `kk` to build your static site
+- **Creates gh-pages branch**: Sets up the deployment branch if it doesn't exist
+- **Deploys files**: Copies generated files to the gh-pages branch
+- **Adds .nojekyll**: Prevents GitHub from processing files with Jekyll
+- **Pushes changes**: Commits and pushes the generated site
+
+#### Workflow Features
+
+- **Automatic deployment**: Triggers on every push to main branch
+- **Manual trigger**: Can be run manually via GitHub Actions interface
+- **Branch management**: Handles both new and existing gh-pages branches
+- **Clean deployment**: Removes old files before deploying new ones
+- **Skip empty deployments**: Only commits when there are actual changes
+
+#### Repository Structure
+
+Your repository should look like this:
+
+```
+your-repository/
+├── .github/
+│   └── workflows/
+│       └── build-and-deploy.yml    # Deployment workflow
+├── content/                        # Your Krik content
+│   ├── site.toml
+│   ├── posts/
+│   │   └── *.md
+│   └── pages/
+│       └── *.md
+└── README.md
+```
+
+After the first successful deployment, your site will be available at:
+`https://yourusername.github.io/your-repository-name/`
+
 ---
 
-This documentation covers all major features of Krik. For more examples, check out the other posts and pages in this demo site!
+This documentation covers all major features of Krik. For more examples, check
+out the other posts and pages in this demo site!

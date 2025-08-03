@@ -7,7 +7,9 @@ toc: true
 
 # Getting Started with Krik: From Installation to Your First Post
 
-Welcome to Krik! This comprehensive guide will take you from zero to publishing your first blog post in just a few minutes. Krik makes it incredibly easy to create beautiful, fast static websites with minimal setup.
+Welcome to Krik! This comprehensive guide will take you from zero to publishing
+your first blog post in just a few minutes. Krik makes it incredibly easy to
+create beautiful, fast static websites with minimal setup.
 
 ## Installation
 
@@ -19,7 +21,8 @@ The fastest way to get started is installing Krik from crates.io:
 cargo install krik
 ```
 
-That's it! No additional setup required - themes and sample content are embedded directly in the executable.
+That's it! No additional setup required - themes and sample content are embedded
+directly in the executable.
 
 ### Verify Installation
 
@@ -43,6 +46,7 @@ cd my-awesome-blog
 ```
 
 This creates a complete site structure with:
+
 - Sample blog posts and pages
 - Default theme with light/dark mode
 - Site configuration
@@ -56,7 +60,9 @@ Launch the development server with live reload:
 kk server
 ```
 
-Open your browser to `http://localhost:3000` and you'll see your new site! The server automatically watches for changes and refreshes your browser when you edit files.
+Open your browser to `http://localhost:3000` and you'll see your new site! The
+server automatically watches for changes and refreshes your browser when you
+edit files.
 
 ## Creating Content
 
@@ -69,6 +75,7 @@ kk post "My First Blog Post"
 ```
 
 This creates `content/posts/my-first-blog-post.md` with:
+
 - Proper YAML front matter
 - Current timestamp
 - Helpful starter content
@@ -105,10 +112,10 @@ Every post and page starts with YAML front matter:
 ---
 title: "Your Post Title"
 date: 2025-01-15T12:00:00Z
-layout: post                 # or 'page' for pages
-tags: ["tutorial", "guide"]  # helps categorize content
-toc: true                    # enables table of contents
-draft: false                 # set to true to hide from site
+layout: post # or 'page' for pages
+tags: ["tutorial", "guide"] # helps categorize content
+toc: true # enables table of contents
+draft: false # set to true to hide from site
 ---
 ```
 
@@ -116,10 +123,11 @@ draft: false                 # set to true to hide from site
 
 Below the front matter, write your content in Markdown:
 
-```markdown
+````markdown
 # Main Heading
 
-Your content here with **bold text**, *italic text*, and [links](https://example.com).
+Your content here with **bold text**, _italic text_, and
+[links](https://example.com).
 
 ## Subheadings
 
@@ -132,7 +140,9 @@ Your content here with **bold text**, *italic text*, and [links](https://example
 ```javascript
 console.log("Code highlighting works automatically!");
 ```
-```
+````
+
+````
 
 ### Markdown Features
 
@@ -152,19 +162,22 @@ When you're ready to publish, generate static files:
 
 ```bash
 kk
-```
+````
 
-This creates the `_site/` directory with your complete website. Upload these files to any web host!
+This creates the `_site/` directory with your complete website. Upload these
+files to any web host!
 
 ### Development vs Production
 
 During development, use the server:
+
 ```bash
 kk server                    # Live reload for development
 kk server --no-live-reload   # Disable live reload if needed
 ```
 
 For production builds:
+
 ```bash
 kk --input content --output _site --theme themes/default
 ```
@@ -186,11 +199,13 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 
 ### Table of Contents
 
-Enable automatic TOC generation by adding `toc: true` to your front matter. Perfect for long articles like this one!
+Enable automatic TOC generation by adding `toc: true` to your front matter.
+Perfect for long articles like this one!
 
 ### Theme Customization
 
 The default theme includes:
+
 - Automatic light/dark mode detection
 - Responsive design for all devices
 - Mobile-friendly hamburger menu
@@ -226,7 +241,7 @@ The default theme includes:
 Now that you have Krik set up:
 
 1. **Customize your site.toml** with your information
-2. **Replace sample content** with your own posts and pages  
+2. **Replace sample content** with your own posts and pages
 3. **Explore the theme system** for advanced customization
 4. **Set up deployment** to your preferred hosting platform
 
@@ -238,6 +253,8 @@ Now that you have Krik set up:
 
 ---
 
-Congratulations! You now have everything you need to create amazing static websites with Krik. The combination of powerful features and simple commands makes it easy to focus on what matters most: your content.
+Congratulations! You now have everything you need to create amazing static
+websites with Krik. The combination of powerful features and simple commands
+makes it easy to focus on what matters most: your content.
 
 Happy blogging! 🚀

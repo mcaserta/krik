@@ -6,7 +6,8 @@ tags: ["themes", "design", "css"]
 
 # Theme System Demo
 
-This post showcases Krik's powerful theme system with automatic light/dark mode detection and smooth transitions.
+This post showcases Krik's powerful theme system with automatic light/dark mode
+detection and smooth transitions.
 
 ## Automatic Theme Detection
 
@@ -33,12 +34,14 @@ Look for the 🌙/☀️ button in the top navigation bar. Clicking it will:
 The theme system uses CSS custom properties for easy customization:
 
 **Light Mode Colors:**
+
 - Background: Clean white and light grays
 - Text: Dark grays for excellent readability
 - Links: Blue tones for accessibility
 - Surfaces: Subtle shadows and borders
 
 **Dark Mode Colors:**
+
 - Background: Deep grays and blacks
 - Text: Light grays and whites
 - Links: Lighter blue tones
@@ -79,4 +82,5 @@ The theme system is designed with accessibility in mind:
 - **Screen Readers**: Proper ARIA labels and semantic HTML
 - **Color Independence**: Information isn't conveyed by color alone
 
-Try switching between light and dark modes to see the smooth transitions in action!
+Try switching between light and dark modes to see the smooth transitions in
+action!
