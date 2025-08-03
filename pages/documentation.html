@@ -99,6 +99,12 @@
     <li><a href="#heading-41">Front Matter</a></li>
     <li><a href="#heading-42">Performance</a></li>
     <li><a href="#heading-43">Accessibility</a></li>
+  <li><a href="#heading-44">Deployment</a></li>
+    <li><a href="#heading-45">GitHub Pages</a></li>
+      <li><a href="#heading-46">Setup Steps</a></li>
+      <li><a href="#heading-47">What the Workflow Does</a></li>
+      <li><a href="#heading-48">Workflow Features</a></li>
+      <li><a href="#heading-49">Repository Structure</a></li>
 </ul>
             </div>
         </aside>
@@ -110,7 +116,8 @@
                 
             </header>
             <article><h1 id="heading-0">Krik Documentation</h1>
-<p>This page provides comprehensive documentation for using Krik, the static site generator.</p>
+<p>This page provides comprehensive documentation for using Krik, the static site
+generator.</p>
 <h2 id="heading-1">Quick Start</h2>
 <h3 id="heading-2">Installation</h3>
 <h4 id="heading-3">From Crates.io (Recommended)</h4>
@@ -147,7 +154,7 @@ kk post                           # Create with default title "New post"
 kk post "Custom Post" -f my-slug  # Custom filename
 
 kk page "About Us"                # Create new page
-kk page                           # Create with default title "New page" 
+kk page                           # Create with default title "New page"
 kk page "Contact" -f contact      # Custom filename
 </code></pre>
 <h4 id="heading-8">Development Server</h4>
@@ -196,7 +203,6 @@ toc: true
 draft: false
 custom_field: "custom value"
 ---
-
 # Your content here
 </code></pre>
 <h3 id="heading-14">Front Matter Fields</h3>
@@ -226,7 +232,8 @@ layout: custom
 <h3 id="heading-18">Template Features</h3>
 <ul>
 <li><strong>Post Template</strong>: Tags, “Back to Home” link, language selector, scroll-to-top</li>
-<li><strong>Page Template</strong>: Clean layout, language selector (if translations available), scroll-to-top</li>
+<li><strong>Page Template</strong>: Clean layout, language selector (if translations
+available), scroll-to-top</li>
 <li><strong>Index Template</strong>: Post listing, theme toggle, scroll-to-top</li>
 </ul>
 <h2 id="heading-19">Internationalization (i18n)</h2>
@@ -252,7 +259,8 @@ layout: custom
 <tr><td><code>ar</code></td><td>Arabic</td><td>العربية</td></tr>
 </tbody></table>
 <h3 id="heading-22">Language Navigation</h3>
-<p>Pages with translations automatically show a language selector dropdown in the navigation bar.</p>
+<p>Pages with translations automatically show a language selector dropdown in the
+navigation bar.</p>
 <h2 id="heading-23">Advanced Features</h2>
 <h3 id="heading-24">Table of Contents</h3>
 <p>Enable TOC generation with <code>toc: true</code> in front matter:</p>
@@ -317,10 +325,10 @@ toc: true
 <h3 id="heading-30">Customization</h3>
 <p>The theme uses CSS custom properties for easy customization:</p>
 <pre><code class="language-css">:root {
-    --bg-color: #ffffff;
-    --text-color: #333333;
-    --link-color: #0066cc;
-    /* ... more variables */
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --link-color: #0066cc;
+  /* ... more variables */
 }
 </code></pre>
 <h2 id="heading-31">Command Line Reference</h2>
@@ -419,8 +427,132 @@ kk page [TITLE] [OPTIONS]
 <li>Ensure good color contrast in custom themes</li>
 <li>Test with keyboard navigation</li>
 </ul>
+<h2 id="heading-44">Deployment</h2>
+<h3 id="heading-45">GitHub Pages</h3>
+<p>You can automatically deploy your Krik site to GitHub Pages using GitHub
+Actions. This workflow will build and deploy your site whenever you push to the
+main branch.</p>
+<h4 id="heading-46">Setup Steps</h4>
+<ol>
+<li><strong>Create the workflow file</strong>: Add <code>.github/workflows/build-and-deploy.yml</code> to
+your repository:</li>
+</ol>
+<pre><code class="language-yaml">name: Build and Deploy Site with Krik
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full clone needed for branch operations
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Install Krik
+        run: cargo install krik
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Run Krik to generate site
+        run: kk
+
+      - name: Deploy to gh-pages
+        run: |
+          mkdir -p /tmp/generated-site
+          cp -r _site/* /tmp/generated-site/
+
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf .
+          fi
+
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
+          cp -r /tmp/generated-site/* .
+          touch .nojekyll
+
+          git add .
+          if ! git diff --staged --quiet; then
+            git commit -m "Deploy site generated on $(date)"
+            git push origin gh-pages
+          fi
+</code></pre>
+<ol start="2">
+<li>
+<p><strong>Enable GitHub Pages</strong>:</p>
+<ul>
+<li>Go to your repository settings</li>
+<li>Navigate to “Pages” section</li>
+<li>Under “Source”, select “Deploy from a branch”</li>
+<li>Choose the <code>gh-pages</code> branch</li>
+<li>Select “/ (root)” as the folder</li>
+<li>Click “Save”</li>
+</ul>
+</li>
+<li>
+<p><strong>Configure your site</strong>: Ensure your content is in the <code>content/</code> directory
+with proper structure</p>
+</li>
+<li>
+<p><strong>Deploy</strong>: Push to your main branch to trigger the deployment</p>
+</li>
+</ol>
+<h4 id="heading-47">What the Workflow Does</h4>
+<p>The GitHub Actions workflow automatically:</p>
+<ul>
+<li><strong>Installs dependencies</strong>: Sets up Rust toolchain and installs Krik from
+crates.io</li>
+<li><strong>Generates the site</strong>: Runs <code>kk</code> to build your static site</li>
+<li><strong>Creates gh-pages branch</strong>: Sets up the deployment branch if it doesn’t exist</li>
+<li><strong>Deploys files</strong>: Copies generated files to the gh-pages branch</li>
+<li><strong>Adds .nojekyll</strong>: Prevents GitHub from processing files with Jekyll</li>
+<li><strong>Pushes changes</strong>: Commits and pushes the generated site</li>
+</ul>
+<h4 id="heading-48">Workflow Features</h4>
+<ul>
+<li><strong>Automatic deployment</strong>: Triggers on every push to main branch</li>
+<li><strong>Manual trigger</strong>: Can be run manually via GitHub Actions interface</li>
+<li><strong>Branch management</strong>: Handles both new and existing gh-pages branches</li>
+<li><strong>Clean deployment</strong>: Removes old files before deploying new ones</li>
+<li><strong>Skip empty deployments</strong>: Only commits when there are actual changes</li>
+</ul>
+<h4 id="heading-49">Repository Structure</h4>
+<p>Your repository should look like this:</p>
+<pre><code>your-repository/
+├── .github/
+│   └── workflows/
+│       └── build-and-deploy.yml    # Deployment workflow
+├── content/                        # Your Krik content
+│   ├── site.toml
+│   ├── posts/
+│   │   └── *.md
+│   └── pages/
+│       └── *.md
+└── README.md
+</code></pre>
+<p>After the first successful deployment, your site will be available at:
+<code>https://yourusername.github.io/your-repository-name/</code></p>
 <hr />
-<p>This documentation covers all major features of Krik. For more examples, check out the other posts and pages in this demo site!</p>
+<p>This documentation covers all major features of Krik. For more examples, check
+out the other posts and pages in this demo site!</p>
 </article>
         </main>
     </div>

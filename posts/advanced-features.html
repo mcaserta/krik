@@ -88,7 +88,8 @@
                 <div class="meta">January 22, 2024</div>
             </header>
             <article>
-<p>This post demonstrates some of the more advanced features available in Krik, including image handling, complex markdown, and feed generation.</p>
+<p>This post demonstrates some of the more advanced features available in Krik,
+including image handling, complex markdown, and feed generation.</p>
 <h2 id="heading-0">Image Support</h2>
 <p>Krik automatically copies images and other static assets to the generated site:</p>
 <p><img src="../images/placeholder.svg" alt="Placeholder Image" title="This is a placeholder image" /></p>
@@ -113,16 +114,14 @@
 <h2 id="heading-3">Nested Lists and Complex Formatting</h2>
 <h3 id="heading-4">Project Structure</h3>
 <ol>
-<li>
-<p><strong>Core Engine</strong> (Rust)</p>
+<li><strong>Core Engine</strong> (Rust)
 <ul>
 <li>Markdown parsing with pulldown-cmark</li>
 <li>Template rendering with Tera</li>
 <li>File system operations</li>
 </ul>
 </li>
-<li>
-<p><strong>Theme System</strong></p>
+<li><strong>Theme System</strong>
 <ul>
 <li>CSS custom properties for theming</li>
 <li>JavaScript for interactive features:
@@ -135,8 +134,7 @@
 <li>Responsive design breakpoints</li>
 </ul>
 </li>
-<li>
-<p><strong>Content Processing</strong></p>
+<li><strong>Content Processing</strong>
 <ul>
 <li>Front matter parsing (YAML)</li>
 <li>Asset copying (images, files)</li>
@@ -149,7 +147,8 @@
 <h4 id="heading-6">Mixed Content Types</h4>
 <p>You can combine different content types effectively:</p>
 <blockquote>
-<p><strong>Quote with formatting</strong>: This blockquote contains <em>italic</em>, <strong>bold</strong>, and <code>inline code</code>.</p>
+<p><strong>Quote with formatting</strong>: This blockquote contains <em>italic</em>, <strong>bold</strong>, and
+<code>inline code</code>.</p>
 <p>It can also contain lists:</p>
 <ol>
 <li>First quoted item</li>
@@ -162,20 +161,21 @@
 <h4 id="heading-7">Code with Explanation</h4>
 <p>Here’s how the theme toggle works:</p>
 <pre><code class="language-javascript">function toggleTheme() {
-    // Get current theme or default to light
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    
-    // Switch to opposite theme
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    // Apply new theme
-    document.documentElement.setAttribute('data-theme', newTheme);
-    
-    // Save preference
-    localStorage.setItem('theme', newTheme);
-    
-    // Update toggle icon
-    updateThemeIcon(newTheme);
+  // Get current theme or default to light
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light";
+
+  // Switch to opposite theme
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+
+  // Apply new theme
+  document.documentElement.setAttribute("data-theme", newTheme);
+
+  // Save preference
+  localStorage.setItem("theme", newTheme);
+
+  // Update toggle icon
+  updateThemeIcon(newTheme);
 }
 </code></pre>
 <p>The key aspects of this implementation:</p>
@@ -203,10 +203,12 @@
 <li>Tag information (when available)</li>
 </ul>
 <h3 id="heading-11">Link Resolution</h3>
-<p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute for proper link resolution:</p>
+<p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute
+for proper link resolution:</p>
 <pre><code class="language-xml">&lt;feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com"&gt;
 </code></pre>
-<p>This ensures that relative links in your posts work correctly when viewed in feed readers.</p>
+<p>This ensures that relative links in your posts work correctly when viewed in
+feed readers.</p>
 <h2 id="heading-12">Performance Considerations</h2>
 <h3 id="heading-13">Build Performance</h3>
 <p>Krik is designed for speed:</p>
@@ -245,7 +247,9 @@
 <li>High contrast color schemes</li>
 </ul>
 <hr />
-<p>This demonstrates many of Krik’s advanced capabilities. The combination of performance, features, and accessibility makes it an excellent choice for modern static sites.</p>
+<p>This demonstrates many of Krik’s advanced capabilities. The combination of
+performance, features, and accessibility makes it an excellent choice for modern
+static sites.</p>
 </article>
             
             <div class="tags">

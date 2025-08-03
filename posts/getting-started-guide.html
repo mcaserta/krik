@@ -93,13 +93,16 @@
                 <div class="meta">January 15, 2025</div>
             </header>
             <article>
-<p>Welcome to Krik! This comprehensive guide will take you from zero to publishing your first blog post in just a few minutes. Krik makes it incredibly easy to create beautiful, fast static websites with minimal setup.</p>
+<p>Welcome to Krik! This comprehensive guide will take you from zero to publishing
+your first blog post in just a few minutes. Krik makes it incredibly easy to
+create beautiful, fast static websites with minimal setup.</p>
 <h2 id="heading-0">Installation</h2>
 <h3 id="heading-1">Quick Install (Recommended)</h3>
 <p>The fastest way to get started is installing Krik from crates.io:</p>
 <pre><code class="language-bash">cargo install krik
 </code></pre>
-<p>That’s it! No additional setup required - themes and sample content are embedded directly in the executable.</p>
+<p>That’s it! No additional setup required - themes and sample content are embedded
+directly in the executable.</p>
 <h3 id="heading-2">Verify Installation</h3>
 <p>Check that Krik is installed correctly:</p>
 <pre><code class="language-bash">kk --version
@@ -123,7 +126,9 @@ cd my-awesome-blog
 <p>Launch the development server with live reload:</p>
 <pre><code class="language-bash">kk server
 </code></pre>
-<p>Open your browser to <code>http://localhost:3000</code> and you’ll see your new site! The server automatically watches for changes and refreshes your browser when you edit files.</p>
+<p>Open your browser to <code>http://localhost:3000</code> and you’ll see your new site! The
+server automatically watches for changes and refreshes your browser when you
+edit files.</p>
 <h2 id="heading-6">Creating Content</h2>
 <h3 id="heading-7">Your First Blog Post</h3>
 <p>Create a new blog post with a simple command:</p>
@@ -153,17 +158,18 @@ kk page "Contact" --filename contact
 <pre><code class="language-yaml">---
 title: "Your Post Title"
 date: 2025-01-15T12:00:00Z
-layout: post                 # or 'page' for pages
-tags: ["tutorial", "guide"]  # helps categorize content
-toc: true                    # enables table of contents
-draft: false                 # set to true to hide from site
+layout: post # or 'page' for pages
+tags: ["tutorial", "guide"] # helps categorize content
+toc: true # enables table of contents
+draft: false # set to true to hide from site
 ---
 </code></pre>
 <h3 id="heading-12">Adding Your Content</h3>
 <p>Below the front matter, write your content in Markdown:</p>
 <pre><code class="language-markdown"># Main Heading
 
-Your content here with **bold text**, *italic text*, and [links](https://example.com).
+Your content here with **bold text**, _italic text_, and
+[links](https://example.com).
 
 ## Subheadings
 
@@ -175,6 +181,7 @@ Your content here with **bold text**, *italic text*, and [links](https://example
 
 ```javascript
 console.log("Code highlighting works automatically!");
+```
 </code></pre>
 <pre><code>
 ### Markdown Features
@@ -196,7 +203,8 @@ When you're ready to publish, generate static files:
 ```bash
 kk
 </code></pre>
-<p>This creates the <code>_site/</code> directory with your complete website. Upload these files to any web host!</p>
+<p>This creates the <code>_site/</code> directory with your complete website. Upload these
+files to any web host!</p>
 <h3 id="heading-13">Development vs Production</h3>
 <p>During development, use the server:</p>
 <pre><code class="language-bash">kk server                    # Live reload for development
@@ -216,7 +224,8 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 # Edit the Italian version
 </code></pre>
 <h3 id="heading-16">Table of Contents</h3>
-<p>Enable automatic TOC generation by adding <code>toc: true</code> to your front matter. Perfect for long articles like this one!</p>
+<p>Enable automatic TOC generation by adding <code>toc: true</code> to your front matter.
+Perfect for long articles like this one!</p>
 <h3 id="heading-17">Theme Customization</h3>
 <p>The default theme includes:</p>
 <ul>
@@ -264,7 +273,9 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <li><strong>Community</strong>: Join discussions on GitHub</li>
 </ul>
 <hr />
-<p>Congratulations! You now have everything you need to create amazing static websites with Krik. The combination of powerful features and simple commands makes it easy to focus on what matters most: your content.</p>
+<p>Congratulations! You now have everything you need to create amazing static
+websites with Krik. The combination of powerful features and simple commands
+makes it easy to focus on what matters most: your content.</p>
 <p>Happy blogging! 🚀</p>
 </article>
             

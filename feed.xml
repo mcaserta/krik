@@ -14,13 +14,16 @@
     <published>2025-01-15T12:00:00+00:00</published>
     <content type="html"><![CDATA[
 <h1>Getting Started with Krik: From Installation to Your First Post</h1>
-<p>Welcome to Krik! This comprehensive guide will take you from zero to publishing your first blog post in just a few minutes. Krik makes it incredibly easy to create beautiful, fast static websites with minimal setup.</p>
+<p>Welcome to Krik! This comprehensive guide will take you from zero to publishing
+your first blog post in just a few minutes. Krik makes it incredibly easy to
+create beautiful, fast static websites with minimal setup.</p>
 <h2>Installation</h2>
 <h3>Quick Install (Recommended)</h3>
 <p>The fastest way to get started is installing Krik from crates.io:</p>
 <pre><code class="language-bash">cargo install krik
 </code></pre>
-<p>That’s it! No additional setup required - themes and sample content are embedded directly in the executable.</p>
+<p>That’s it! No additional setup required - themes and sample content are embedded
+directly in the executable.</p>
 <h3>Verify Installation</h3>
 <p>Check that Krik is installed correctly:</p>
 <pre><code class="language-bash">kk --version
@@ -44,7 +47,9 @@ cd my-awesome-blog
 <p>Launch the development server with live reload:</p>
 <pre><code class="language-bash">kk server
 </code></pre>
-<p>Open your browser to <code>http://localhost:3000</code> and you’ll see your new site! The server automatically watches for changes and refreshes your browser when you edit files.</p>
+<p>Open your browser to <code>http://localhost:3000</code> and you’ll see your new site! The
+server automatically watches for changes and refreshes your browser when you
+edit files.</p>
 <h2>Creating Content</h2>
 <h3>Your First Blog Post</h3>
 <p>Create a new blog post with a simple command:</p>
@@ -74,17 +79,18 @@ kk page "Contact" --filename contact
 <pre><code class="language-yaml">---
 title: "Your Post Title"
 date: 2025-01-15T12:00:00Z
-layout: post                 # or 'page' for pages
-tags: ["tutorial", "guide"]  # helps categorize content
-toc: true                    # enables table of contents
-draft: false                 # set to true to hide from site
+layout: post # or 'page' for pages
+tags: ["tutorial", "guide"] # helps categorize content
+toc: true # enables table of contents
+draft: false # set to true to hide from site
 ---
 </code></pre>
 <h3>Adding Your Content</h3>
 <p>Below the front matter, write your content in Markdown:</p>
 <pre><code class="language-markdown"># Main Heading
 
-Your content here with **bold text**, *italic text*, and [links](https://example.com).
+Your content here with **bold text**, _italic text_, and
+[links](https://example.com).
 
 ## Subheadings
 
@@ -96,6 +102,7 @@ Your content here with **bold text**, *italic text*, and [links](https://example
 
 ```javascript
 console.log("Code highlighting works automatically!");
+```
 </code></pre>
 <pre><code>
 ### Markdown Features
@@ -117,7 +124,8 @@ When you're ready to publish, generate static files:
 ```bash
 kk
 </code></pre>
-<p>This creates the <code>_site/</code> directory with your complete website. Upload these files to any web host!</p>
+<p>This creates the <code>_site/</code> directory with your complete website. Upload these
+files to any web host!</p>
 <h3>Development vs Production</h3>
 <p>During development, use the server:</p>
 <pre><code class="language-bash">kk server                    # Live reload for development
@@ -137,7 +145,8 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 # Edit the Italian version
 </code></pre>
 <h3>Table of Contents</h3>
-<p>Enable automatic TOC generation by adding <code>toc: true</code> to your front matter. Perfect for long articles like this one!</p>
+<p>Enable automatic TOC generation by adding <code>toc: true</code> to your front matter.
+Perfect for long articles like this one!</p>
 <h3>Theme Customization</h3>
 <p>The default theme includes:</p>
 <ul>
@@ -185,7 +194,9 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <li><strong>Community</strong>: Join discussions on GitHub</li>
 </ul>
 <hr />
-<p>Congratulations! You now have everything you need to create amazing static websites with Krik. The combination of powerful features and simple commands makes it easy to focus on what matters most: your content.</p>
+<p>Congratulations! You now have everything you need to create amazing static
+websites with Krik. The combination of powerful features and simple commands
+makes it easy to focus on what matters most: your content.</p>
 <p>Happy blogging! 🚀</p>
 
     ]]></content>
@@ -201,7 +212,8 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
     <published>2024-01-22T11:45:00+00:00</published>
     <content type="html"><![CDATA[
 <h1>Advanced Features Demo</h1>
-<p>This post demonstrates some of the more advanced features available in Krik, including image handling, complex markdown, and feed generation.</p>
+<p>This post demonstrates some of the more advanced features available in Krik,
+including image handling, complex markdown, and feed generation.</p>
 <h2>Image Support</h2>
 <p>Krik automatically copies images and other static assets to the generated site:</p>
 <p><img src="../images/placeholder.svg" alt="Placeholder Image" title="This is a placeholder image" /></p>
@@ -226,16 +238,14 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <h2>Nested Lists and Complex Formatting</h2>
 <h3>Project Structure</h3>
 <ol>
-<li>
-<p><strong>Core Engine</strong> (Rust)</p>
+<li><strong>Core Engine</strong> (Rust)
 <ul>
 <li>Markdown parsing with pulldown-cmark</li>
 <li>Template rendering with Tera</li>
 <li>File system operations</li>
 </ul>
 </li>
-<li>
-<p><strong>Theme System</strong></p>
+<li><strong>Theme System</strong>
 <ul>
 <li>CSS custom properties for theming</li>
 <li>JavaScript for interactive features:
@@ -248,8 +258,7 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <li>Responsive design breakpoints</li>
 </ul>
 </li>
-<li>
-<p><strong>Content Processing</strong></p>
+<li><strong>Content Processing</strong>
 <ul>
 <li>Front matter parsing (YAML)</li>
 <li>Asset copying (images, files)</li>
@@ -262,7 +271,8 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <h4>Mixed Content Types</h4>
 <p>You can combine different content types effectively:</p>
 <blockquote>
-<p><strong>Quote with formatting</strong>: This blockquote contains <em>italic</em>, <strong>bold</strong>, and <code>inline code</code>.</p>
+<p><strong>Quote with formatting</strong>: This blockquote contains <em>italic</em>, <strong>bold</strong>, and
+<code>inline code</code>.</p>
 <p>It can also contain lists:</p>
 <ol>
 <li>First quoted item</li>
@@ -275,20 +285,21 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <h4>Code with Explanation</h4>
 <p>Here’s how the theme toggle works:</p>
 <pre><code class="language-javascript">function toggleTheme() {
-    // Get current theme or default to light
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    
-    // Switch to opposite theme
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    // Apply new theme
-    document.documentElement.setAttribute('data-theme', newTheme);
-    
-    // Save preference
-    localStorage.setItem('theme', newTheme);
-    
-    // Update toggle icon
-    updateThemeIcon(newTheme);
+  // Get current theme or default to light
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light";
+
+  // Switch to opposite theme
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+
+  // Apply new theme
+  document.documentElement.setAttribute("data-theme", newTheme);
+
+  // Save preference
+  localStorage.setItem("theme", newTheme);
+
+  // Update toggle icon
+  updateThemeIcon(newTheme);
 }
 </code></pre>
 <p>The key aspects of this implementation:</p>
@@ -316,10 +327,12 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <li>Tag information (when available)</li>
 </ul>
 <h3>Link Resolution</h3>
-<p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute for proper link resolution:</p>
+<p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute
+for proper link resolution:</p>
 <pre><code class="language-xml">&lt;feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com"&gt;
 </code></pre>
-<p>This ensures that relative links in your posts work correctly when viewed in feed readers.</p>
+<p>This ensures that relative links in your posts work correctly when viewed in
+feed readers.</p>
 <h2>Performance Considerations</h2>
 <h3>Build Performance</h3>
 <p>Krik is designed for speed:</p>
@@ -358,7 +371,9 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <li>High contrast color schemes</li>
 </ul>
 <hr />
-<p>This demonstrates many of Krik’s advanced capabilities. The combination of performance, features, and accessibility makes it an excellent choice for modern static sites.</p>
+<p>This demonstrates many of Krik’s advanced capabilities. The combination of
+performance, features, and accessibility makes it an excellent choice for modern
+static sites.</p>
 
     ]]></content>
     <category term="advanced" />
@@ -373,7 +388,8 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
     <published>2024-01-20T14:30:00+00:00</published>
     <content type="html"><![CDATA[
 <h1>Markdown Feature Showcase</h1>
-<p>This post demonstrates all the markdown features supported by Krik, including some advanced formatting options.</p>
+<p>This post demonstrates all the markdown features supported by Krik, including
+some advanced formatting options.</p>
 <h2>Basic Text Formatting</h2>
 <p>Here are the basic text formatting options:</p>
 <ul>
@@ -381,10 +397,11 @@ cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 <li><em>Italic text</em> using <code>*italic*</code></li>
 <li><del>Strikethrough text</del> using <code>~~strikethrough~~</code></li>
 <li><code>Inline code</code> using backticks</li>
-<li>You can also combine <em><strong>bold and italic</strong></em> text</li>
+<li>You can also combine <strong><em>bold and italic</em></strong> text</li>
 </ul>
 <h2>Headings</h2>
-<p>Krik supports all heading levels from H1 to H6. Since this post has TOC enabled, you can see how they’re organized in the table of contents.</p>
+<p>Krik supports all heading levels from H1 to H6. Since this post has TOC enabled,
+you can see how they’re organized in the table of contents.</p>
 <h3>This is H3</h3>
 <h4>This is H4</h4>
 <h5>This is H5</h5>
@@ -411,19 +428,19 @@ def generate_site(input_dir, output_dir):
     """Generate static site from markdown files."""
     for file in input_dir.glob("**/*.md"):
         process_markdown_file(file, output_dir)
-    
+
     print("Site generated successfully!")
 </code></pre>
 <pre><code class="language-html">&lt;!-- HTML code example --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
     &lt;title&gt;Krik Demo&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
     &lt;h1&gt;Hello, World!&lt;/h1&gt;
-&lt;/body&gt;
+  &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
 <h2>Lists and Task Lists</h2>
@@ -493,8 +510,8 @@ Nested incomplete task</li>
 <p>This is a simple blockquote.</p>
 </blockquote>
 <blockquote>
-<p>This is a multi-line blockquote.
-It can span multiple lines and even include other markdown elements.</p>
+<p>This is a multi-line blockquote. It can span multiple lines and even include
+other markdown elements.</p>
 <p>Like <strong>bold text</strong> and <em>italic text</em>.</p>
 </blockquote>
 <blockquote>
@@ -524,21 +541,28 @@ It can span multiple lines and even include other markdown elements.</p>
 <p>Here’s how images work (note: no actual image file in this demo):</p>
 <p><img src="../images/example.png" alt="Alt text for image" title="Optional title" /></p>
 <h2>Footnotes in Detail</h2>
-<p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create bidirectional links with smooth scrolling<sup class="footnote-reference"><a href="#complex-footnote">2</a></sup>.</p>
-<p>You can have multiple paragraphs in footnotes<sup class="footnote-reference"><a href="#multiline">3</a></sup>, and they support full markdown formatting.</p>
+<p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create
+bidirectional links with smooth scrolling<sup class="footnote-reference"><a href="#complex-footnote">2</a></sup>.</p>
+<p>You can have multiple paragraphs in footnotes<sup class="footnote-reference"><a href="#multiline">3</a></sup>, and they support full
+markdown formatting.</p>
 <h2>Escaping Characters</h2>
-<p>Sometimes you need to escape markdown characters: *not italic*, `not code`, [not a link].</p>
+<p>Sometimes you need to escape markdown characters: *not italic*, `not code`,
+[not a link].</p>
 <hr />
-<p>This covers most of the markdown features supported by Krik. The combination of these features with the theme system, internationalization, and advanced navigation makes Krik a powerful choice for static site generation.</p>
+<p>This covers most of the markdown features supported by Krik. The combination of
+these features with the theme system, internationalization, and advanced
+navigation makes Krik a powerful choice for static site generation.</p>
 <div class="footnote-definition" id="footnote1"><sup class="footnote-definition-label">1</sup>
 <p>This is a simple footnote that demonstrates the basic functionality.</p>
 </div>
 <div class="footnote-definition" id="complex-footnote"><sup class="footnote-definition-label">2</sup>
-<p>This footnote contains <strong>bold text</strong>, <em>italic text</em>, and even <code>inline code</code>. It shows how footnotes can contain rich formatting.</p>
+<p>This footnote contains <strong>bold text</strong>, <em>italic text</em>, and even <code>inline code</code>.
+It shows how footnotes can contain rich formatting.</p>
 </div>
 <div class="footnote-definition" id="multiline"><sup class="footnote-definition-label">3</sup>
 <p>This is a multiline footnote.</p>
-<p>It can contain multiple paragraphs, code blocks, and other markdown elements:</p>
+<p>It can contain multiple paragraphs, code blocks, and other markdown
+elements:</p>
 <pre><code>code in footnotes works too!
 </code></pre>
 <p>Pretty neat, right?</p>
@@ -557,7 +581,8 @@ It can span multiple lines and even include other markdown elements.</p>
     <published>2024-01-18T09:15:00+00:00</published>
     <content type="html"><![CDATA[
 <h1>Theme System Demo</h1>
-<p>This post showcases Krik’s powerful theme system with automatic light/dark mode detection and smooth transitions.</p>
+<p>This post showcases Krik’s powerful theme system with automatic light/dark mode
+detection and smooth transitions.</p>
 <h2>Automatic Theme Detection</h2>
 <p>Krik automatically detects your operating system’s theme preference:</p>
 <ul>
@@ -622,7 +647,8 @@ It can span multiple lines and even include other markdown elements.</p>
 <li><strong>Screen Readers</strong>: Proper ARIA labels and semantic HTML</li>
 <li><strong>Color Independence</strong>: Information isn’t conveyed by color alone</li>
 </ul>
-<p>Try switching between light and dark modes to see the smooth transitions in action!</p>
+<p>Try switching between light and dark modes to see the smooth transitions in
+action!</p>
 
     ]]></content>
     <category term="themes" />
@@ -638,9 +664,11 @@ It can span multiple lines and even include other markdown elements.</p>
     <content type="html"><![CDATA[
 <h1>Welcome to Krik</h1>
 <p><img src="../images/krik.png" alt="Krik logo" /></p>
-<p>Welcome to the <strong>Krik</strong> static site generator! This post demonstrates many of the features available in this fast, Rust-powered static site generator.</p>
+<p>Welcome to the <strong>Krik</strong> static site generator! This post demonstrates many of
+the features available in this fast, Rust-powered static site generator.</p>
 <h2>Table of Contents</h2>
-<p>This post has a table of contents enabled via <code>toc: true</code> in the front matter. You should see a TOC in the sidebar with clickable links to each section.</p>
+<p>This post has a table of contents enabled via <code>toc: true</code> in the front matter.
+You should see a TOC in the sidebar with clickable links to each section.</p>
 <h2>Markdown Features</h2>
 <p>Krik supports full <strong>GitHub Flavored Markdown</strong> with many enhancements:</p>
 <h3>Text Formatting</h3>
@@ -670,10 +698,11 @@ It can span multiple lines and even include other markdown elements.</p>
 </code></pre>
 <pre><code class="language-javascript">// Theme toggle functionality
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light";
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
 }
 </code></pre>
 <h3>Tables</h3>
@@ -687,34 +716,46 @@ function toggleTheme() {
 <tr><td>Content Creation</td><td>✅</td><td>Quick post &amp; page generation</td></tr>
 </tbody></table>
 <h3>Footnotes</h3>
-<p>This is a paragraph with a footnote<sup class="footnote-reference"><a href="#1">1</a></sup>. You can click on it to jump to the definition, and then click the return arrow to come back.</p>
+<p>This is a paragraph with a footnote<sup class="footnote-reference"><a href="#1">1</a></sup>. You can click on it to jump to the
+definition, and then click the return arrow to come back.</p>
 <p>Here’s another footnote<sup class="footnote-reference"><a href="#second">2</a></sup> with different content.</p>
 <h2>Advanced Features</h2>
 <h3>Theme System</h3>
-<p>The site automatically detects your OS theme preference and switches between light and dark modes. Try toggling your system theme or use the theme button in the top navigation!</p>
+<p>The site automatically detects your OS theme preference and switches between
+light and dark modes. Try toggling your system theme or use the theme button in
+the top navigation!</p>
 <h3>Scroll to Top</h3>
-<p>On longer pages like this one, you’ll see a scroll-to-top button appear in the bottom-right corner when you scroll down. It provides smooth scrolling back to the top.</p>
+<p>On longer pages like this one, you’ll see a scroll-to-top button appear in the
+bottom-right corner when you scroll down. It provides smooth scrolling back to
+the top.</p>
 <h3>Navigation</h3>
-<p>The sidebar shows all pages on your site, and posts like this one include a “Back to Home” link for easy navigation. On mobile devices, the sidebar transforms into a convenient hamburger menu.</p>
+<p>The sidebar shows all pages on your site, and posts like this one include a
+“Back to Home” link for easy navigation. On mobile devices, the sidebar
+transforms into a convenient hamburger menu.</p>
 <h3>Development Server</h3>
 <p>Krik includes a powerful development server with live reload functionality:</p>
 <pre><code class="language-bash">kk server                    # Start with live reload
 kk server --no-live-reload   # Mobile-safe mode for Safari/iPad
 </code></pre>
-<p>The server automatically watches for changes and refreshes your browser, making development fast and efficient.</p>
+<p>The server automatically watches for changes and refreshes your browser, making
+development fast and efficient.</p>
 <h3>Content Creation</h3>
 <p>Create new content quickly with built-in commands:</p>
 <pre><code class="language-bash">kk post "My New Blog Post"   # Create a new blog post
 kk page "About Us"           # Create a new page
 </code></pre>
-<p>Both commands generate files with proper front matter and helpful starter content.</p>
+<p>Both commands generate files with proper front matter and helpful starter
+content.</p>
 <hr />
-<p>This is just the beginning! Check out the other posts and pages to see more features in action, or try the new commands to create your own content.</p>
+<p>This is just the beginning! Check out the other posts and pages to see more
+features in action, or try the new commands to create your own content.</p>
 <div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
-<p>This is the first footnote. Click the return arrow (↩) to go back to the text.</p>
+<p>This is the first footnote. Click the return arrow (↩) to go back to the
+text.</p>
 </div>
 <div class="footnote-definition" id="second"><sup class="footnote-definition-label">2</sup>
-<p>This is the second footnote with some additional content to show how multiple footnotes work.</p>
+<p>This is the second footnote with some additional content to show how
+multiple footnotes work.</p>
 </div>
 
     ]]></content>

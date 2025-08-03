@@ -90,7 +90,8 @@
                 <div class="meta">January 20, 2024</div>
             </header>
             <article>
-<p>This post demonstrates all the markdown features supported by Krik, including some advanced formatting options.</p>
+<p>This post demonstrates all the markdown features supported by Krik, including
+some advanced formatting options.</p>
 <h2 id="heading-0">Basic Text Formatting</h2>
 <p>Here are the basic text formatting options:</p>
 <ul>
@@ -98,10 +99,11 @@
 <li><em>Italic text</em> using <code>*italic*</code></li>
 <li><del>Strikethrough text</del> using <code>~~strikethrough~~</code></li>
 <li><code>Inline code</code> using backticks</li>
-<li>You can also combine <em><strong>bold and italic</strong></em> text</li>
+<li>You can also combine <strong><em>bold and italic</em></strong> text</li>
 </ul>
 <h2 id="heading-1">Headings</h2>
-<p>Krik supports all heading levels from H1 to H6. Since this post has TOC enabled, you can see how they’re organized in the table of contents.</p>
+<p>Krik supports all heading levels from H1 to H6. Since this post has TOC enabled,
+you can see how they’re organized in the table of contents.</p>
 <h3 id="heading-2">This is H3</h3>
 <h4 id="heading-3">This is H4</h4>
 <h5 id="heading-4">This is H5</h5>
@@ -128,19 +130,19 @@ def generate_site(input_dir, output_dir):
     """Generate static site from markdown files."""
     for file in input_dir.glob("**/*.md"):
         process_markdown_file(file, output_dir)
-    
+
     print("Site generated successfully!")
 </code></pre>
 <pre><code class="language-html">&lt;!-- HTML code example --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
     &lt;title&gt;Krik Demo&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
     &lt;h1&gt;Hello, World!&lt;/h1&gt;
-&lt;/body&gt;
+  &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
 <h2 id="heading-8">Lists and Task Lists</h2>
@@ -210,8 +212,8 @@ Nested incomplete task</li>
 <p>This is a simple blockquote.</p>
 </blockquote>
 <blockquote>
-<p>This is a multi-line blockquote.
-It can span multiple lines and even include other markdown elements.</p>
+<p>This is a multi-line blockquote. It can span multiple lines and even include
+other markdown elements.</p>
 <p>Like <strong>bold text</strong> and <em>italic text</em>.</p>
 </blockquote>
 <blockquote>
@@ -241,21 +243,28 @@ It can span multiple lines and even include other markdown elements.</p>
 <p>Here’s how images work (note: no actual image file in this demo):</p>
 <p><img src="../images/example.png" alt="Alt text for image" title="Optional title" /></p>
 <h2 id="heading-19">Footnotes in Detail</h2>
-<p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create bidirectional links with smooth scrolling<sup class="footnote-reference"><a href="#complex-footnote">2</a></sup>.</p>
-<p>You can have multiple paragraphs in footnotes<sup class="footnote-reference"><a href="#multiline">3</a></sup>, and they support full markdown formatting.</p>
+<p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create
+bidirectional links with smooth scrolling<sup class="footnote-reference"><a href="#complex-footnote">2</a></sup>.</p>
+<p>You can have multiple paragraphs in footnotes<sup class="footnote-reference"><a href="#multiline">3</a></sup>, and they support full
+markdown formatting.</p>
 <h2 id="heading-20">Escaping Characters</h2>
-<p>Sometimes you need to escape markdown characters: *not italic*, `not code`, [not a link].</p>
+<p>Sometimes you need to escape markdown characters: *not italic*, `not code`,
+[not a link].</p>
 <hr />
-<p>This covers most of the markdown features supported by Krik. The combination of these features with the theme system, internationalization, and advanced navigation makes Krik a powerful choice for static site generation.</p>
+<p>This covers most of the markdown features supported by Krik. The combination of
+these features with the theme system, internationalization, and advanced
+navigation makes Krik a powerful choice for static site generation.</p>
 <div class="footnote-definition" id="footnote1"><sup class="footnote-definition-label">1</sup>
 <p>This is a simple footnote that demonstrates the basic functionality.</p>
 </div>
 <div class="footnote-definition" id="complex-footnote"><sup class="footnote-definition-label">2</sup>
-<p>This footnote contains <strong>bold text</strong>, <em>italic text</em>, and even <code>inline code</code>. It shows how footnotes can contain rich formatting.</p>
+<p>This footnote contains <strong>bold text</strong>, <em>italic text</em>, and even <code>inline code</code>.
+It shows how footnotes can contain rich formatting.</p>
 </div>
 <div class="footnote-definition" id="multiline"><sup class="footnote-definition-label">3</sup>
 <p>This is a multiline footnote.</p>
-<p>It can contain multiple paragraphs, code blocks, and other markdown elements:</p>
+<p>It can contain multiple paragraphs, code blocks, and other markdown
+elements:</p>
 <pre><code>code in footnotes works too!
 </code></pre>
 <p>Pretty neat, right?</p>
