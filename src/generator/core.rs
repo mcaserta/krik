@@ -124,6 +124,7 @@ impl SiteGenerator {
     /// 2. Generate HTML pages from documents
     /// 3. Generate index page with post listings
     /// 4. Generate Atom feed
+    /// 5. Generate XML sitemap
     pub fn generate_site(&self) -> Result<(), Box<dyn std::error::Error>> {
         // Ensure output directory exists
         if !self.output_dir.exists() {
@@ -142,6 +143,9 @@ impl SiteGenerator {
 
         // Generate Atom feed
         super::feeds::generate_feed(&self.documents, &self.site_config, &self.output_dir)?;
+
+        // Generate XML sitemap
+        super::sitemap::generate_sitemap(&self.documents, &self.site_config, &self.output_dir)?;
 
         Ok(())
     }

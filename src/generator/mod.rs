@@ -7,12 +7,14 @@
 //! - `assets`: Asset copying and file management
 //! - `templates`: HTML template rendering and page generation
 //! - `feeds`: Atom feed generation
+//! - `sitemap`: XML sitemap generation
 
 pub mod core;
 pub mod markdown;
 pub mod assets;
 pub mod templates;
 pub mod feeds;
+pub mod sitemap;
 
 // Re-export the main SiteGenerator for backwards compatibility
 pub use core::SiteGenerator;

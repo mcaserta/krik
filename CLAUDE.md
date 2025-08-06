@@ -10,7 +10,8 @@ Fast Rust static site generator. Builds to `kk` executable.
 - i18n via `file.lang.md` (en, it, es, fr, de, pt, ja, zh, ru, ar)
 - Development server with live reload (can be disabled with `--no-live-reload`)
 - TOC generation, footnotes, scroll-to-top
-- Atom feeds, syntax highlighting
+- Atom feeds and XML sitemap generation
+- XML sitemap with multilingual support (`<xhtml:link>` alternate language declarations)
 - Mobile-friendly hamburger menu for responsive navigation
 - Site initialization with embedded content and themes (`kk init`)
 - Content creation commands for posts and pages (`kk post`, `kk page`)
