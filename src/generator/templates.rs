@@ -182,7 +182,7 @@ pub fn generate_page(
     context.insert("content", &processed_content);
 
     // Add navigation data
-    add_navigation_context(&mut context, document, all_documents, i18n);
+    add_navigation_context(&mut context, document, i18n);
 
     // Add language translations
     add_language_context(&mut context, document, all_documents);
@@ -279,7 +279,7 @@ pub fn generate_index(
 }
 
 /// Add navigation context for back links and breadcrumbs
-fn add_navigation_context(context: &mut Context, document: &Document, _all_documents: &[Document], i18n: &I18nManager) {
+fn add_navigation_context(context: &mut Context, document: &Document, i18n: &I18nManager) {
     // Add "Back to Home" link for posts
     if is_post(document) {
         context.insert("show_back_to_home", &true);

@@ -40,6 +40,7 @@
 //! - `content/site.toml` - Site configuration
 //! - `content/images/` - Images and assets (copied as-is)
 
+pub mod error;
 pub mod parser;
 pub mod theme;
 pub mod i18n;
@@ -50,6 +51,7 @@ pub mod init;
 pub mod content;
 pub mod cli;
 
+pub use error::*;
 pub use parser::*;
 pub use theme::*;
 pub use i18n::*;

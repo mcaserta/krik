@@ -1,11 +1,12 @@
-use crate::parser::{Document, extract_language_from_filename, parse_markdown_with_frontmatter};
+use crate::parser::{Document, extract_language_from_filename, parse_markdown_with_frontmatter_for_file};
+use crate::error::{KrikResult, KrikError, IoError, IoErrorKind};
 use pulldown_cmark::{html, Options, Parser};
 use regex::Regex;
 use std::path::Path;
 use walkdir::WalkDir;
 
 /// Scan files in the source directory and parse markdown documents
-pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResult<()> {
     for entry in WalkDir::new(source_dir)
         .follow_links(true)
         .into_iter()
@@ -24,9 +25,14 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> Result<()
         }
 
         // Read and parse the file
-        let content = std::fs::read_to_string(path)?;
+        let content = std::fs::read_to_string(path)
+            .map_err(|e| KrikError::Io(IoError {
+                kind: IoErrorKind::ReadFailed(e),
+                path: path.to_path_buf(),
+                context: "Reading markdown file".to_string(),
+            }))?;
         
-        match parse_markdown_with_frontmatter(&content) {
+        match parse_markdown_with_frontmatter_for_file(&content, path) {
             Ok((frontmatter, markdown_content)) => {
                 // Skip drafts
                 if frontmatter.draft.unwrap_or(false) {
@@ -34,12 +40,22 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> Result<()
                 }
 
                 // Extract language from filename
-                let filename_without_ext = path.file_stem().unwrap().to_string_lossy();
-                let (base_name, language) = extract_language_from_filename(&filename_without_ext);
+                let filename_without_ext = path.file_stem()
+                    .ok_or_else(|| KrikError::Io(IoError {
+                        kind: IoErrorKind::InvalidPath,
+                        path: path.to_path_buf(),
+                        context: "Extracting filename stem".to_string(),
+                    }))?
+                    .to_string_lossy();
+                let (base_name, language) = extract_language_from_filename(&filename_without_ext)?;
                 
                 // Determine relative path from source directory
                 let relative_path = path.strip_prefix(source_dir)
-                    .map_err(|_| format!("Failed to get relative path for: {}", path.display()))?;
+                    .map_err(|_| KrikError::Io(IoError {
+                        kind: IoErrorKind::InvalidPath,
+                        path: path.to_path_buf(),
+                        context: "Getting relative path from source directory".to_string(),
+                    }))?;
 
                 // Convert to HTML content
                 let html_content = markdown_to_html(&markdown_content);
@@ -55,6 +71,7 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> Result<()
                 documents.push(document);
             }
             Err(e) => {
+                // Log error but continue processing other files
                 eprintln!("Warning: Failed to parse {}: {}", path.display(), e);
                 continue;
             }

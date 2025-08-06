@@ -1,4 +1,5 @@
 use clap::{Arg, ArgMatches, Command};
+use crate::error::KrikResult;
 
 mod commands;
 
@@ -154,7 +155,7 @@ impl KrikCli {
     }
 
     /// Run the CLI application
-    pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn run(self) -> KrikResult<()> {
         match self.matches.subcommand() {
             Some(("server", server_matches)) => commands::handle_server(server_matches).await,
             Some(("init", init_matches)) => commands::handle_init(init_matches),

@@ -1,14 +1,20 @@
 use std::fs;
 use std::path::Path;
 use chrono::{Utc, DateTime};
+use crate::error::{KrikResult, KrikError, IoError, IoErrorKind, ContentError, ContentErrorKind};
 
 /// Create a new blog post in the content/posts directory
-pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&String>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&String>) -> KrikResult<()> {
     let posts_dir = content_dir.join("posts");
     
     // Create posts directory if it doesn't exist
     if !posts_dir.exists() {
-        fs::create_dir_all(&posts_dir)?;
+        fs::create_dir_all(&posts_dir)
+            .map_err(|e| KrikError::Io(IoError {
+                kind: IoErrorKind::WriteFailed(e),
+                path: posts_dir.clone(),
+                context: "Creating posts directory".to_string(),
+            }))?;
         println!("📁 Created directory: {}", posts_dir.display());
     }
     
@@ -23,17 +29,23 @@ pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&Str
     
     // Check if file already exists
     if file_path.exists() {
-        return Err(format!(
-            "Post file '{}' already exists. Use a different filename with --filename.",
-            file_path.display()
-        ).into());
+        return Err(KrikError::Content(ContentError {
+            kind: ContentErrorKind::DuplicateSlug(filename),
+            path: Some(file_path),
+            context: "Post file already exists. Use a different filename with --filename.".to_string(),
+        }));
     }
     
     // Generate post content with front matter
     let content = generate_post_content(title);
     
     // Write the file
-    fs::write(&file_path, content)?;
+    fs::write(&file_path, content)
+        .map_err(|e| KrikError::Io(IoError {
+            kind: IoErrorKind::WriteFailed(e),
+            path: file_path.clone(),
+            context: "Writing post content to file".to_string(),
+        }))?;
     
     println!("📝 Created new blog post: {}", file_path.display());
     println!("✨ You can now edit the file and add your content!");
@@ -42,12 +54,17 @@ pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&Str
 }
 
 /// Create a new page in the content/pages directory
-pub fn create_page(content_dir: &Path, title: &str, custom_filename: Option<&String>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn create_page(content_dir: &Path, title: &str, custom_filename: Option<&String>) -> KrikResult<()> {
     let pages_dir = content_dir.join("pages");
     
     // Create pages directory if it doesn't exist
     if !pages_dir.exists() {
-        fs::create_dir_all(&pages_dir)?;
+        fs::create_dir_all(&pages_dir)
+            .map_err(|e| KrikError::Io(IoError {
+                kind: IoErrorKind::WriteFailed(e),
+                path: pages_dir.clone(),
+                context: "Creating pages directory".to_string(),
+            }))?;
         println!("📁 Created directory: {}", pages_dir.display());
     }
     
@@ -62,17 +79,23 @@ pub fn create_page(content_dir: &Path, title: &str, custom_filename: Option<&Str
     
     // Check if file already exists
     if file_path.exists() {
-        return Err(format!(
-            "Page file '{}' already exists. Use a different filename with --filename.",
-            file_path.display()
-        ).into());
+        return Err(KrikError::Content(ContentError {
+            kind: ContentErrorKind::DuplicateSlug(filename),
+            path: Some(file_path),
+            context: "Page file already exists. Use a different filename with --filename.".to_string(),
+        }));
     }
     
     // Generate page content with front matter
     let content = generate_page_content(title);
     
     // Write the file
-    fs::write(&file_path, content)?;
+    fs::write(&file_path, content)
+        .map_err(|e| KrikError::Io(IoError {
+            kind: IoErrorKind::WriteFailed(e),
+            path: file_path.clone(),
+            context: "Writing page content to file".to_string(),
+        }))?;
     
     println!("📄 Created new page: {}", file_path.display());
     println!("✨ You can now edit the file and add your content!");

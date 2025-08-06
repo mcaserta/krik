@@ -2,6 +2,7 @@ use crate::parser::Document;
 use crate::theme::Theme;
 use crate::i18n::I18nManager;
 use crate::site::SiteConfig;
+use crate::error::{KrikResult, KrikError, ThemeError, ThemeErrorKind, GenerationError, GenerationErrorKind};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
@@ -75,14 +76,21 @@ impl SiteGenerator {
         source_dir: P,
         output_dir: P,
         theme_dir: Option<P>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
+    ) -> KrikResult<Self> {
         let source_dir = source_dir.as_ref().to_path_buf();
         let output_dir = output_dir.as_ref().to_path_buf();
         
         let theme = if let Some(theme_path) = theme_dir {
-            Theme::load_from_path(theme_path)?
+            let path = theme_path.as_ref().to_path_buf();
+            Theme::load_from_path(&path)
+                .map_err(|_| KrikError::Theme(ThemeError {
+                    kind: ThemeErrorKind::NotFound,
+                    theme_path: path.clone(),
+                    context: format!("Loading custom theme from {}", path.display()),
+                }))?
         } else {
-            Theme::load_from_path("themes/default").unwrap_or_else(|_| {
+            let default_path = PathBuf::from("themes/default");
+            Theme::load_from_path(&default_path).unwrap_or_else(|_| {
                 Theme {
                     config: crate::theme::ThemeConfig {
                         name: "default".to_string(),
@@ -92,7 +100,7 @@ impl SiteGenerator {
                         templates: HashMap::new(),
                     },
                     templates: tera::Tera::new("themes/default/templates/**/*").unwrap_or_default(),
-                    theme_path: PathBuf::from("themes/default"),
+                    theme_path: default_path,
                 }
             })
         };
@@ -113,8 +121,12 @@ impl SiteGenerator {
     }
 
     /// Scan files in the source directory and parse markdown documents
-    pub fn scan_files(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn scan_files(&mut self) -> KrikResult<()> {
         super::markdown::scan_files(&self.source_dir, &mut self.documents)
+            .map_err(|e| match e {
+                KrikError::Generation(gen_err) => KrikError::Generation(gen_err),
+                other => other,
+            })
     }
 
     /// Generate the complete static site
@@ -126,30 +138,80 @@ impl SiteGenerator {
     /// 4. Generate Atom feed
     /// 5. Generate XML sitemap
     /// 6. Generate robots.txt
-    pub fn generate_site(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn generate_site(&self) -> KrikResult<()> {
         // Ensure output directory exists
         if !self.output_dir.exists() {
-            std::fs::create_dir_all(&self.output_dir)?;
+            std::fs::create_dir_all(&self.output_dir)
+                .map_err(|e| KrikError::Generation(GenerationError {
+                    kind: GenerationErrorKind::OutputDirError(e),
+                    context: format!("Creating output directory: {}", self.output_dir.display()),
+                }))?;
         }
 
         // Copy assets and non-markdown files
-        super::assets::copy_non_markdown_files(&self.source_dir, &self.output_dir)?;
-        super::assets::copy_theme_assets(&self.theme, &self.output_dir)?;
+        super::assets::copy_non_markdown_files(&self.source_dir, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::AssetCopyError {
+                    source: self.source_dir.clone(),
+                    target: self.output_dir.clone(),
+                    error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset copy failed: {}", e)),
+                },
+                context: "Copying non-markdown assets".to_string(),
+            }))?;
+        
+        super::assets::copy_theme_assets(&self.theme, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::AssetCopyError {
+                    source: self.theme.theme_path.clone(),
+                    target: self.output_dir.clone(),
+                    error: std::io::Error::new(std::io::ErrorKind::Other, format!("Theme asset copy failed: {}", e)),
+                },
+                context: "Copying theme assets".to_string(),
+            }))?;
 
         // Generate HTML pages
-        super::templates::generate_pages(&self.documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)?;
+        super::templates::generate_pages(&self.documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    format!("Page generation failed: {}", e)
+                )),
+                context: "Generating HTML pages from documents".to_string(),
+            }))?;
 
         // Generate index page
-        super::templates::generate_index(&self.documents, &self.theme, &self.site_config, &self.output_dir)?;
+        super::templates::generate_index(&self.documents, &self.theme, &self.site_config, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    format!("Index page generation failed: {}", e)
+                )),
+                context: "Generating index page with post listings".to_string(),
+            }))?;
 
         // Generate Atom feed
-        super::feeds::generate_feed(&self.documents, &self.site_config, &self.output_dir)?;
+        super::feeds::generate_feed(&self.documents, &self.site_config, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::FeedError(format!("Atom feed generation failed: {}", e)),
+                context: "Generating Atom feed for posts".to_string(),
+            }))?;
 
         // Generate XML sitemap
-        super::sitemap::generate_sitemap(&self.documents, &self.site_config, &self.output_dir)?;
+        super::sitemap::generate_sitemap(&self.documents, &self.site_config, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::SitemapError(format!("XML sitemap generation failed: {}", e)),
+                context: "Generating XML sitemap with multilingual support".to_string(),
+            }))?;
 
         // Generate robots.txt
-        super::robots::generate_robots(&self.site_config, &self.output_dir)?;
+        super::robots::generate_robots(&self.site_config, &self.output_dir)
+            .map_err(|e| KrikError::Generation(GenerationError {
+                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    format!("robots.txt generation failed: {}", e)
+                )),
+                context: "Generating robots.txt with sitemap reference".to_string(),
+            }))?;
 
         Ok(())
     }

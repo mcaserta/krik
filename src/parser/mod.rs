@@ -1,6 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use crate::error::{KrikResult, KrikError, MarkdownError, MarkdownErrorKind};
+use std::path::Path;
 
 /// Front matter metadata extracted from the YAML header of Markdown files.
 ///
@@ -88,13 +90,28 @@ pub struct Document {
 /// assert!(markdown.contains("Hello World"));
 /// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
-pub fn parse_markdown_with_frontmatter(content: &str) -> Result<(FrontMatter, String), Box<dyn std::error::Error>> {
+pub fn parse_markdown_with_frontmatter(content: &str) -> KrikResult<(FrontMatter, String)> {
+    parse_markdown_with_frontmatter_for_file(content, Path::new("<unknown>"))
+}
+
+/// Parses a Markdown document with YAML front matter for a specific file.
+///
+/// Same as `parse_markdown_with_frontmatter` but provides better error context
+/// by including the file path in error messages.
+pub fn parse_markdown_with_frontmatter_for_file(content: &str, file_path: &Path) -> KrikResult<(FrontMatter, String)> {
     if let Some(stripped) = content.strip_prefix("---\n") {
         if let Some(end_pos) = stripped.find("\n---\n") {
             let yaml_content = &stripped[..end_pos];
             let markdown_content = &stripped[end_pos + 5..];
             
-            let front_matter: FrontMatter = serde_yaml::from_str(yaml_content)?;
+            let front_matter: FrontMatter = serde_yaml::from_str(yaml_content)
+                .map_err(|e| KrikError::Markdown(MarkdownError {
+                    kind: MarkdownErrorKind::InvalidFrontMatter(e),
+                    file: file_path.to_path_buf(),
+                    line: None,
+                    column: None,
+                    context: "Parsing YAML front matter".to_string(),
+                }))?;
             return Ok((front_matter, markdown_content.to_string()));
         }
     }
@@ -109,14 +126,27 @@ pub fn parse_markdown_with_frontmatter(content: &str) -> Result<(FrontMatter, St
     }, content.to_string()))
 }
 
-pub fn extract_language_from_filename(filename: &str) -> (String, String) {
+/// Supported language codes
+const SUPPORTED_LANGUAGES: &[&str] = &["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"];
+
+pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, String)> {
     // filename is already without extension (e.g., "sample.it" or "sample")
     if let Some(dot_pos) = filename.rfind('.') {
         let base_part = &filename[..dot_pos];
         let potential_lang = &filename[dot_pos + 1..];
         if potential_lang.len() == 2 {
-            return (base_part.to_string(), potential_lang.to_string());
+            // Validate language code
+            if !SUPPORTED_LANGUAGES.contains(&potential_lang) {
+                return Err(KrikError::Markdown(MarkdownError {
+                    kind: MarkdownErrorKind::InvalidLanguage(potential_lang.to_string()),
+                    file: Path::new(filename).to_path_buf(),
+                    line: None,
+                    column: None,
+                    context: format!("Extracting language from filename: {}", filename),
+                }));
+            }
+            return Ok((base_part.to_string(), potential_lang.to_string()));
         }
     }
-    (filename.to_string(), "en".to_string())
+    Ok((filename.to_string(), "en".to_string()))
 }
