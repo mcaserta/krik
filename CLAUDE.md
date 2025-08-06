@@ -10,8 +10,9 @@ Fast Rust static site generator. Builds to `kk` executable.
 - i18n via `file.lang.md` (en, it, es, fr, de, pt, ja, zh, ru, ar)
 - Development server with live reload (can be disabled with `--no-live-reload`)
 - TOC generation, footnotes, scroll-to-top
-- Atom feeds and XML sitemap generation
+- Atom feeds, XML sitemap, and robots.txt generation
 - XML sitemap with multilingual support (`<xhtml:link>` alternate language declarations)
+- SEO-optimized robots.txt with sitemap reference and bot management
 - Mobile-friendly hamburger menu for responsive navigation
 - Site initialization with embedded content and themes (`kk init`)
 - Content creation commands for posts and pages (`kk post`, `kk page`)
@@ -60,3 +61,7 @@ template
   pushing to github and crates.io
 - Don't forget to also stage and commit the claude.md file when releasing the
   software
+
+## Documentation Maintenance
+
+- When updating the documentation, also update the krik site contents because they also contain documentation and examples

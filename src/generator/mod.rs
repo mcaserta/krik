@@ -8,6 +8,7 @@
 //! - `templates`: HTML template rendering and page generation
 //! - `feeds`: Atom feed generation
 //! - `sitemap`: XML sitemap generation
+//! - `robots`: robots.txt generation
 
 pub mod core;
 pub mod markdown;
@@ -15,6 +16,7 @@ pub mod assets;
 pub mod templates;
 pub mod feeds;
 pub mod sitemap;
+pub mod robots;
 
 // Re-export the main SiteGenerator for backwards compatibility
 pub use core::SiteGenerator;

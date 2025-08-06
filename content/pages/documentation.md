@@ -249,9 +249,13 @@ Automatically appears on longer pages with smart visibility:
 - Theme-aware styling
 - Mobile-optimized size and positioning
 
-### Atom Feed Generation
+### SEO and Discovery
 
-Krik automatically generates an RFC 4287 compliant Atom feed at `feed.xml`:
+Krik automatically generates SEO-optimized files for search engines and web crawlers:
+
+#### Atom Feed Generation
+
+Automatically generates an RFC 4287 compliant Atom feed at `feed.xml`:
 
 **Features:**
 
@@ -260,6 +264,31 @@ Krik automatically generates an RFC 4287 compliant Atom feed at `feed.xml`:
 - Full HTML content with proper XML escaping
 - xml:base support when `base_url` is configured
 - Proper metadata (titles, dates, IDs)
+
+#### XML Sitemap Generation
+
+Automatically generates a comprehensive XML sitemap at `sitemap.xml`:
+
+**Features:**
+
+- XML Schema validation with proper namespaces
+- Multilingual support with `<xhtml:link>` alternate language declarations
+- One entry per content piece with canonical URLs (prefers English)
+- Proper priority and change frequency settings
+- Excludes draft content automatically
+
+#### robots.txt Generation
+
+Automatically generates SEO-optimized robots.txt:
+
+**Features:**
+
+- References sitemap.xml location
+- Allows all content by default (good for most static sites)
+- Blocks access to system files and build directories
+- Includes bot-specific rules for major search engines
+- Blocks known problematic crawlers/scrapers
+- Includes polite crawl delay settings
 
 ## Theme System
 
@@ -360,6 +389,8 @@ Krik generates a complete static site with:
 - **Static assets**: Images, CSS, etc. copied as-is
 - **Theme assets**: CSS and JavaScript from theme directory
 - **Atom feed**: `feed.xml` with proper link resolution
+- **XML sitemap**: `sitemap.xml` with multilingual support
+- **robots.txt**: SEO-optimized with sitemap reference
 - **Navigation**: TOCs, footnote links, scroll-to-top buttons
 
 ### Example Output Structure
@@ -368,6 +399,8 @@ Krik generates a complete static site with:
 _site/
 ├── index.html          # Homepage
 ├── feed.xml           # Atom feed
+├── sitemap.xml        # XML sitemap
+├── robots.txt         # SEO robots file
 ├── assets/            # Theme assets
 │   ├── css/main.css
 │   └── js/main.js

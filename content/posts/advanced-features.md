@@ -110,18 +110,22 @@ The key aspects of this implementation:
 - Provides smooth CSS transitions
 - Works across page reloads
 
-## Feed Generation Details
+## SEO and Discovery Features
 
-Krik automatically generates an Atom feed (`feed.xml`) that includes:
+Krik automatically generates several files to optimize search engine discovery and indexing:
 
-### Feed Metadata
+### Atom Feed Generation
+
+Automatically generates an Atom feed (`feed.xml`) that includes:
+
+#### Feed Metadata
 
 - Site title from `site.toml`
 - Last updated timestamp
 - Self-referencing links
 - Unique feed ID
 
-### Post Entries
+#### Post Entries
 
 - Only posts (not pages) are included
 - Limited to 20 most recent posts
@@ -129,7 +133,7 @@ Krik automatically generates an Atom feed (`feed.xml`) that includes:
 - Individual post IDs and timestamps
 - Tag information (when available)
 
-### Link Resolution
+#### Link Resolution
 
 When `base_url` is configured in `site.toml`, Krik uses the `xml:base` attribute
 for proper link resolution:
@@ -140,6 +144,60 @@ for proper link resolution:
 
 This ensures that relative links in your posts work correctly when viewed in
 feed readers.
+
+### XML Sitemap Generation
+
+Automatically generates a comprehensive XML sitemap (`sitemap.xml`):
+
+#### Sitemap Features
+
+- **XML Schema Validation**: Includes proper namespace declarations
+- **Multilingual Support**: Uses `<xhtml:link>` for alternate language versions
+- **Canonical URLs**: One entry per content piece (prefers English)
+- **SEO Optimization**: Proper priorities and change frequencies
+- **Draft Exclusion**: Automatically excludes draft content
+
+#### Example Sitemap Entry
+
+```xml
+<url>
+  <loc>https://example.com/posts/welcome.html</loc>
+  <lastmod>2024-01-15</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.8</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://example.com/posts/welcome.html" />
+  <xhtml:link rel="alternate" hreflang="it" href="https://example.com/posts/welcome.it.html" />
+</url>
+```
+
+### robots.txt Generation
+
+Automatically generates SEO-optimized robots.txt:
+
+#### robots.txt Features
+
+- **Sitemap Reference**: Points to sitemap.xml location
+- **Best Practice Rules**: Allows content while blocking system files
+- **Bot Management**: Specific rules for major search engines
+- **Security**: Blocks known problematic crawlers
+- **Politeness**: Includes crawl delay settings
+
+#### Example robots.txt
+
+```
+User-agent: *
+Allow: /
+
+# Disallow common non-content directories
+Disallow: /.*
+Disallow: /_*
+
+# Sitemap location
+Sitemap: https://example.com/sitemap.xml
+
+# Crawl delay (optional - be nice to servers)
+Crawl-delay: 1
+```
 
 ## Performance Considerations
 

@@ -28,6 +28,7 @@ theming ✨
 - Development server with live reload and file watching
 - RFC 4287 compliant Atom feeds with xml:base support
 - XML sitemap generation with multilingual support (`<xhtml:link>` alternate language declarations)
+- SEO-optimized robots.txt with sitemap reference and bot management
 - Table of contents generation with `toc: true`
 - Bidirectional footnote navigation with smooth scrolling
 - Smart scroll-to-top button and theme-aware syntax highlighting

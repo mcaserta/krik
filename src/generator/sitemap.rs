@@ -32,9 +32,9 @@ fn generate_sitemap_xml(
 ) -> Result<String, Box<dyn std::error::Error>> {
     let mut sitemap = String::new();
     
-    // XML declaration and urlset opening with xhtml namespace
+    // XML declaration and urlset opening with xhtml namespace and schema location
     sitemap.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    sitemap.push_str("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n");
+    sitemap.push_str("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">\n");
 
     // Add home page entry
     if let Some(ref base_url) = site_config.base_url {
