@@ -82,29 +82,32 @@
     <li><a href="#heading-24">Table of Contents</a></li>
     <li><a href="#heading-25">Footnotes</a></li>
     <li><a href="#heading-26">Scroll-to-Top Button</a></li>
-    <li><a href="#heading-27">Atom Feed Generation</a></li>
-  <li><a href="#heading-28">Theme System</a></li>
-    <li><a href="#heading-29">Light/Dark Mode</a></li>
-    <li><a href="#heading-30">Customization</a></li>
-  <li><a href="#heading-31">Command Line Reference</a></li>
-    <li><a href="#heading-32">Main Commands</a></li>
-    <li><a href="#heading-33">Global Options</a></li>
-    <li><a href="#heading-34">Init Command</a></li>
-    <li><a href="#heading-35">Post/Page Commands</a></li>
-    <li><a href="#heading-36">Server Command</a></li>
-  <li><a href="#heading-37">Generated Output</a></li>
-    <li><a href="#heading-38">Example Output Structure</a></li>
-  <li><a href="#heading-39">Best Practices</a></li>
-    <li><a href="#heading-40">Content Organization</a></li>
-    <li><a href="#heading-41">Front Matter</a></li>
-    <li><a href="#heading-42">Performance</a></li>
-    <li><a href="#heading-43">Accessibility</a></li>
-  <li><a href="#heading-44">Deployment</a></li>
-    <li><a href="#heading-45">GitHub Pages</a></li>
-      <li><a href="#heading-46">Setup Steps</a></li>
-      <li><a href="#heading-47">What the Workflow Does</a></li>
-      <li><a href="#heading-48">Workflow Features</a></li>
-      <li><a href="#heading-49">Repository Structure</a></li>
+    <li><a href="#heading-27">SEO and Discovery</a></li>
+      <li><a href="#heading-28">Atom Feed Generation</a></li>
+      <li><a href="#heading-29">XML Sitemap Generation</a></li>
+      <li><a href="#heading-30">robots.txt Generation</a></li>
+  <li><a href="#heading-31">Theme System</a></li>
+    <li><a href="#heading-32">Light/Dark Mode</a></li>
+    <li><a href="#heading-33">Customization</a></li>
+  <li><a href="#heading-34">Command Line Reference</a></li>
+    <li><a href="#heading-35">Main Commands</a></li>
+    <li><a href="#heading-36">Global Options</a></li>
+    <li><a href="#heading-37">Init Command</a></li>
+    <li><a href="#heading-38">Post/Page Commands</a></li>
+    <li><a href="#heading-39">Server Command</a></li>
+  <li><a href="#heading-40">Generated Output</a></li>
+    <li><a href="#heading-41">Example Output Structure</a></li>
+  <li><a href="#heading-42">Best Practices</a></li>
+    <li><a href="#heading-43">Content Organization</a></li>
+    <li><a href="#heading-44">Front Matter</a></li>
+    <li><a href="#heading-45">Performance</a></li>
+    <li><a href="#heading-46">Accessibility</a></li>
+  <li><a href="#heading-47">Deployment</a></li>
+    <li><a href="#heading-48">GitHub Pages</a></li>
+      <li><a href="#heading-49">Setup Steps</a></li>
+      <li><a href="#heading-50">What the Workflow Does</a></li>
+      <li><a href="#heading-51">Workflow Features</a></li>
+      <li><a href="#heading-52">Repository Structure</a></li>
 </ul>
             </div>
         </aside>
@@ -297,8 +300,10 @@ toc: true
 <li>Theme-aware styling</li>
 <li>Mobile-optimized size and positioning</li>
 </ul>
-<h3 id="heading-27">Atom Feed Generation</h3>
-<p>Krik automatically generates an RFC 4287 compliant Atom feed at <code>feed.xml</code>:</p>
+<h3 id="heading-27">SEO and Discovery</h3>
+<p>Krik automatically generates SEO-optimized files for search engines and web crawlers:</p>
+<h4 id="heading-28">Atom Feed Generation</h4>
+<p>Automatically generates an RFC 4287 compliant Atom feed at <code>feed.xml</code>:</p>
 <p><strong>Features:</strong></p>
 <ul>
 <li>Only includes posts (content with <code>post</code> template)</li>
@@ -307,8 +312,29 @@ toc: true
 <li>xml:base support when <code>base_url</code> is configured</li>
 <li>Proper metadata (titles, dates, IDs)</li>
 </ul>
-<h2 id="heading-28">Theme System</h2>
-<h3 id="heading-29">Light/Dark Mode</h3>
+<h4 id="heading-29">XML Sitemap Generation</h4>
+<p>Automatically generates a comprehensive XML sitemap at <code>sitemap.xml</code>:</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>XML Schema validation with proper namespaces</li>
+<li>Multilingual support with <code>&lt;xhtml:link&gt;</code> alternate language declarations</li>
+<li>One entry per content piece with canonical URLs (prefers English)</li>
+<li>Proper priority and change frequency settings</li>
+<li>Excludes draft content automatically</li>
+</ul>
+<h4 id="heading-30">robots.txt Generation</h4>
+<p>Automatically generates SEO-optimized robots.txt:</p>
+<p><strong>Features:</strong></p>
+<ul>
+<li>References sitemap.xml location</li>
+<li>Allows all content by default (good for most static sites)</li>
+<li>Blocks access to system files and build directories</li>
+<li>Includes bot-specific rules for major search engines</li>
+<li>Blocks known problematic crawlers/scrapers</li>
+<li>Includes polite crawl delay settings</li>
+</ul>
+<h2 id="heading-31">Theme System</h2>
+<h3 id="heading-32">Light/Dark Mode</h3>
 <p><strong>Automatic Detection:</strong></p>
 <ul>
 <li>Detects OS theme preference via CSS <code>prefers-color-scheme</code></li>
@@ -322,7 +348,7 @@ toc: true
 <li>Overrides automatic detection</li>
 <li>Smooth 0.3s transitions</li>
 </ul>
-<h3 id="heading-30">Customization</h3>
+<h3 id="heading-33">Customization</h3>
 <p>The theme uses CSS custom properties for easy customization:</p>
 <pre><code class="language-css">:root {
   --bg-color: #ffffff;
@@ -331,15 +357,15 @@ toc: true
   /* ... more variables */
 }
 </code></pre>
-<h2 id="heading-31">Command Line Reference</h2>
-<h3 id="heading-32">Main Commands</h3>
+<h2 id="heading-34">Command Line Reference</h2>
+<h3 id="heading-35">Main Commands</h3>
 <pre><code class="language-bash">kk [OPTIONS]              # Generate static site
 kk init [DIR]             # Initialize new site
 kk post [TITLE]           # Create new blog post
 kk page [TITLE]           # Create new page
 kk server [OPTIONS]       # Start development server
 </code></pre>
-<h3 id="heading-33">Global Options</h3>
+<h3 id="heading-36">Global Options</h3>
 <table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
 <tr><td><code>-i, --input &lt;DIR&gt;</code></td><td>Input directory</td><td><code>content</code></td></tr>
 <tr><td><code>-o, --output &lt;DIR&gt;</code></td><td>Output directory</td><td><code>_site</code></td></tr>
@@ -347,14 +373,14 @@ kk server [OPTIONS]       # Start development server
 <tr><td><code>-h, --help</code></td><td>Show help</td><td></td></tr>
 <tr><td><code>-V, --version</code></td><td>Show version</td><td></td></tr>
 </tbody></table>
-<h3 id="heading-34">Init Command</h3>
+<h3 id="heading-37">Init Command</h3>
 <pre><code class="language-bash">kk init [DIR] [OPTIONS]
 </code></pre>
 <table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>[DIR]</code></td><td>Directory to initialize (default: current directory)</td></tr>
 <tr><td><code>-f, --force</code></td><td>Overwrite existing files</td></tr>
 </tbody></table>
-<h3 id="heading-35">Post/Page Commands</h3>
+<h3 id="heading-38">Post/Page Commands</h3>
 <pre><code class="language-bash">kk post [TITLE] [OPTIONS]
 kk page [TITLE] [OPTIONS]
 </code></pre>
@@ -363,7 +389,7 @@ kk page [TITLE] [OPTIONS]
 <tr><td><code>-f, --filename &lt;NAME&gt;</code></td><td>Custom filename (without .md)</td><td>Generated from title</td></tr>
 <tr><td><code>--content-dir &lt;DIR&gt;</code></td><td>Content directory path</td><td><code>content</code></td></tr>
 </tbody></table>
-<h3 id="heading-36">Server Command</h3>
+<h3 id="heading-39">Server Command</h3>
 <pre><code class="language-bash">kk server [OPTIONS]
 </code></pre>
 <table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
@@ -373,7 +399,7 @@ kk page [TITLE] [OPTIONS]
 <tr><td><code>-p, --port &lt;PORT&gt;</code></td><td>Server port</td><td><code>3000</code></td></tr>
 <tr><td><code>--no-live-reload</code></td><td>Disable live reload</td><td>Live reload enabled</td></tr>
 </tbody></table>
-<h2 id="heading-37">Generated Output</h2>
+<h2 id="heading-40">Generated Output</h2>
 <p>Krik generates a complete static site with:</p>
 <ul>
 <li><strong>HTML files</strong>: Preserving directory structure</li>
@@ -381,12 +407,16 @@ kk page [TITLE] [OPTIONS]
 <li><strong>Static assets</strong>: Images, CSS, etc. copied as-is</li>
 <li><strong>Theme assets</strong>: CSS and JavaScript from theme directory</li>
 <li><strong>Atom feed</strong>: <code>feed.xml</code> with proper link resolution</li>
+<li><strong>XML sitemap</strong>: <code>sitemap.xml</code> with multilingual support</li>
+<li><strong>robots.txt</strong>: SEO-optimized with sitemap reference</li>
 <li><strong>Navigation</strong>: TOCs, footnote links, scroll-to-top buttons</li>
 </ul>
-<h3 id="heading-38">Example Output Structure</h3>
+<h3 id="heading-41">Example Output Structure</h3>
 <pre><code>_site/
 ├── index.html          # Homepage
 ├── feed.xml           # Atom feed
+├── sitemap.xml        # XML sitemap
+├── robots.txt         # SEO robots file
 ├── assets/            # Theme assets
 │   ├── css/main.css
 │   └── js/main.js
@@ -398,41 +428,41 @@ kk page [TITLE] [OPTIONS]
 └── images/
     └── logo.png       # Static assets
 </code></pre>
-<h2 id="heading-39">Best Practices</h2>
-<h3 id="heading-40">Content Organization</h3>
+<h2 id="heading-42">Best Practices</h2>
+<h3 id="heading-43">Content Organization</h3>
 <ul>
 <li>Use <code>posts/</code> for blog entries and time-sensitive content</li>
 <li>Use <code>pages/</code> for static pages like About, Contact, etc.</li>
 <li>Keep assets organized in subdirectories</li>
 <li>Use consistent naming conventions for translations</li>
 </ul>
-<h3 id="heading-41">Front Matter</h3>
+<h3 id="heading-44">Front Matter</h3>
 <ul>
 <li>Always include a <code>title</code> for better navigation</li>
 <li>Use <code>date</code> for posts to ensure proper chronological ordering</li>
 <li>Add <code>tags</code> to posts for better categorization</li>
 <li>Enable <code>toc</code> for longer articles with multiple sections</li>
 </ul>
-<h3 id="heading-42">Performance</h3>
+<h3 id="heading-45">Performance</h3>
 <ul>
 <li>Optimize images before adding to content</li>
 <li>Use appropriate image formats (WebP when possible)</li>
 <li>Keep individual posts/pages to reasonable lengths</li>
 <li>Use drafts (<code>draft: true</code>) for work-in-progress content</li>
 </ul>
-<h3 id="heading-43">Accessibility</h3>
+<h3 id="heading-46">Accessibility</h3>
 <ul>
 <li>Use proper heading hierarchy (H1 → H2 → H3)</li>
 <li>Include alt text for images</li>
 <li>Ensure good color contrast in custom themes</li>
 <li>Test with keyboard navigation</li>
 </ul>
-<h2 id="heading-44">Deployment</h2>
-<h3 id="heading-45">GitHub Pages</h3>
+<h2 id="heading-47">Deployment</h2>
+<h3 id="heading-48">GitHub Pages</h3>
 <p>You can automatically deploy your Krik site to GitHub Pages using GitHub
 Actions. This workflow will build and deploy your site whenever you push to the
 main branch.</p>
-<h4 id="heading-46">Setup Steps</h4>
+<h4 id="heading-49">Setup Steps</h4>
 <ol>
 <li><strong>Create the workflow file</strong>: Add <code>.github/workflows/build-and-deploy.yml</code> to
 your repository:</li>
@@ -515,7 +545,7 @@ with proper structure</p>
 <p><strong>Deploy</strong>: Push to your main branch to trigger the deployment</p>
 </li>
 </ol>
-<h4 id="heading-47">What the Workflow Does</h4>
+<h4 id="heading-50">What the Workflow Does</h4>
 <p>The GitHub Actions workflow automatically:</p>
 <ul>
 <li><strong>Installs dependencies</strong>: Sets up Rust toolchain and installs Krik from
@@ -526,7 +556,7 @@ crates.io</li>
 <li><strong>Adds .nojekyll</strong>: Prevents GitHub from processing files with Jekyll</li>
 <li><strong>Pushes changes</strong>: Commits and pushes the generated site</li>
 </ul>
-<h4 id="heading-48">Workflow Features</h4>
+<h4 id="heading-51">Workflow Features</h4>
 <ul>
 <li><strong>Automatic deployment</strong>: Triggers on every push to main branch</li>
 <li><strong>Manual trigger</strong>: Can be run manually via GitHub Actions interface</li>
@@ -534,7 +564,7 @@ crates.io</li>
 <li><strong>Clean deployment</strong>: Removes old files before deploying new ones</li>
 <li><strong>Skip empty deployments</strong>: Only commits when there are actual changes</li>
 </ul>
-<h4 id="heading-49">Repository Structure</h4>
+<h4 id="heading-52">Repository Structure</h4>
 <p>Your repository should look like this:</p>
 <pre><code>your-repository/
 ├── .github/

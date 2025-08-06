@@ -63,17 +63,24 @@
     <li><a href="#heading-5">Advanced Markdown Features</a></li>
       <li><a href="#heading-6">Mixed Content Types</a></li>
       <li><a href="#heading-7">Code with Explanation</a></li>
-  <li><a href="#heading-8">Feed Generation Details</a></li>
-    <li><a href="#heading-9">Feed Metadata</a></li>
-    <li><a href="#heading-10">Post Entries</a></li>
-    <li><a href="#heading-11">Link Resolution</a></li>
-  <li><a href="#heading-12">Performance Considerations</a></li>
-    <li><a href="#heading-13">Build Performance</a></li>
-    <li><a href="#heading-14">Runtime Performance</a></li>
-  <li><a href="#heading-15">Accessibility Features</a></li>
-    <li><a href="#heading-16">Semantic Structure</a></li>
-    <li><a href="#heading-17">Interactive Elements</a></li>
-    <li><a href="#heading-18">Content Accessibility</a></li>
+  <li><a href="#heading-8">SEO and Discovery Features</a></li>
+    <li><a href="#heading-9">Atom Feed Generation</a></li>
+      <li><a href="#heading-10">Feed Metadata</a></li>
+      <li><a href="#heading-11">Post Entries</a></li>
+      <li><a href="#heading-12">Link Resolution</a></li>
+    <li><a href="#heading-13">XML Sitemap Generation</a></li>
+      <li><a href="#heading-14">Sitemap Features</a></li>
+      <li><a href="#heading-15">Example Sitemap Entry</a></li>
+    <li><a href="#heading-16">robots.txt Generation</a></li>
+      <li><a href="#heading-17">robots.txt Features</a></li>
+      <li><a href="#heading-18">Example robots.txt</a></li>
+  <li><a href="#heading-19">Performance Considerations</a></li>
+    <li><a href="#heading-20">Build Performance</a></li>
+    <li><a href="#heading-21">Runtime Performance</a></li>
+  <li><a href="#heading-22">Accessibility Features</a></li>
+    <li><a href="#heading-23">Semantic Structure</a></li>
+    <li><a href="#heading-24">Interactive Elements</a></li>
+    <li><a href="#heading-25">Content Accessibility</a></li>
 </ul>
             </div>
         </aside>
@@ -185,16 +192,18 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Provides smooth CSS transitions</li>
 <li>Works across page reloads</li>
 </ul>
-<h2 id="heading-8">Feed Generation Details</h2>
-<p>Krik automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
-<h3 id="heading-9">Feed Metadata</h3>
+<h2 id="heading-8">SEO and Discovery Features</h2>
+<p>Krik automatically generates several files to optimize search engine discovery and indexing:</p>
+<h3 id="heading-9">Atom Feed Generation</h3>
+<p>Automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
+<h4 id="heading-10">Feed Metadata</h4>
 <ul>
 <li>Site title from <code>site.toml</code></li>
 <li>Last updated timestamp</li>
 <li>Self-referencing links</li>
 <li>Unique feed ID</li>
 </ul>
-<h3 id="heading-10">Post Entries</h3>
+<h4 id="heading-11">Post Entries</h4>
 <ul>
 <li>Only posts (not pages) are included</li>
 <li>Limited to 20 most recent posts</li>
@@ -202,15 +211,59 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Individual post IDs and timestamps</li>
 <li>Tag information (when available)</li>
 </ul>
-<h3 id="heading-11">Link Resolution</h3>
+<h4 id="heading-12">Link Resolution</h4>
 <p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute
 for proper link resolution:</p>
 <pre><code class="language-xml">&lt;feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com"&gt;
 </code></pre>
 <p>This ensures that relative links in your posts work correctly when viewed in
 feed readers.</p>
-<h2 id="heading-12">Performance Considerations</h2>
-<h3 id="heading-13">Build Performance</h3>
+<h3 id="heading-13">XML Sitemap Generation</h3>
+<p>Automatically generates a comprehensive XML sitemap (<code>sitemap.xml</code>):</p>
+<h4 id="heading-14">Sitemap Features</h4>
+<ul>
+<li><strong>XML Schema Validation</strong>: Includes proper namespace declarations</li>
+<li><strong>Multilingual Support</strong>: Uses <code>&lt;xhtml:link&gt;</code> for alternate language versions</li>
+<li><strong>Canonical URLs</strong>: One entry per content piece (prefers English)</li>
+<li><strong>SEO Optimization</strong>: Proper priorities and change frequencies</li>
+<li><strong>Draft Exclusion</strong>: Automatically excludes draft content</li>
+</ul>
+<h4 id="heading-15">Example Sitemap Entry</h4>
+<pre><code class="language-xml">&lt;url&gt;
+  &lt;loc&gt;https://example.com/posts/welcome.html&lt;/loc&gt;
+  &lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+  &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+  &lt;priority&gt;0.8&lt;/priority&gt;
+  &lt;xhtml:link rel="alternate" hreflang="en" href="https://example.com/posts/welcome.html" /&gt;
+  &lt;xhtml:link rel="alternate" hreflang="it" href="https://example.com/posts/welcome.it.html" /&gt;
+&lt;/url&gt;
+</code></pre>
+<h3 id="heading-16">robots.txt Generation</h3>
+<p>Automatically generates SEO-optimized robots.txt:</p>
+<h4 id="heading-17">robots.txt Features</h4>
+<ul>
+<li><strong>Sitemap Reference</strong>: Points to sitemap.xml location</li>
+<li><strong>Best Practice Rules</strong>: Allows content while blocking system files</li>
+<li><strong>Bot Management</strong>: Specific rules for major search engines</li>
+<li><strong>Security</strong>: Blocks known problematic crawlers</li>
+<li><strong>Politeness</strong>: Includes crawl delay settings</li>
+</ul>
+<h4 id="heading-18">Example robots.txt</h4>
+<pre><code>User-agent: *
+Allow: /
+
+# Disallow common non-content directories
+Disallow: /.*
+Disallow: /_*
+
+# Sitemap location
+Sitemap: https://example.com/sitemap.xml
+
+# Crawl delay (optional - be nice to servers)
+Crawl-delay: 1
+</code></pre>
+<h2 id="heading-19">Performance Considerations</h2>
+<h3 id="heading-20">Build Performance</h3>
 <p>Krik is designed for speed:</p>
 <ul>
 <li><strong>Rust Performance</strong>: Native speed with zero-cost abstractions</li>
@@ -218,7 +271,7 @@ feed readers.</p>
 <li><strong>Incremental Building</strong>: Only processes changed files (planned feature)</li>
 <li><strong>Memory Efficiency</strong>: Streaming processing for large sites</li>
 </ul>
-<h3 id="heading-14">Runtime Performance</h3>
+<h3 id="heading-21">Runtime Performance</h3>
 <p>The generated sites are optimized for performance:</p>
 <ul>
 <li><strong>Minimal CSS</strong>: No framework bloat, only necessary styles</li>
@@ -226,21 +279,21 @@ feed readers.</p>
 <li><strong>Responsive Images</strong>: Proper sizing and format recommendations</li>
 <li><strong>Static Assets</strong>: Everything is static, no server-side processing</li>
 </ul>
-<h2 id="heading-15">Accessibility Features</h2>
+<h2 id="heading-22">Accessibility Features</h2>
 <p>Krik generates accessible HTML by default:</p>
-<h3 id="heading-16">Semantic Structure</h3>
+<h3 id="heading-23">Semantic Structure</h3>
 <ul>
 <li>Proper heading hierarchy (H1 → H2 → H3)</li>
 <li>Landmark elements (nav, main, aside)</li>
 <li>List structures for navigation</li>
 </ul>
-<h3 id="heading-17">Interactive Elements</h3>
+<h3 id="heading-24">Interactive Elements</h3>
 <ul>
 <li>ARIA labels on buttons and controls</li>
 <li>Focus indicators for keyboard navigation</li>
 <li>Skip links for screen readers (planned)</li>
 </ul>
-<h3 id="heading-18">Content Accessibility</h3>
+<h3 id="heading-25">Content Accessibility</h3>
 <ul>
 <li>Alt text support for images</li>
 <li>Table headers and captions</li>

@@ -309,16 +309,18 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Provides smooth CSS transitions</li>
 <li>Works across page reloads</li>
 </ul>
-<h2>Feed Generation Details</h2>
-<p>Krik automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
-<h3>Feed Metadata</h3>
+<h2>SEO and Discovery Features</h2>
+<p>Krik automatically generates several files to optimize search engine discovery and indexing:</p>
+<h3>Atom Feed Generation</h3>
+<p>Automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
+<h4>Feed Metadata</h4>
 <ul>
 <li>Site title from <code>site.toml</code></li>
 <li>Last updated timestamp</li>
 <li>Self-referencing links</li>
 <li>Unique feed ID</li>
 </ul>
-<h3>Post Entries</h3>
+<h4>Post Entries</h4>
 <ul>
 <li>Only posts (not pages) are included</li>
 <li>Limited to 20 most recent posts</li>
@@ -326,13 +328,57 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Individual post IDs and timestamps</li>
 <li>Tag information (when available)</li>
 </ul>
-<h3>Link Resolution</h3>
+<h4>Link Resolution</h4>
 <p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute
 for proper link resolution:</p>
 <pre><code class="language-xml">&lt;feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com"&gt;
 </code></pre>
 <p>This ensures that relative links in your posts work correctly when viewed in
 feed readers.</p>
+<h3>XML Sitemap Generation</h3>
+<p>Automatically generates a comprehensive XML sitemap (<code>sitemap.xml</code>):</p>
+<h4>Sitemap Features</h4>
+<ul>
+<li><strong>XML Schema Validation</strong>: Includes proper namespace declarations</li>
+<li><strong>Multilingual Support</strong>: Uses <code>&lt;xhtml:link&gt;</code> for alternate language versions</li>
+<li><strong>Canonical URLs</strong>: One entry per content piece (prefers English)</li>
+<li><strong>SEO Optimization</strong>: Proper priorities and change frequencies</li>
+<li><strong>Draft Exclusion</strong>: Automatically excludes draft content</li>
+</ul>
+<h4>Example Sitemap Entry</h4>
+<pre><code class="language-xml">&lt;url&gt;
+  &lt;loc&gt;https://example.com/posts/welcome.html&lt;/loc&gt;
+  &lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+  &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+  &lt;priority&gt;0.8&lt;/priority&gt;
+  &lt;xhtml:link rel="alternate" hreflang="en" href="https://example.com/posts/welcome.html" /&gt;
+  &lt;xhtml:link rel="alternate" hreflang="it" href="https://example.com/posts/welcome.it.html" /&gt;
+&lt;/url&gt;
+</code></pre>
+<h3>robots.txt Generation</h3>
+<p>Automatically generates SEO-optimized robots.txt:</p>
+<h4>robots.txt Features</h4>
+<ul>
+<li><strong>Sitemap Reference</strong>: Points to sitemap.xml location</li>
+<li><strong>Best Practice Rules</strong>: Allows content while blocking system files</li>
+<li><strong>Bot Management</strong>: Specific rules for major search engines</li>
+<li><strong>Security</strong>: Blocks known problematic crawlers</li>
+<li><strong>Politeness</strong>: Includes crawl delay settings</li>
+</ul>
+<h4>Example robots.txt</h4>
+<pre><code>User-agent: *
+Allow: /
+
+# Disallow common non-content directories
+Disallow: /.*
+Disallow: /_*
+
+# Sitemap location
+Sitemap: https://example.com/sitemap.xml
+
+# Crawl delay (optional - be nice to servers)
+Crawl-delay: 1
+</code></pre>
 <h2>Performance Considerations</h2>
 <h3>Build Performance</h3>
 <p>Krik is designed for speed:</p>
