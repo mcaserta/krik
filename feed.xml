@@ -310,7 +310,8 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Works across page reloads</li>
 </ul>
 <h2>SEO and Discovery Features</h2>
-<p>Krik automatically generates several files to optimize search engine discovery and indexing:</p>
+<p>Krik automatically generates several files to optimize search engine discovery
+and indexing:</p>
 <h3>Atom Feed Generation</h3>
 <p>Automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
 <h4>Feed Metadata</h4>
