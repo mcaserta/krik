@@ -112,7 +112,8 @@ The key aspects of this implementation:
 
 ## SEO and Discovery Features
 
-Krik automatically generates several files to optimize search engine discovery and indexing:
+Krik automatically generates several files to optimize search engine discovery
+and indexing:
 
 ### Atom Feed Generation
 

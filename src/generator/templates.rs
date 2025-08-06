@@ -56,6 +56,7 @@ fn calculate_relative_path(file_path: &str, target: &str) -> String {
 /// Add common site and path context to a Tera context
 fn add_site_context(context: &mut Context, site_config: &SiteConfig, language: &str, file_path: &str) {
     context.insert("site_title", &site_config.get_site_title());
+    context.insert("file_path", file_path);
     if let Some(ref base_url) = site_config.base_url {
         context.insert("base_url", base_url);
     }

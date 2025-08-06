@@ -3,7 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title | default(value="Untitled") }}</title>
+    
+    <!-- Basic SEO Meta Tags -->
+    <title>{{ title | default(value="Untitled") }}{% if site_title %} - {{ site_title }}{% endif %}</title>
+    <meta name="description" content="{% if description %}{{ description | trim }}{% else %}{{ content | striptags | truncate(length=160) | trim }}{% endif %}">
+    <meta name="author" content="{% if author %}{{ author }}{% else %}{{ site_title | default(value="Blog") }}{% endif %}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ title | default(value="Untitled") }}">
+    <meta property="og:description" content="{% if description %}{{ description | trim }}{% else %}{{ content | striptags | truncate(length=160) | trim }}{% endif %}">
+    <meta property="og:url" content="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
+    <meta property="og:site_name" content="{{ site_title | default(value="Blog") }}">
+    <meta property="og:locale" content="{{ lang | default(value="en") | replace(from="-", to="_") }}">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="generator" content="Krik Static Site Generator">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="{{ assets_path }}/css/main.css">

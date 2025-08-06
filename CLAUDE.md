@@ -10,9 +10,7 @@ Fast Rust static site generator. Builds to `kk` executable.
 - i18n via `file.lang.md` (en, it, es, fr, de, pt, ja, zh, ru, ar)
 - Development server with live reload (can be disabled with `--no-live-reload`)
 - TOC generation, footnotes, scroll-to-top
-- Atom feeds, XML sitemap, and robots.txt generation
-- XML sitemap with multilingual support (`<xhtml:link>` alternate language declarations)
-- SEO-optimized robots.txt with sitemap reference and bot management
+- Atom feeds, XML sitemap, robots.txt generation
 - Mobile-friendly hamburger menu for responsive navigation
 - Site initialization with embedded content and themes (`kk init`)
 - Content creation commands for posts and pages (`kk post`, `kk page`)
@@ -22,7 +20,7 @@ Fast Rust static site generator. Builds to `kk` executable.
 ```bash
 cargo build --release
 ./target/release/kk init my-blog
-cd my blog
+cd my-blog
 ./target/release/kk                         # Generate once
 ./target/release/kk server --port 3000      # Dev server with live reload
 ./target/release/kk server --no-live-reload # Dev server without live reload (mobile-safe)
@@ -34,14 +32,18 @@ template
 ## Release Workflow
 
 - When releasing the software, automatically:
-  - Increment version number in CLI output for `-V` option
+  - Update the documentation in `README.md`, `CLAUDE.md` and `content`
+  - Reformat all modified Markdown files using prettier
   - Update version in `Cargo.toml`
+  - Check that the software builds successfully
+  - Run tests using `cargo test`
+  - Make sure the cli outputs the correct version
   - Commit changes to git
+  - Make sure everything is committed in git
   - Tag the release in git
   - Push to GitHub
   - Release to GitHub using `gh release create`
   - Publish to crates.io using `cargo publish`
-  - **Make sure everything is committed in git before releasing the software**
 
 ## UI/UX Behaviors
 
@@ -53,15 +55,3 @@ template
   portability across different hosting environments
 - **Title Deduplication**: H1 titles matching frontmatter titles are removed
   from content to prevent duplication
-
-## Release Process Memories
-
-- Incrementing the version number should be done before checking git for
-  uncommitted changes as the version number needs to be incremented before
-  pushing to github and crates.io
-- Don't forget to also stage and commit the claude.md file when releasing the
-  software
-
-## Documentation Maintenance
-
-- When updating the documentation, also update the krik site contents because they also contain documentation and examples

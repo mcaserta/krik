@@ -3,7 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Basic SEO Meta Tags -->
     <title>{{ site_title | default(value="Blog") }}</title>
+    <meta name="description" content="{% if site_description %}{{ site_description | trim }}{% else %}{{ site_title | default(value="Blog") }} - Latest posts and articles{% endif %}">
+    <meta name="author" content="{{ site_title | default(value="Blog") }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% if base_url %}{{ base_url }}{% else %}/{% endif %}">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ site_title | default(value="Blog") }}">
+    <meta property="og:description" content="{% if site_description %}{{ site_description | trim }}{% else %}{{ site_title | default(value="Blog") }} - Latest posts and articles{% endif %}">
+    <meta property="og:url" content="{% if base_url %}{{ base_url }}{% else %}/{% endif %}">
+    <meta property="og:site_name" content="{{ site_title | default(value="Blog") }}">
+    <meta property="og:locale" content="{{ lang | default(value="en") | replace(from="-", to="_") }}">
+
+    <!-- Additional Meta Tags -->
+    <meta name="generator" content="Krik Static Site Generator">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="{{ assets_path }}/css/main.css">

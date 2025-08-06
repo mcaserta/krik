@@ -251,7 +251,8 @@ Automatically appears on longer pages with smart visibility:
 
 ### SEO and Discovery
 
-Krik automatically generates SEO-optimized files for search engines and web crawlers:
+Krik automatically generates SEO-optimized files for search engines and web
+crawlers:
 
 #### Atom Feed Generation
 
