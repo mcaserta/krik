@@ -6,7 +6,7 @@
     
     <!-- Basic SEO Meta Tags -->
     <title>{{ title | default(value="Untitled") }}{% if site_title %} - {{ site_title }}{% endif %}</title>
-    <meta name="description" content="{% if description %}{{ description | trim }}{% else %}{{ content | striptags | truncate(length=160) | trim }}{% endif %}">
+    <meta name="description" content="{{ description }}">
     <meta name="author" content="{% if author %}{{ author }}{% else %}{{ site_title | default(value="Blog") }}{% endif %}">
     {% if tags %}<meta name="keywords" content="{{ tags | join(sep=", ") }}">{% endif %}
     {% if date %}<meta name="article:published_time" content="{{ date | date(format="%Y-%m-%d") }}">{% endif %}
@@ -17,7 +17,7 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ title | default(value="Untitled") }}">
-    <meta property="og:description" content="{% if description %}{{ description | trim }}{% else %}{{ content | striptags | truncate(length=160) | trim }}{% endif %}">
+    <meta property="og:description" content="{{ description }}">
     <meta property="og:url" content="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
     <meta property="og:site_name" content="{{ site_title | default(value="Blog") }}">
     {% if date %}<meta property="article:published_time" content="{{ date | date(format="%Y-%m-%dT%H:%M:%S+00:00") }}">{% endif %}

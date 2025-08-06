@@ -53,6 +53,38 @@ fn calculate_relative_path(file_path: &str, target: &str) -> String {
     }
 }
 
+/// Generate a clean description from document content
+fn generate_description(content: &str, frontmatter_description: Option<&String>) -> String {
+    if let Some(desc) = frontmatter_description {
+        // Use frontmatter description if available, clean it up
+        desc.trim().replace('\n', " ").replace('\r', " ")
+    } else {
+        // Generate from content: strip ALL HTML tags, truncate, and clean up
+        let mut text_content = content.to_string();
+        
+        // Remove all HTML tags using a simple regex-like approach
+        while let Some(start) = text_content.find('<') {
+            if let Some(end) = text_content[start..].find('>') {
+                text_content.replace_range(start..start + end + 1, " ");
+            } else {
+                break;
+            }
+        }
+        
+        // Remove extra whitespace and truncate
+        let cleaned = text_content
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .join(" ");
+        
+        if cleaned.len() > 160 {
+            format!("{}...", &cleaned[..157])
+        } else {
+            cleaned
+        }
+    }
+}
+
 /// Add common site and path context to a Tera context
 fn add_site_context(context: &mut Context, site_config: &SiteConfig, language: &str, file_path: &str) {
     context.insert("site_title", &site_config.get_site_title());
@@ -119,6 +151,11 @@ pub fn generate_page(
     context.insert("tags", &document.front_matter.tags);
     context.insert("language", &document.language);
     context.insert("base_name", &document.base_name);
+    
+    // Generate and add description
+    let frontmatter_desc = document.front_matter.extra.get("description").and_then(|v| v.as_str()).map(|s| s.to_string());
+    let description = generate_description(&document.content, frontmatter_desc.as_ref());
+    context.insert("description", &description);
     
     // Add site configuration and common paths
     add_site_context(&mut context, site_config, &document.language, &document.file_path);
@@ -202,6 +239,10 @@ pub fn generate_index(
     
     // Add site configuration and common paths (index is always at root)
     add_site_context(&mut context, site_config, "en", "index.html");
+    
+    // Generate site description
+    let site_description = format!("{} - Latest posts and articles", site_config.get_site_title());
+    context.insert("site_description", &site_description);
 
     // Filter and sort posts (only documents with 'post' layout or in posts directory, default language only)
     let mut post_docs: Vec<&Document> = documents.iter()

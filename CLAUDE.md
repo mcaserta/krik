@@ -36,6 +36,7 @@ template
   - Reformat all modified Markdown files using prettier
   - Update version in `Cargo.toml`
   - Check that the software builds successfully
+  - Check that the site under `content` builds successfully
   - Run tests using `cargo test`
   - Make sure the cli outputs the correct version
   - Commit changes to git
