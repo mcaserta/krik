@@ -34,6 +34,8 @@ chrono = { version = "0.4", features = ["serde"] }
 tera = "1.20"
 toml = "0.8"
 regex = "1.10"
+# Resolve external tool paths (pandoc, typst)
+which = "6"
 # Server dependencies
 tokio = { version = "1.0", features = ["full"] }
 warp = "0.3"

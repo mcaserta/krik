@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::fs;
 use chrono::Utc;
+use which::which;
 
 /// PDF generation using pandoc with typst engine
 pub struct PdfGenerator {
@@ -38,65 +39,9 @@ impl PdfGenerator {
         Self::find_executable("pandoc").is_some() && Self::find_executable("typst").is_some()
     }
 
-    /// Find executable in PATH using cross-platform approach
+    /// Find executable in PATH using the `which` crate (cross-platform)
     fn find_executable(name: &str) -> Option<PathBuf> {
-        let path_env = std::env::var("PATH").ok()?;
-        let path_separator = if cfg!(windows) { ';' } else { ':' };
-        
-        // On Windows, we need to check for multiple extensions
-        let extensions = if cfg!(windows) {
-            vec!["", ".exe", ".cmd", ".bat", ".com"]
-        } else {
-            vec![""]
-        };
-
-        for path_dir in path_env.split(path_separator) {
-            // Skip empty path entries
-            if path_dir.trim().is_empty() {
-                continue;
-            }
-            
-            let dir_path = PathBuf::from(path_dir.trim());
-            
-            // Skip if the directory doesn't exist
-            if !dir_path.is_dir() {
-                continue;
-            }
-            
-            for ext in &extensions {
-                let executable_name = format!("{}{}", name, ext);
-                let full_path = dir_path.join(&executable_name);
-                
-                if full_path.is_file() {
-                    // On Unix-like systems, also check if it's executable
-                    #[cfg(unix)]
-                    {
-                        use std::os::unix::fs::PermissionsExt;
-                        if let Ok(metadata) = full_path.metadata() {
-                            let permissions = metadata.permissions();
-                            // Check if any execute bit is set (user, group, or other)
-                            if permissions.mode() & 0o111 != 0 {
-                                return Some(full_path);
-                            }
-                        }
-                    }
-                    
-                    // On Windows, just check if the file exists with a valid extension
-                    #[cfg(windows)]
-                    {
-                        return Some(full_path);
-                    }
-                    
-                    // Fallback for other systems
-                    #[cfg(not(any(unix, windows)))]
-                    {
-                        return Some(full_path);
-                    }
-                }
-            }
-        }
-        
-        None
+        which(name).ok()
     }
 
     /// Generate PDF from a markdown file path
