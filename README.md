@@ -114,6 +114,28 @@ kk server --no-live-reload   # Disable live reload (useful for mobile devices)
 
 Features: Live reload, file watching, multi-interface binding, network discovery
 
+### Lint Content
+
+```bash
+kk lint                        # Lint default content directory
+kk lint --input ./content      # Lint a specific directory
+kk lint --strict               # Treat warnings as errors
+```
+
+The linter validates:
+
+- Title: required and non-empty
+- Language codes: must match filename suffix (e.g., hello.it.md → it)
+- Slugs: filename stem must be slug-like (lowercase, numbers, hyphens)
+- Layout: warns on unrecognized values and directory/layout mismatches
+- Date: warns if missing for posts; warns if > 1 year in the future
+- Tags: array of non-empty strings; warns when tags are not slug-like
+- TOC: warns if `toc` is not a boolean
+- Duplicate slugs: within the same directory and language
+- Duplicate titles: warns within the same directory and language
+
+Exits non-zero on errors. In `--strict` mode, warnings are also treated as errors.
+
 ### Production Build
 
 ```bash

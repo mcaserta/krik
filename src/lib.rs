@@ -49,6 +49,7 @@ pub mod site;
 pub mod server;
 pub mod init;
 pub mod content;
+pub mod lint;
 pub mod cli;
 
 pub use error::*;

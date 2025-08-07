@@ -3,6 +3,7 @@ use crate::generator::SiteGenerator;
 use crate::server::DevServer;
 use crate::init::init_site;
 use crate::content::{create_post, create_page};
+use crate::lint::lint_content;
 use crate::error::{KrikResult, KrikError, ServerError, ServerErrorKind, GenerationError, GenerationErrorKind};
 use std::path::PathBuf;
 
@@ -62,6 +63,48 @@ pub fn handle_page(page_matches: &ArgMatches) -> KrikResult<()> {
     let content_dir = PathBuf::from(page_matches.get_one::<String>("content-dir").unwrap());
     
     create_page(&content_dir, title, filename)
+}
+
+/// Handle the lint subcommand
+pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
+    let input_dir = PathBuf::from(lint_matches.get_one::<String>("input").unwrap());
+    let strict = lint_matches.get_flag("strict");
+
+    println!("🔎 Linting content in: {}", input_dir.display());
+
+    let report = lint_content(&input_dir)?;
+
+    println!("\nScanned {} file(s)", report.files_scanned);
+
+    if !report.warnings.is_empty() {
+        println!("\nWarnings ({}):", report.warnings.len());
+        for w in &report.warnings {
+            println!("  - {}", w);
+        }
+    }
+
+    if !report.errors.is_empty() || (strict && !report.warnings.is_empty()) {
+        eprintln!("\nErrors ({}):", report.errors.len());
+        for e in &report.errors {
+            eprintln!("  - {}", e);
+        }
+        if strict && !report.warnings.is_empty() {
+            eprintln!("  - strict mode: treating {} warning(s) as error(s)", report.warnings.len());
+        }
+        // Return a content validation error
+        return Err(KrikError::Content(crate::error::ContentError {
+            kind: crate::error::ContentErrorKind::ValidationFailed({
+                let mut msgs = report.errors.clone();
+                if strict { msgs.extend(report.warnings.clone()); }
+                msgs
+            }),
+            path: None,
+            context: "Content lint failed".to_string(),
+        }));
+    }
+
+    println!("\n✅ No lint errors found");
+    Ok(())
 }
 
 /// Handle the default generate command

@@ -25,6 +25,7 @@ impl KrikCli {
             .subcommand(Self::build_init_command())
             .subcommand(Self::build_post_command())
             .subcommand(Self::build_page_command())
+            .subcommand(Self::build_lint_command())
             .arg(Self::input_arg())
             .arg(Self::output_arg())
             .arg(Self::theme_arg())
@@ -124,6 +125,19 @@ impl KrikCli {
             )
     }
 
+    /// Build the lint subcommand
+    fn build_lint_command() -> Command {
+        Command::new("lint")
+            .about("Validate content front matter, dates, slugs, and language codes")
+            .arg(Self::input_arg())
+            .arg(
+                Arg::new("strict")
+                    .long("strict")
+                    .help("Treat warnings as errors (non-zero exit on warnings)")
+                    .action(clap::ArgAction::SetTrue),
+            )
+    }
+
     /// Create the input directory argument
     fn input_arg() -> Arg {
         Self::create_dir_arg("input", 'i', "Input directory containing markdown files", Some("content"))
@@ -161,6 +175,7 @@ impl KrikCli {
             Some(("init", init_matches)) => commands::handle_init(init_matches),
             Some(("post", post_matches)) => commands::handle_post(post_matches),
             Some(("page", page_matches)) => commands::handle_page(page_matches),
+            Some(("lint", lint_matches)) => commands::handle_lint(lint_matches),
             _ => commands::handle_generate(&self.matches),
         }
     }
