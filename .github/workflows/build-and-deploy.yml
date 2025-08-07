@@ -54,9 +54,10 @@ jobs:
             exit 1
           fi
           
-          # Check if gh-pages branch exists
+          # Fetch and check gh-pages branch
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-            echo "gh-pages branch exists, checking it out"
+            echo "gh-pages branch exists, fetching and checking it out"
+            git fetch origin gh-pages
             git checkout gh-pages
           else
             echo "Creating new gh-pages branch"
@@ -79,6 +80,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Deploy site generated on $(date)"
-            git push origin gh-pages
+            git push --force origin gh-pages
             echo "Site deployed successfully to gh-pages branch"
           fi
