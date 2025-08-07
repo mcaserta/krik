@@ -585,8 +585,8 @@ other markdown elements.</p>
 <h3>Reference Links</h3>
 <p>This is a paragraph with <a href="https://www.rust-lang.org/" title="Rust Programming Language">reference link</a> and another <a href="https://github.com/" title="GitHub">link</a>.</p>
 <h2>Images</h2>
-<p>Here’s how images work (note: no actual image file in this demo):</p>
-<p><img src="../images/example.png" alt="Alt text for image" title="Optional title" /></p>
+<p>Here’s how images work:</p>
+<p><img src="../images/krik.png" alt="Alt text for image" title="Optional title" /></p>
 <h2>Footnotes in Detail</h2>
 <p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create
 bidirectional links with smooth scrolling<sup class="footnote-reference"><a href="#complex-footnote">2</a></sup>.</p>
