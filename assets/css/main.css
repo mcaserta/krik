@@ -260,7 +260,8 @@ body {
     min-height: 100vh;
 }
 
-.layout-container:has(.toc-sidebar) .main-content {
+/* When TOC sidebar is present, adjust main content margins */
+.layout-container.has-toc .main-content {
     margin-right: 200px;
 }
 
