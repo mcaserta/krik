@@ -98,19 +98,19 @@
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
-  <li><a href="#heading-0">Table of Contents</a></li>
-  <li><a href="#heading-1">Markdown Features</a></li>
-    <li><a href="#heading-2">Text Formatting</a></li>
-    <li><a href="#heading-3">Lists</a></li>
-    <li><a href="#heading-4">Code Blocks</a></li>
-    <li><a href="#heading-5">Tables</a></li>
-    <li><a href="#heading-6">Footnotes</a></li>
-  <li><a href="#heading-7">Advanced Features</a></li>
-    <li><a href="#heading-8">Theme System</a></li>
-    <li><a href="#heading-9">Scroll to Top</a></li>
-    <li><a href="#heading-10">Navigation</a></li>
-    <li><a href="#heading-11">Development Server</a></li>
-    <li><a href="#heading-12">Content Creation</a></li>
+  <li><a href="#table-of-contents">Table of Contents</a></li>
+  <li><a href="#markdown-features">Markdown Features</a></li>
+    <li><a href="#text-formatting">Text Formatting</a></li>
+    <li><a href="#lists">Lists</a></li>
+    <li><a href="#code-blocks">Code Blocks</a></li>
+    <li><a href="#tables">Tables</a></li>
+    <li><a href="#footnotes">Footnotes</a></li>
+  <li><a href="#advanced-features">Advanced Features</a></li>
+    <li><a href="#theme-system">Theme System</a></li>
+    <li><a href="#scroll-to-top">Scroll to Top</a></li>
+    <li><a href="#navigation">Navigation</a></li>
+    <li><a href="#development-server">Development Server</a></li>
+    <li><a href="#content-creation">Content Creation</a></li>
 </ul>
             </div>
         </aside>
@@ -128,14 +128,14 @@
 <p><img src="../images/krik.png" alt="Krik logo" /></p>
 <p>Welcome to the <strong>Krik</strong> static site generator! This post demonstrates many of
 the features available in this fast, Rust-powered static site generator.</p>
-<h2 id="heading-0">Table of Contents</h2>
+<h2 id="table-of-contents">Table of Contents</h2>
 <p>This post has a table of contents enabled via <code>toc: true</code> in the front matter.
 You should see a TOC in the sidebar with clickable links to each section.</p>
-<h2 id="heading-1">Markdown Features</h2>
+<h2 id="markdown-features">Markdown Features</h2>
 <p>Krik supports full <strong>GitHub Flavored Markdown</strong> with many enhancements:</p>
-<h3 id="heading-2">Text Formatting</h3>
+<h3 id="text-formatting">Text Formatting</h3>
 <p>You can use <em>italic text</em>, <strong>bold text</strong>, <del>strikethrough</del>, and <code>inline code</code>.</p>
-<h3 id="heading-3">Lists</h3>
+<h3 id="lists">Lists</h3>
 <p>Unordered lists:</p>
 <ul>
 <li>First item</li>
@@ -153,7 +153,7 @@ You should see a TOC in the sidebar with clickable links to each section.</p>
 <li>Second step</li>
 <li>Third step</li>
 </ol>
-<h3 id="heading-4">Code Blocks</h3>
+<h3 id="code-blocks">Code Blocks</h3>
 <pre><code class="language-rust">fn main() {
     println!("Hello, Krik!");
 }
@@ -167,7 +167,7 @@ function toggleTheme() {
   localStorage.setItem("theme", newTheme);
 }
 </code></pre>
-<h3 id="heading-5">Tables</h3>
+<h3 id="tables">Tables</h3>
 <table><thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody>
 <tr><td>Markdown</td><td>✅</td><td>Full GFM support</td></tr>
 <tr><td>Themes</td><td>✅</td><td>Light/dark mode</td></tr>
@@ -177,31 +177,31 @@ function toggleTheme() {
 <tr><td>Site Init</td><td>✅</td><td>Embedded content &amp; themes</td></tr>
 <tr><td>Content Creation</td><td>✅</td><td>Quick post &amp; page generation</td></tr>
 </tbody></table>
-<h3 id="heading-6">Footnotes</h3>
+<h3 id="footnotes">Footnotes</h3>
 <p>This is a paragraph with a footnote<sup class="footnote-reference"><a href="#1">1</a></sup>. You can click on it to jump to the
 definition, and then click the return arrow to come back.</p>
-<p>Here’s another footnote<sup class="footnote-reference"><a href="#second">2</a></sup> with different content.</p>
-<h2 id="heading-7">Advanced Features</h2>
-<h3 id="heading-8">Theme System</h3>
+<p>Here's another footnote<sup class="footnote-reference"><a href="#second">2</a></sup> with different content.</p>
+<h2 id="advanced-features">Advanced Features</h2>
+<h3 id="theme-system">Theme System</h3>
 <p>The site automatically detects your OS theme preference and switches between
 light and dark modes. Try toggling your system theme or use the theme button in
 the top navigation!</p>
-<h3 id="heading-9">Scroll to Top</h3>
-<p>On longer pages like this one, you’ll see a scroll-to-top button appear in the
+<h3 id="scroll-to-top">Scroll to Top</h3>
+<p>On longer pages like this one, you'll see a scroll-to-top button appear in the
 bottom-right corner when you scroll down. It provides smooth scrolling back to
 the top.</p>
-<h3 id="heading-10">Navigation</h3>
+<h3 id="navigation">Navigation</h3>
 <p>The sidebar shows all pages on your site, and posts like this one include a
-“Back to Home” link for easy navigation. On mobile devices, the sidebar
+"Back to Home" link for easy navigation. On mobile devices, the sidebar
 transforms into a convenient hamburger menu.</p>
-<h3 id="heading-11">Development Server</h3>
+<h3 id="development-server">Development Server</h3>
 <p>Krik includes a powerful development server with live reload functionality:</p>
 <pre><code class="language-bash">kk server                    # Start with live reload
 kk server --no-live-reload   # Mobile-safe mode for Safari/iPad
 </code></pre>
 <p>The server automatically watches for changes and refreshes your browser, making
 development fast and efficient.</p>
-<h3 id="heading-12">Content Creation</h3>
+<h3 id="content-creation">Content Creation</h3>
 <p>Create new content quickly with built-in commands:</p>
 <pre><code class="language-bash">kk post "My New Blog Post"   # Create a new blog post
 kk page "About Us"           # Create a new page

@@ -80,30 +80,30 @@
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
-  <li><a href="#heading-0">Installation</a></li>
-    <li><a href="#heading-1">Quick Install (Recommended)</a></li>
-    <li><a href="#heading-2">Verify Installation</a></li>
-  <li><a href="#heading-3">Creating Your First Site</a></li>
-    <li><a href="#heading-4">Initialize a New Site</a></li>
-    <li><a href="#heading-5">Start the Development Server</a></li>
-  <li><a href="#heading-6">Creating Content</a></li>
-    <li><a href="#heading-7">Your First Blog Post</a></li>
-    <li><a href="#heading-8">Custom Filenames</a></li>
-    <li><a href="#heading-9">Creating Pages</a></li>
-  <li><a href="#heading-10">Customizing Your Content</a></li>
-    <li><a href="#heading-11">Front Matter Explained</a></li>
-    <li><a href="#heading-12">Adding Your Content</a></li>
-    <li><a href="#heading-13">Development vs Production</a></li>
-  <li><a href="#heading-14">Advanced Features</a></li>
-    <li><a href="#heading-15">Internationalization</a></li>
-    <li><a href="#heading-16">Table of Contents</a></li>
-    <li><a href="#heading-17">Theme Customization</a></li>
-  <li><a href="#heading-18">Tips for Success</a></li>
-    <li><a href="#heading-19">Writing Great Content</a></li>
-    <li><a href="#heading-20">Workflow Optimization</a></li>
-    <li><a href="#heading-21">Organization Best Practices</a></li>
-  <li><a href="#heading-22">Next Steps</a></li>
-  <li><a href="#heading-23">Getting Help</a></li>
+  <li><a href="#installation">Installation</a></li>
+    <li><a href="#quick-install-recommended">Quick Install (Recommended)</a></li>
+    <li><a href="#verify-installation">Verify Installation</a></li>
+  <li><a href="#creating-your-first-site">Creating Your First Site</a></li>
+    <li><a href="#initialize-a-new-site">Initialize a New Site</a></li>
+    <li><a href="#start-the-development-server">Start the Development Server</a></li>
+  <li><a href="#creating-content">Creating Content</a></li>
+    <li><a href="#your-first-blog-post">Your First Blog Post</a></li>
+    <li><a href="#custom-filenames">Custom Filenames</a></li>
+    <li><a href="#creating-pages">Creating Pages</a></li>
+  <li><a href="#customizing-your-content">Customizing Your Content</a></li>
+    <li><a href="#front-matter-explained">Front Matter Explained</a></li>
+    <li><a href="#adding-your-content">Adding Your Content</a></li>
+    <li><a href="#development-vs-production">Development vs Production</a></li>
+  <li><a href="#advanced-features">Advanced Features</a></li>
+    <li><a href="#internationalization">Internationalization</a></li>
+    <li><a href="#table-of-contents">Table of Contents</a></li>
+    <li><a href="#theme-customization">Theme Customization</a></li>
+  <li><a href="#tips-for-success">Tips for Success</a></li>
+    <li><a href="#writing-great-content">Writing Great Content</a></li>
+    <li><a href="#workflow-optimization">Workflow Optimization</a></li>
+    <li><a href="#organization-best-practices">Organization Best Practices</a></li>
+  <li><a href="#next-steps">Next Steps</a></li>
+  <li><a href="#getting-help">Getting Help</a></li>
 </ul>
             </div>
         </aside>
@@ -121,20 +121,20 @@
 <p>Welcome to Krik! This comprehensive guide will take you from zero to publishing
 your first blog post in just a few minutes. Krik makes it incredibly easy to
 create beautiful, fast static websites with minimal setup.</p>
-<h2 id="heading-0">Installation</h2>
-<h3 id="heading-1">Quick Install (Recommended)</h3>
+<h2 id="installation">Installation</h2>
+<h3 id="quick-install-recommended">Quick Install (Recommended)</h3>
 <p>The fastest way to get started is installing Krik from crates.io:</p>
 <pre><code class="language-bash">cargo install krik
 </code></pre>
-<p>That’s it! No additional setup required - themes and sample content are embedded
+<p>That's it! No additional setup required - themes and sample content are embedded
 directly in the executable.</p>
-<h3 id="heading-2">Verify Installation</h3>
+<h3 id="verify-installation">Verify Installation</h3>
 <p>Check that Krik is installed correctly:</p>
 <pre><code class="language-bash">kk --version
 kk --help
 </code></pre>
-<h2 id="heading-3">Creating Your First Site</h2>
-<h3 id="heading-4">Initialize a New Site</h3>
+<h2 id="creating-your-first-site">Creating Your First Site</h2>
+<h3 id="initialize-a-new-site">Initialize a New Site</h3>
 <p>Create a new blog in just one command:</p>
 <pre><code class="language-bash"># Create a new blog directory
 kk init my-awesome-blog
@@ -147,15 +147,15 @@ cd my-awesome-blog
 <li>Site configuration</li>
 <li>All necessary assets</li>
 </ul>
-<h3 id="heading-5">Start the Development Server</h3>
+<h3 id="start-the-development-server">Start the Development Server</h3>
 <p>Launch the development server with live reload:</p>
 <pre><code class="language-bash">kk server
 </code></pre>
-<p>Open your browser to <code>http://localhost:3000</code> and you’ll see your new site! The
+<p>Open your browser to <code>http://localhost:3000</code> and you'll see your new site! The
 server automatically watches for changes and refreshes your browser when you
 edit files.</p>
-<h2 id="heading-6">Creating Content</h2>
-<h3 id="heading-7">Your First Blog Post</h3>
+<h2 id="creating-content">Creating Content</h2>
+<h3 id="your-first-blog-post">Your First Blog Post</h3>
 <p>Create a new blog post with a simple command:</p>
 <pre><code class="language-bash">kk post "My First Blog Post"
 </code></pre>
@@ -166,19 +166,19 @@ edit files.</p>
 <li>Helpful starter content</li>
 <li>Tips for writing</li>
 </ul>
-<h3 id="heading-8">Custom Filenames</h3>
+<h3 id="custom-filenames">Custom Filenames</h3>
 <p>Want a specific filename? Use the <code>--filename</code> option:</p>
 <pre><code class="language-bash">kk post "How to Build Amazing Websites" --filename amazing-websites
 </code></pre>
 <p>This creates <code>amazing-websites.md</code> instead of the auto-generated filename.</p>
-<h3 id="heading-9">Creating Pages</h3>
+<h3 id="creating-pages">Creating Pages</h3>
 <p>Pages are perfect for static content like About, Contact, or Documentation:</p>
 <pre><code class="language-bash">kk page "About Me"
 kk page "Contact" --filename contact
 </code></pre>
 <p>Pages are created in <code>content/pages/</code> and use the page template automatically.</p>
-<h2 id="heading-10">Customizing Your Content</h2>
-<h3 id="heading-11">Front Matter Explained</h3>
+<h2 id="customizing-your-content">Customizing Your Content</h2>
+<h3 id="front-matter-explained">Front Matter Explained</h3>
 <p>Every post and page starts with YAML front matter:</p>
 <pre><code class="language-yaml">---
 title: "Your Post Title"
@@ -189,7 +189,7 @@ toc: true # enables table of contents
 draft: false # set to true to hide from site
 ---
 </code></pre>
-<h3 id="heading-12">Adding Your Content</h3>
+<h3 id="adding-your-content">Adding Your Content</h3>
 <p>Below the front matter, write your content in Markdown:</p>
 <pre><code class="language-markdown"># Main Heading
 
@@ -230,7 +230,7 @@ kk
 </code></pre>
 <p>This creates the <code>_site/</code> directory with your complete website. Upload these
 files to any web host!</p>
-<h3 id="heading-13">Development vs Production</h3>
+<h3 id="development-vs-production">Development vs Production</h3>
 <p>During development, use the server:</p>
 <pre><code class="language-bash">kk server                    # Live reload for development
 kk server --no-live-reload   # Disable live reload if needed
@@ -238,8 +238,8 @@ kk server --no-live-reload   # Disable live reload if needed
 <p>For production builds:</p>
 <pre><code class="language-bash">kk --input content --output _site --theme themes/default
 </code></pre>
-<h2 id="heading-14">Advanced Features</h2>
-<h3 id="heading-15">Internationalization</h3>
+<h2 id="advanced-features">Advanced Features</h2>
+<h3 id="internationalization">Internationalization</h3>
 <p>Create translations by adding language codes to filenames:</p>
 <pre><code class="language-bash"># Create English version
 kk post "Welcome to My Blog"
@@ -248,10 +248,10 @@ kk post "Welcome to My Blog"
 cp content/posts/welcome-to-my-blog.md content/posts/welcome-to-my-blog.it.md
 # Edit the Italian version
 </code></pre>
-<h3 id="heading-16">Table of Contents</h3>
+<h3 id="table-of-contents">Table of Contents</h3>
 <p>Enable automatic TOC generation by adding <code>toc: true</code> to your front matter.
 Perfect for long articles like this one!</p>
-<h3 id="heading-17">Theme Customization</h3>
+<h3 id="theme-customization">Theme Customization</h3>
 <p>The default theme includes:</p>
 <ul>
 <li>Automatic light/dark mode detection</li>
@@ -260,8 +260,8 @@ Perfect for long articles like this one!</p>
 <li>Smooth scroll-to-top button</li>
 <li>Professional typography</li>
 </ul>
-<h2 id="heading-18">Tips for Success</h2>
-<h3 id="heading-19">Writing Great Content</h3>
+<h2 id="tips-for-success">Tips for Success</h2>
+<h3 id="writing-great-content">Writing Great Content</h3>
 <ol>
 <li><strong>Use descriptive titles</strong> - They appear in navigation and feeds</li>
 <li><strong>Add relevant tags</strong> - Helps organize and categorize your posts</li>
@@ -269,21 +269,21 @@ Perfect for long articles like this one!</p>
 <li><strong>Enable TOC for long posts</strong> - Improves navigation</li>
 <li><strong>Use drafts</strong> - Set <code>draft: true</code> while working on content</li>
 </ol>
-<h3 id="heading-20">Workflow Optimization</h3>
+<h3 id="workflow-optimization">Workflow Optimization</h3>
 <ol>
 <li><strong>Start with the development server</strong>: <code>kk server</code></li>
 <li><strong>Create content quickly</strong>: <code>kk post "Title"</code> or <code>kk page "Title"</code></li>
 <li><strong>Edit in your favorite editor</strong> - Changes appear instantly in browser</li>
 <li><strong>Generate when ready</strong>: <code>kk</code> to create static files</li>
 </ol>
-<h3 id="heading-21">Organization Best Practices</h3>
+<h3 id="organization-best-practices">Organization Best Practices</h3>
 <ul>
 <li>Use <code>/posts/</code> for time-sensitive content (blog posts, news, updates)</li>
 <li>Use <code>/pages/</code> for static content (about, contact, documentation)</li>
 <li>Keep images organized in <code>/images/</code> subdirectories</li>
 <li>Use consistent naming conventions for translations</li>
 </ul>
-<h2 id="heading-22">Next Steps</h2>
+<h2 id="next-steps">Next Steps</h2>
 <p>Now that you have Krik set up:</p>
 <ol>
 <li><strong>Customize your site.toml</strong> with your information</li>
@@ -291,7 +291,7 @@ Perfect for long articles like this one!</p>
 <li><strong>Explore the theme system</strong> for advanced customization</li>
 <li><strong>Set up deployment</strong> to your preferred hosting platform</li>
 </ol>
-<h2 id="heading-23">Getting Help</h2>
+<h2 id="getting-help">Getting Help</h2>
 <ul>
 <li><strong>Documentation</strong>: Check the comprehensive documentation page on this site</li>
 <li><strong>Examples</strong>: Explore the sample posts to see features in action</li>

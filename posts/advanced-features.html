@@ -80,32 +80,32 @@
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
-  <li><a href="#heading-0">Image Support</a></li>
-    <li><a href="#heading-1">Image Best Practices</a></li>
-  <li><a href="#heading-2">Complex Tables</a></li>
-  <li><a href="#heading-3">Nested Lists and Complex Formatting</a></li>
-    <li><a href="#heading-4">Project Structure</a></li>
-    <li><a href="#heading-5">Advanced Markdown Features</a></li>
-      <li><a href="#heading-6">Mixed Content Types</a></li>
-      <li><a href="#heading-7">Code with Explanation</a></li>
-  <li><a href="#heading-8">SEO and Discovery Features</a></li>
-    <li><a href="#heading-9">Atom Feed Generation</a></li>
-      <li><a href="#heading-10">Feed Metadata</a></li>
-      <li><a href="#heading-11">Post Entries</a></li>
-      <li><a href="#heading-12">Link Resolution</a></li>
-    <li><a href="#heading-13">XML Sitemap Generation</a></li>
-      <li><a href="#heading-14">Sitemap Features</a></li>
-      <li><a href="#heading-15">Example Sitemap Entry</a></li>
-    <li><a href="#heading-16">robots.txt Generation</a></li>
-      <li><a href="#heading-17">robots.txt Features</a></li>
-      <li><a href="#heading-18">Example robots.txt</a></li>
-  <li><a href="#heading-19">Performance Considerations</a></li>
-    <li><a href="#heading-20">Build Performance</a></li>
-    <li><a href="#heading-21">Runtime Performance</a></li>
-  <li><a href="#heading-22">Accessibility Features</a></li>
-    <li><a href="#heading-23">Semantic Structure</a></li>
-    <li><a href="#heading-24">Interactive Elements</a></li>
-    <li><a href="#heading-25">Content Accessibility</a></li>
+  <li><a href="#image-support">Image Support</a></li>
+    <li><a href="#image-best-practices">Image Best Practices</a></li>
+  <li><a href="#complex-tables">Complex Tables</a></li>
+  <li><a href="#nested-lists-and-complex-formatting">Nested Lists and Complex Formatting</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#advanced-markdown-features">Advanced Markdown Features</a></li>
+      <li><a href="#mixed-content-types">Mixed Content Types</a></li>
+      <li><a href="#code-with-explanation">Code with Explanation</a></li>
+  <li><a href="#seo-and-discovery-features">SEO and Discovery Features</a></li>
+    <li><a href="#atom-feed-generation">Atom Feed Generation</a></li>
+      <li><a href="#feed-metadata">Feed Metadata</a></li>
+      <li><a href="#post-entries">Post Entries</a></li>
+      <li><a href="#link-resolution">Link Resolution</a></li>
+    <li><a href="#xml-sitemap-generation">XML Sitemap Generation</a></li>
+      <li><a href="#sitemap-features">Sitemap Features</a></li>
+      <li><a href="#example-sitemap-entry">Example Sitemap Entry</a></li>
+    <li><a href="#robotstxt-generation">robots.txt Generation</a></li>
+      <li><a href="#robotstxt-features">robots.txt Features</a></li>
+      <li><a href="#example-robotstxt">Example robots.txt</a></li>
+  <li><a href="#performance-considerations">Performance Considerations</a></li>
+    <li><a href="#build-performance">Build Performance</a></li>
+    <li><a href="#runtime-performance">Runtime Performance</a></li>
+  <li><a href="#accessibility-features">Accessibility Features</a></li>
+    <li><a href="#semantic-structure">Semantic Structure</a></li>
+    <li><a href="#interactive-elements">Interactive Elements</a></li>
+    <li><a href="#content-accessibility">Content Accessibility</a></li>
 </ul>
             </div>
         </aside>
@@ -122,10 +122,10 @@
             <article>
 <p>This post demonstrates some of the more advanced features available in Krik,
 including image handling, complex markdown, and feed generation.</p>
-<h2 id="heading-0">Image Support</h2>
+<h2 id="image-support">Image Support</h2>
 <p>Krik automatically copies images and other static assets to the generated site:</p>
 <p><img src="../images/placeholder.svg" alt="Placeholder Image" title="This is a placeholder image" /></p>
-<h3 id="heading-1">Image Best Practices</h3>
+<h3 id="image-best-practices">Image Best Practices</h3>
 <p>When adding images to your posts:</p>
 <ul>
 <li>Store images in the <code>content/images/</code> directory</li>
@@ -134,8 +134,8 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Optionally include title text for tooltips</li>
 <li>Consider using relative paths from your post location</li>
 </ul>
-<h2 id="heading-2">Complex Tables</h2>
-<p>Here’s a more complex table showing Krik’s architecture:</p>
+<h2 id="complex-tables">Complex Tables</h2>
+<p>Here's a more complex table showing Krik's architecture:</p>
 <table><thead><tr><th>Component</th><th>Language</th><th>Purpose</th><th>Dependencies</th></tr></thead><tbody>
 <tr><td><strong>Parser</strong></td><td>Rust</td><td>Markdown → AST</td><td>pulldown-cmark, serde</td></tr>
 <tr><td><strong>Generator</strong></td><td>Rust</td><td>AST → HTML</td><td>tera, chrono</td></tr>
@@ -143,8 +143,8 @@ including image handling, complex markdown, and feed generation.</p>
 <tr><td><strong>i18n</strong></td><td>Rust</td><td>Multi-language</td><td>HashMap collections</td></tr>
 <tr><td><strong>Feed</strong></td><td>Rust</td><td>Atom generation</td><td>XML serialization</td></tr>
 </tbody></table>
-<h2 id="heading-3">Nested Lists and Complex Formatting</h2>
-<h3 id="heading-4">Project Structure</h3>
+<h2 id="nested-lists-and-complex-formatting">Nested Lists and Complex Formatting</h2>
+<h3 id="project-structure">Project Structure</h3>
 <ol>
 <li><strong>Core Engine</strong> (Rust)
 <ul>
@@ -175,8 +175,8 @@ including image handling, complex markdown, and feed generation.</p>
 </ul>
 </li>
 </ol>
-<h3 id="heading-5">Advanced Markdown Features</h3>
-<h4 id="heading-6">Mixed Content Types</h4>
+<h3 id="advanced-markdown-features">Advanced Markdown Features</h3>
+<h4 id="mixed-content-types">Mixed Content Types</h4>
 <p>You can combine different content types effectively:</p>
 <blockquote>
 <p><strong>Quote with formatting</strong>: This blockquote contains <em>italic</em>, <strong>bold</strong>, and
@@ -190,8 +190,8 @@ including image handling, complex markdown, and feed generation.</p>
 <pre><code class="language-rust">println!("Code in quotes!");
 </code></pre>
 </blockquote>
-<h4 id="heading-7">Code with Explanation</h4>
-<p>Here’s how the theme toggle works:</p>
+<h4 id="code-with-explanation">Code with Explanation</h4>
+<p>Here's how the theme toggle works:</p>
 <pre><code class="language-javascript">function toggleTheme() {
   // Get current theme or default to light
   const currentTheme =
@@ -217,19 +217,19 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Provides smooth CSS transitions</li>
 <li>Works across page reloads</li>
 </ul>
-<h2 id="heading-8">SEO and Discovery Features</h2>
+<h2 id="seo-and-discovery-features">SEO and Discovery Features</h2>
 <p>Krik automatically generates several files to optimize search engine discovery
 and indexing:</p>
-<h3 id="heading-9">Atom Feed Generation</h3>
+<h3 id="atom-feed-generation">Atom Feed Generation</h3>
 <p>Automatically generates an Atom feed (<code>feed.xml</code>) that includes:</p>
-<h4 id="heading-10">Feed Metadata</h4>
+<h4 id="feed-metadata">Feed Metadata</h4>
 <ul>
 <li>Site title from <code>site.toml</code></li>
 <li>Last updated timestamp</li>
 <li>Self-referencing links</li>
 <li>Unique feed ID</li>
 </ul>
-<h4 id="heading-11">Post Entries</h4>
+<h4 id="post-entries">Post Entries</h4>
 <ul>
 <li>Only posts (not pages) are included</li>
 <li>Limited to 20 most recent posts</li>
@@ -237,16 +237,16 @@ and indexing:</p>
 <li>Individual post IDs and timestamps</li>
 <li>Tag information (when available)</li>
 </ul>
-<h4 id="heading-12">Link Resolution</h4>
+<h4 id="link-resolution">Link Resolution</h4>
 <p>When <code>base_url</code> is configured in <code>site.toml</code>, Krik uses the <code>xml:base</code> attribute
 for proper link resolution:</p>
 <pre><code class="language-xml">&lt;feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com"&gt;
 </code></pre>
 <p>This ensures that relative links in your posts work correctly when viewed in
 feed readers.</p>
-<h3 id="heading-13">XML Sitemap Generation</h3>
+<h3 id="xml-sitemap-generation">XML Sitemap Generation</h3>
 <p>Automatically generates a comprehensive XML sitemap (<code>sitemap.xml</code>):</p>
-<h4 id="heading-14">Sitemap Features</h4>
+<h4 id="sitemap-features">Sitemap Features</h4>
 <ul>
 <li><strong>XML Schema Validation</strong>: Includes proper namespace declarations</li>
 <li><strong>Multilingual Support</strong>: Uses <code>&lt;xhtml:link&gt;</code> for alternate language versions</li>
@@ -254,7 +254,7 @@ feed readers.</p>
 <li><strong>SEO Optimization</strong>: Proper priorities and change frequencies</li>
 <li><strong>Draft Exclusion</strong>: Automatically excludes draft content</li>
 </ul>
-<h4 id="heading-15">Example Sitemap Entry</h4>
+<h4 id="example-sitemap-entry">Example Sitemap Entry</h4>
 <pre><code class="language-xml">&lt;url&gt;
   &lt;loc&gt;https://example.com/posts/welcome.html&lt;/loc&gt;
   &lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
@@ -264,9 +264,9 @@ feed readers.</p>
   &lt;xhtml:link rel="alternate" hreflang="it" href="https://example.com/posts/welcome.it.html" /&gt;
 &lt;/url&gt;
 </code></pre>
-<h3 id="heading-16">robots.txt Generation</h3>
+<h3 id="robotstxt-generation">robots.txt Generation</h3>
 <p>Automatically generates SEO-optimized robots.txt:</p>
-<h4 id="heading-17">robots.txt Features</h4>
+<h4 id="robotstxt-features">robots.txt Features</h4>
 <ul>
 <li><strong>Sitemap Reference</strong>: Points to sitemap.xml location</li>
 <li><strong>Best Practice Rules</strong>: Allows content while blocking system files</li>
@@ -274,7 +274,7 @@ feed readers.</p>
 <li><strong>Security</strong>: Blocks known problematic crawlers</li>
 <li><strong>Politeness</strong>: Includes crawl delay settings</li>
 </ul>
-<h4 id="heading-18">Example robots.txt</h4>
+<h4 id="example-robotstxt">Example robots.txt</h4>
 <pre><code>User-agent: *
 Allow: /
 
@@ -288,8 +288,8 @@ Sitemap: https://example.com/sitemap.xml
 # Crawl delay (optional - be nice to servers)
 Crawl-delay: 1
 </code></pre>
-<h2 id="heading-19">Performance Considerations</h2>
-<h3 id="heading-20">Build Performance</h3>
+<h2 id="performance-considerations">Performance Considerations</h2>
+<h3 id="build-performance">Build Performance</h3>
 <p>Krik is designed for speed:</p>
 <ul>
 <li><strong>Rust Performance</strong>: Native speed with zero-cost abstractions</li>
@@ -297,36 +297,36 @@ Crawl-delay: 1
 <li><strong>Incremental Building</strong>: Only processes changed files (planned feature)</li>
 <li><strong>Memory Efficiency</strong>: Streaming processing for large sites</li>
 </ul>
-<h3 id="heading-21">Runtime Performance</h3>
+<h3 id="runtime-performance">Runtime Performance</h3>
 <p>The generated sites are optimized for performance:</p>
 <ul>
 <li><strong>Minimal CSS</strong>: No framework bloat, only necessary styles</li>
-<li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn’t required</li>
+<li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn't required</li>
 <li><strong>Responsive Images</strong>: Proper sizing and format recommendations</li>
 <li><strong>Static Assets</strong>: Everything is static, no server-side processing</li>
 </ul>
-<h2 id="heading-22">Accessibility Features</h2>
+<h2 id="accessibility-features">Accessibility Features</h2>
 <p>Krik generates accessible HTML by default:</p>
-<h3 id="heading-23">Semantic Structure</h3>
+<h3 id="semantic-structure">Semantic Structure</h3>
 <ul>
 <li>Proper heading hierarchy (H1 → H2 → H3)</li>
 <li>Landmark elements (nav, main, aside)</li>
 <li>List structures for navigation</li>
 </ul>
-<h3 id="heading-24">Interactive Elements</h3>
+<h3 id="interactive-elements">Interactive Elements</h3>
 <ul>
 <li>ARIA labels on buttons and controls</li>
 <li>Focus indicators for keyboard navigation</li>
 <li>Skip links for screen readers (planned)</li>
 </ul>
-<h3 id="heading-25">Content Accessibility</h3>
+<h3 id="content-accessibility">Content Accessibility</h3>
 <ul>
 <li>Alt text support for images</li>
 <li>Table headers and captions</li>
 <li>High contrast color schemes</li>
 </ul>
 <hr />
-<p>This demonstrates many of Krik’s advanced capabilities. The combination of
+<p>This demonstrates many of Krik's advanced capabilities. The combination of
 performance, features, and accessibility makes it an excellent choice for modern
 static sites.</p>
 </article>
