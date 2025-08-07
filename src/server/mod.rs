@@ -4,6 +4,7 @@ use tokio::sync::broadcast;
 use warp::Filter;
 use notify::{Watcher, RecursiveMode, Event, EventKind};
 use crate::generator::SiteGenerator;
+use tracing::{info, error};
 
 pub mod websocket;
 pub mod static_files;
@@ -70,20 +71,20 @@ impl DevServer {
             
             let routes = ws_route.or(static_route);
             
-            println!("🚀 Krik development server started!");
-            println!("📁 Serving: {}", self.output_dir.display());
-            println!("👀 Watching: {}", self.input_dir.display());
+            info!("🚀 Krik development server started!");
+            info!("📁 Serving: {}", self.output_dir.display());
+            info!("👀 Watching: {}", self.input_dir.display());
             if let Some(ref theme_dir) = self.theme_dir {
-                println!("👀 Watching theme: {}", theme_dir.display());
+                info!("👀 Watching theme: {}", theme_dir.display());
             }
-            println!("🌐 Available on:");
+            info!("🌐 Available on:");
             
             for interface in &interfaces {
-                println!("   http://{}:{}", interface, self.port);
+                info!("   http://{}:{}", interface, self.port);
             }
             
-            println!("✅ Live reload enabled");
-            println!("\n💡 Press Ctrl+C to stop");
+            info!("✅ Live reload enabled");
+            info!("\n💡 Press Ctrl+C to stop");
 
             // Start server with live reload
             warp::serve(routes)
@@ -94,20 +95,20 @@ impl DevServer {
             let static_route = warp::fs::dir(output_dir.clone())
                 .or(warp::path::end().and(warp::fs::file(output_dir.join("index.html"))));
             
-            println!("🚀 Krik development server started!");
-            println!("📁 Serving: {}", self.output_dir.display());
-            println!("👀 Watching: {}", self.input_dir.display());
+            info!("🚀 Krik development server started!");
+            info!("📁 Serving: {}", self.output_dir.display());
+            info!("👀 Watching: {}", self.input_dir.display());
             if let Some(ref theme_dir) = self.theme_dir {
-                println!("👀 Watching theme: {}", theme_dir.display());
+                info!("👀 Watching theme: {}", theme_dir.display());
             }
-            println!("🌐 Available on:");
+            info!("🌐 Available on:");
             
             for interface in &interfaces {
-                println!("   http://{}:{}", interface, self.port);
+                info!("   http://{}:{}", interface, self.port);
             }
             
-            println!("❌ Live reload disabled");
-            println!("\n💡 Press Ctrl+C to stop");
+            info!("❌ Live reload disabled");
+            info!("\n💡 Press Ctrl+C to stop");
 
             // Start server without live reload
             warp::serve(static_route)
@@ -168,28 +169,28 @@ impl DevServer {
                 }
                 last_generation = now;
 
-                println!("📝 File changed, regenerating site...");
+                info!("📝 File changed, regenerating site...");
                 
                 // Regenerate site
                 if let Ok(mut generator) = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
                     if let Err(e) = generator.scan_files() {
-                        eprintln!("❌ Error scanning files: {}", e);
+                        error!("❌ Error scanning files: {}", e);
                         continue;
                     }
                     if let Err(e) = generator.generate_site() {
-                        eprintln!("❌ Error generating site: {}", e);
+                        error!("❌ Error generating site: {}", e);
                         continue;
                     }
                     
                     // Conditionally inject live reload script
                     if live_reload {
                         if let Err(e) = inject_live_reload_script(&output_dir, port) {
-                            eprintln!("❌ Error injecting live reload script: {}", e);
+                            error!("❌ Error injecting live reload script: {}", e);
                             continue;
                         }
                     }
                     
-                    println!("✅ Site regenerated");
+                    info!("✅ Site regenerated");
                     
                     // Notify connected clients to reload
                     let _ = reload_tx.send(());

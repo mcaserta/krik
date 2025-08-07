@@ -51,6 +51,7 @@ pub mod init;
 pub mod content;
 pub mod lint;
 pub mod cli;
+pub mod logging;
 
 pub use error::*;
 pub use parser::*;
@@ -58,3 +59,4 @@ pub use theme::*;
 pub use i18n::*;
 pub use generator::*;
 pub use site::*;
+pub use logging::*;

@@ -1,5 +1,6 @@
 use crate::error::{KrikResult, MarkdownError, MarkdownErrorKind, IoError, IoErrorKind};
 use std::path::Path;
+use tracing::warn;
 
 /// Error recovery utilities for graceful degradation
 pub struct ErrorRecovery;
@@ -14,7 +15,7 @@ impl ErrorRecovery {
         match &error.kind {
             MarkdownErrorKind::InvalidFrontMatter(_) => {
                 // If front matter is invalid, try to extract just the content without front matter
-                eprintln!("Warning: Invalid front matter in {}, using content without metadata", 
+                warn!("Warning: Invalid front matter in {}, using content without metadata", 
                           file_path.display());
                 
                 // Skip the front matter section and use remaining content
@@ -30,7 +31,7 @@ impl ErrorRecovery {
             }
             MarkdownErrorKind::InvalidDate(_) => {
                 // For invalid dates, we can still process the content with a warning
-                eprintln!("Warning: Invalid date in {}, using current date", file_path.display());
+                warn!("Warning: Invalid date in {}, using current date", file_path.display());
                 Some((Self::create_default_frontmatter(), content.to_string()))
             }
             _ => None, // Can't recover from other errors
@@ -90,8 +91,8 @@ impl ErrorRecovery {
         match operation() {
             Ok(results) => Ok(results),
             Err(e) if continue_on_error => {
-                eprintln!("Warning: {description} failed with error: {e}");
-                eprintln!("Continuing with partial results...");
+                warn!("Warning: {description} failed with error: {e}");
+                warn!("Continuing with partial results...");
                 Ok(Vec::new()) // Return empty results but don't fail
             }
             Err(e) => Err(e),
@@ -210,8 +211,8 @@ impl<T> ErrorRecoverable<T> for KrikResult<T> {
         match self {
             Ok(value) => Ok(Some(value)),
             Err(e) => {
-                eprintln!("Warning: {} failed: {}", description, e);
-                eprintln!("Continuing...");
+                warn!("Warning: {} failed: {}", description, e);
+                warn!("Continuing...");
                 Ok(None)
             }
         }
@@ -221,8 +222,8 @@ impl<T> ErrorRecoverable<T> for KrikResult<T> {
         match self {
             Ok(value) => Ok(value),
             Err(e) => {
-                eprintln!("Warning: {} failed: {}", description, e);
-                eprintln!("Using default value");
+                warn!("Warning: {} failed: {}", description, e);
+                warn!("Using default value");
                 Ok(default)
             }
         }

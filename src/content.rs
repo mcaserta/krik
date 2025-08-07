@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 use chrono::{Utc, DateTime};
 use crate::error::{KrikResult, KrikError, IoError, IoErrorKind, ContentError, ContentErrorKind};
+use tracing::info;
 
 /// Create a new blog post in the content/posts directory
 pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&String>) -> KrikResult<()> {
@@ -15,7 +16,7 @@ pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&Str
                 path: posts_dir.clone(),
                 context: "Creating posts directory".to_string(),
             }))?;
-        println!("📁 Created directory: {}", posts_dir.display());
+        info!("📁 Created directory: {}", posts_dir.display());
     }
     
     // Generate filename
@@ -47,8 +48,8 @@ pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&Str
             context: "Writing post content to file".to_string(),
         }))?;
     
-    println!("📝 Created new blog post: {}", file_path.display());
-    println!("✨ You can now edit the file and add your content!");
+    info!("📝 Created new blog post: {}", file_path.display());
+    info!("✨ You can now edit the file and add your content!");
     
     Ok(())
 }
@@ -65,7 +66,7 @@ pub fn create_page(content_dir: &Path, title: &str, custom_filename: Option<&Str
                 path: pages_dir.clone(),
                 context: "Creating pages directory".to_string(),
             }))?;
-        println!("📁 Created directory: {}", pages_dir.display());
+        info!("📁 Created directory: {}", pages_dir.display());
     }
     
     // Generate filename
@@ -97,8 +98,8 @@ pub fn create_page(content_dir: &Path, title: &str, custom_filename: Option<&Str
             context: "Writing page content to file".to_string(),
         }))?;
     
-    println!("📄 Created new page: {}", file_path.display());
-    println!("✨ You can now edit the file and add your content!");
+    info!("📄 Created new page: {}", file_path.display());
+    info!("✨ You can now edit the file and add your content!");
     
     Ok(())
 }

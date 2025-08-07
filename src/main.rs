@@ -1,6 +1,7 @@
 use krik::cli::KrikCli;
 use krik::error::KrikError;
 use std::error::Error;
+use tracing::error;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -8,11 +9,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     if let Err(e) = cli.run().await {
         // Print user-friendly error message
-        eprintln!("Error: {}", e);
+        error!("Error: {}", e);
         
         // Print additional context for debugging if available
         if let Some(source) = e.source() {
-            eprintln!("Caused by: {}", source);
+            error!("Caused by: {}", source);
         }
         
         // Set appropriate exit code based on error type

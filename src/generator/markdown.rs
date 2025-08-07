@@ -3,11 +3,17 @@ use crate::error::{KrikResult, KrikError, IoError, IoErrorKind};
 use regex::Regex;
 use std::path::Path;
 use walkdir::WalkDir;
+use tracing::{info, debug, warn};
 
 use pulldown_cmark::{html, Options, Parser};
 
 /// Scan files in the source directory and parse markdown documents
 pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResult<()> {
+    info!("Starting file scan in: {}", source_dir.display());
+    let mut processed_files = 0;
+    let mut skipped_files = 0;
+    let mut error_files = 0;
+
     for entry in WalkDir::new(source_dir)
         .follow_links(true)
         .into_iter()
@@ -25,6 +31,8 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResul
             continue;
         }
 
+        debug!("Processing file: {}", path.display());
+
         // Read and parse the file
         let content = std::fs::read_to_string(path)
             .map_err(|e| KrikError::Io(IoError {
@@ -37,6 +45,8 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResul
             Ok((frontmatter, markdown_content)) => {
                 // Skip drafts
                 if frontmatter.draft.unwrap_or(false) {
+                    debug!("Skipping draft: {}", path.display());
+                    skipped_files += 1;
                     continue;
                 }
 
@@ -75,15 +85,20 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResul
                 };
 
                 documents.push(document);
+                processed_files += 1;
+                debug!("Successfully processed: {}", path.display());
             }
             Err(e) => {
                 // Log error but continue processing other files
-                eprintln!("Warning: Failed to parse {}: {}", path.display(), e);
+                warn!("Failed to parse {}: {}", path.display(), e);
+                error_files += 1;
                 continue;
             }
         }
     }
 
+    info!("File scan completed: {} processed, {} skipped, {} errors", 
+          processed_files, skipped_files, error_files);
     Ok(())
 }
 

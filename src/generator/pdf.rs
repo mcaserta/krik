@@ -6,6 +6,7 @@ use std::process::Command;
 use std::fs;
 use chrono::Utc;
 use which::which;
+use tracing::{info, warn};
 
 /// PDF generation using pandoc with typst engine
 pub struct PdfGenerator {
@@ -331,11 +332,11 @@ impl PdfGenerator {
             .collect();
 
         if pdf_documents.is_empty() {
-            println!("No documents marked for PDF generation (pdf: true)");
+            info!("No documents marked for PDF generation (pdf: true)");
             return Ok(generated_pdfs);
         }
 
-        println!("Generating PDFs for {} documents marked with pdf: true", pdf_documents.len());
+        info!("Generating PDFs for {} documents marked with pdf: true", pdf_documents.len());
 
         // Determine project root - use current working directory if source_dir is relative
         let project_root = if source_dir.is_absolute() {
@@ -352,11 +353,11 @@ impl PdfGenerator {
 
             match self.generate_pdf_from_file(&input_path, &output_path, &project_root, site_config, &document.language) {
                 Ok(()) => {
-                    println!("Generated PDF: {}", output_path.display());
+                    info!("Generated PDF: {}", output_path.display());
                     generated_pdfs.push(output_path);
                 }
                 Err(e) => {
-                    eprintln!("Warning: Failed to generate PDF for {}: {}", 
+                    warn!("Warning: Failed to generate PDF for {}: {}", 
                              document.file_path, e);
                 }
             }

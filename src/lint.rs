@@ -5,6 +5,7 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
+use tracing::debug;
 
 /// Report produced by the content linter
 #[derive(Debug, Default)]
@@ -26,6 +27,8 @@ impl LintReport {
 
 /// Lint markdown content in a directory. Returns a report with errors and warnings.
 pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
+    debug!("Starting content linting in: {}", content_dir.display());
+    
     if !content_dir.exists() {
         return Err(KrikError::Io(IoError {
             kind: IoErrorKind::NotFound,
@@ -61,6 +64,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
             continue;
         }
 
+        debug!("Linting file: {}", path.display());
         report.files_scanned += 1;
 
         // Read and parse

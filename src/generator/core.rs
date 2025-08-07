@@ -5,6 +5,7 @@ use crate::site::SiteConfig;
 use crate::error::{KrikResult, KrikError, ThemeError, ThemeErrorKind};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use tracing::{info, debug, warn, error};
 
 /// The main site generator that processes Markdown files and creates a static website.
 ///
@@ -122,11 +123,19 @@ impl SiteGenerator {
 
     /// Scan files in the source directory and parse markdown documents
     pub fn scan_files(&mut self) -> KrikResult<()> {
-        super::markdown::scan_files(&self.source_dir, &mut self.documents)
+        info!("Scanning for markdown files in: {}", self.source_dir.display());
+        let result = super::markdown::scan_files(&self.source_dir, &mut self.documents)
             .map_err(|e| match e {
                 KrikError::Generation(gen_err) => KrikError::Generation(gen_err),
                 other => other,
-            })
+            });
+        
+        match &result {
+            Ok(_) => info!("Successfully scanned {} documents", self.documents.len()),
+            Err(e) => error!("Failed to scan files: {}", e),
+        }
+        
+        result
     }
 
     /// Generate the complete static site
@@ -142,51 +151,64 @@ impl SiteGenerator {
     pub fn generate_site(&self) -> KrikResult<()> {
         use super::pipeline::{EmitPhase, RenderPhase, ScanPhase, TransformPhase};
 
+        info!("Starting site generation");
+        debug!("Source directory: {}", self.source_dir.display());
+        debug!("Output directory: {}", self.output_dir.display());
+
         let scan = ScanPhase;
         let transform = TransformPhase;
         let render = RenderPhase;
         let emit = EmitPhase;
 
         // Prepare output
+        info!("Preparing output directory");
         emit.ensure_output_dir(&self.output_dir)?;
 
         // Scan
+        info!("Scanning source files");
         let mut documents = scan.scan(&self.source_dir)?;
+        debug!("Found {} documents to process", documents.len());
 
         // Transform
+        info!("Transforming documents");
         transform.transform(&mut documents, &self.source_dir);
 
         // Assets
+        info!("Copying assets");
         emit.copy_assets(&self.source_dir, &self.theme, &self.output_dir)?;
 
         // Render
+        info!("Rendering pages");
         render.render_pages(&documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)?;
         render.render_index(&documents, &self.theme, &self.site_config, &self.output_dir)?;
 
         // Emit ancillary artifacts
+        info!("Generating ancillary files");
         emit.emit_feed(&documents, &self.site_config, &self.output_dir)?;
         emit.emit_sitemap(&documents, &self.site_config, &self.output_dir)?;
         emit.emit_robots(&self.site_config, &self.output_dir)?;
 
         // Generate PDFs if tools are available
         if super::pdf::PdfGenerator::is_available() {
+            info!("PDF generation tools available, generating PDFs");
             match super::pdf::PdfGenerator::new() {
                 Ok(pdf_generator) => {
                     match pdf_generator.generate_pdfs(&documents, &self.source_dir, &self.output_dir, &self.site_config) {
                         Ok(generated_pdfs) => {
                             if !generated_pdfs.is_empty() {
-                                println!("Generated {} PDF files alongside their HTML counterparts", generated_pdfs.len());
+                                info!("Generated {} PDF files alongside their HTML counterparts", generated_pdfs.len());
                             }
                         }
-                        Err(e) => eprintln!("Warning: PDF generation failed: {}", e),
+                        Err(e) => warn!("PDF generation failed: {}", e),
                     }
                 }
-                Err(e) => eprintln!("Warning: Could not initialize PDF generator: {}", e),
+                Err(e) => warn!("Could not initialize PDF generator: {}", e),
             }
         } else {
-            println!("PDF generation skipped: pandoc and/or typst not available in PATH");
+            debug!("PDF generation skipped: pandoc and/or typst not available in PATH");
         }
 
+        info!("Site generation completed successfully");
         Ok(())
     }
 }

@@ -2,13 +2,14 @@ use std::fs;
 use std::path::Path;
 use include_dir::{include_dir, Dir};
 use crate::error::{KrikResult, KrikError, IoError, IoErrorKind, GenerationError, GenerationErrorKind};
+use tracing::{info, warn};
 
 // Embed the content and themes directories at compile time
 static CONTENT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/content");
 static THEMES_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/themes");
 
 pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
-    println!("🚀 Initializing new Krik site in: {}", target_dir.display());
+    info!("🚀 Initializing new Krik site in: {}", target_dir.display());
     
     // Create target directory if it doesn't exist
     if !target_dir.exists() {
@@ -18,7 +19,7 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
             path: target_dir.to_path_buf(),
             context: "Creating target directory for site initialization".to_string(),
         }))?;
-        println!("📁 Created directory: {}", target_dir.display());
+        info!("📁 Created directory: {}", target_dir.display());
     }
     
     // Check if directory is empty (unless force is specified)
@@ -42,7 +43,7 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
             )),
             context: "Extracting embedded content directory".to_string(),
         }))?;
-    println!("📝 Created content directory with sample posts and pages");
+    info!("📝 Created content directory with sample posts and pages");
     
     // Extract themes directory  
     let themes_target = target_dir.join("themes");
@@ -54,13 +55,13 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
             )),
             context: "Extracting embedded themes directory".to_string(),
         }))?;
-    println!("🎨 Created themes directory with default theme");
+    info!("🎨 Created themes directory with default theme");
     
-    println!("\n✅ Site initialized successfully!");
-    println!("\n🔧 Next steps:");
-    println!("   cd {}", target_dir.display());
-    println!("   kk server          # Start development server");
-    println!("   kk                 # Generate static site");
+    info!("\n✅ Site initialized successfully!");
+    info!("\n🔧 Next steps:");
+    info!("   cd {}", target_dir.display());
+    info!("   kk server          # Start development server");
+    info!("   kk                 # Generate static site");
     
     Ok(())
 }
@@ -94,7 +95,7 @@ fn extract_embedded_dir(embedded_dir: &Dir, target_path: &Path, force: bool) -> 
         
         // Check if file exists and force is not specified
         if file_path.exists() && !force {
-            println!("⚠️  Skipping existing file: {}", file_path.display());
+            warn!("⚠️  Skipping existing file: {}", file_path.display());
             continue;
         }
         
@@ -105,7 +106,7 @@ fn extract_embedded_dir(embedded_dir: &Dir, target_path: &Path, force: bool) -> 
                 path: file_path.clone(),
                 context: "Writing embedded file contents".to_string(),
             }))?;
-        println!("📄 Created: {}", file_path.strip_prefix(target_path.parent().unwrap_or(target_path)).unwrap_or(&file_path).display());
+        info!("📄 Created: {}", file_path.strip_prefix(target_path.parent().unwrap_or(target_path)).unwrap_or(&file_path).display());
     }
     
     // Recursively extract subdirectories

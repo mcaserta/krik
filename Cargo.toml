@@ -47,3 +47,7 @@ local-ip-address = "0.6"
 include_dir = "0.7"
 # Path utilities for relative URL calculation
 pathdiff = "0.2"
+# Logging dependencies
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+atty = "0.2"

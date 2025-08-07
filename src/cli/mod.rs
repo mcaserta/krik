@@ -1,5 +1,6 @@
 use clap::{Arg, ArgMatches, Command};
 use crate::error::KrikResult;
+use crate::logging;
 
 mod commands;
 
@@ -29,6 +30,7 @@ impl KrikCli {
             .arg(Self::input_arg())
             .arg(Self::output_arg())
             .arg(Self::theme_arg())
+            .arg(Self::verbose_arg())
     }
 
     /// Build the server subcommand
@@ -38,6 +40,7 @@ impl KrikCli {
             .arg(Self::input_arg())
             .arg(Self::output_arg())
             .arg(Self::theme_arg())
+            .arg(Self::verbose_arg())
             .arg(
                 Arg::new("port")
                     .short('p')
@@ -58,6 +61,7 @@ impl KrikCli {
     fn build_init_command() -> Command {
         Command::new("init")
             .about("Initialize a new Krik site with default content and theme")
+            .arg(Self::verbose_arg())
             .arg(
                 Arg::new("directory")
                     .help("Directory to initialize (default: current directory)")
@@ -77,6 +81,7 @@ impl KrikCli {
     fn build_post_command() -> Command {
         Command::new("post")
             .about("Create a new blog post")
+            .arg(Self::verbose_arg())
             .arg(
                 Arg::new("title")
                     .help("Post title")
@@ -103,6 +108,7 @@ impl KrikCli {
     fn build_page_command() -> Command {
         Command::new("page")
             .about("Create a new page")
+            .arg(Self::verbose_arg())
             .arg(
                 Arg::new("title")
                     .help("Page title")
@@ -130,6 +136,7 @@ impl KrikCli {
         Command::new("lint")
             .about("Validate content front matter, dates, slugs, and language codes")
             .arg(Self::input_arg())
+            .arg(Self::verbose_arg())
             .arg(
                 Arg::new("strict")
                     .long("strict")
@@ -153,6 +160,15 @@ impl KrikCli {
         Self::create_dir_arg("theme", 't', "Theme directory path", None)
     }
 
+    /// Create the verbose argument
+    fn verbose_arg() -> Arg {
+        Arg::new("verbose")
+            .short('v')
+            .long("verbose")
+            .help("Enable verbose logging output")
+            .action(clap::ArgAction::SetTrue)
+    }
+
     /// Helper method to create directory arguments with consistent structure
     fn create_dir_arg(name: &'static str, short: char, help: &'static str, default: Option<&'static str>) -> Arg {
         let mut arg = Arg::new(name)
@@ -170,6 +186,10 @@ impl KrikCli {
 
     /// Run the CLI application
     pub async fn run(self) -> KrikResult<()> {
+        // Initialize logging based on verbose flag
+        let verbose = self.matches.get_flag("verbose");
+        logging::init_logging(verbose);
+
         match self.matches.subcommand() {
             Some(("server", server_matches)) => commands::handle_server(server_matches).await,
             Some(("init", init_matches)) => commands::handle_init(init_matches),
