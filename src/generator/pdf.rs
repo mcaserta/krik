@@ -286,9 +286,18 @@ impl PdfGenerator {
 
     /// Resolve a relative path from a markdown file to an absolute path from source root
     fn resolve_relative_path(&self, relative_path: &str, input_dir: &Path, source_root: &Path) -> String {
-        // Convert the markdown file's directory to be relative to source root
-        let input_relative_to_source = input_dir.strip_prefix(source_root)
-            .unwrap_or(input_dir);
+        // First canonicalize both paths to handle any .. or . components
+        let canonical_input_dir = fs::canonicalize(input_dir)
+            .unwrap_or_else(|_| input_dir.to_path_buf());
+        let canonical_source_root = fs::canonicalize(source_root)
+            .unwrap_or_else(|_| source_root.to_path_buf());
+
+        // Try to make input_dir relative to source_root, but don't fail if outside
+        let input_relative_to_source = canonical_input_dir.strip_prefix(&canonical_source_root)
+            .unwrap_or_else(|_| {
+                // If outside source root, use the full canonical path
+                &canonical_input_dir
+            });
 
         // Resolve the relative path from the markdown file's location
         let resolved_path = input_relative_to_source.join(relative_path);
@@ -338,13 +347,17 @@ impl PdfGenerator {
 
         info!("Generating PDFs for {} documents marked with pdf: true", pdf_documents.len());
 
-        // Determine project root - use current working directory if source_dir is relative
-        let project_root = if source_dir.is_absolute() {
-            source_dir.parent().unwrap_or(source_dir).to_path_buf()
-        } else {
-            // For relative paths like "content", use current working directory
-            std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
-        };
+        // Determine project root by canonicalizing the source directory path
+        let canonical_source_dir = fs::canonicalize(source_dir)
+            .map_err(|e| KrikError::Io(IoError {
+                kind: IoErrorKind::ReadFailed(e),
+                path: source_dir.to_path_buf(),
+                context: "Canonicalizing source directory path".to_string(),
+            }))?;
+            
+        let project_root = canonical_source_dir.parent()
+            .unwrap_or(&canonical_source_dir)
+            .to_path_buf();
 
         for document in pdf_documents {
             // Construct input path (source file) and output path (PDF file)
@@ -454,6 +467,21 @@ mod tests {
         let input_dir = Path::new("/project/content/posts/year/month");
         let resolved = generator.resolve_relative_path("../../../../images/logo.png", input_dir, source_root);
         assert_eq!(resolved, "images/logo.png");
+
+        // Test path resolution with input directory outside source root
+        let input_dir = Path::new("/other/project/content/posts");
+        let resolved = generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
+        assert_eq!(resolved, "/other/project/content/images/logo.png");
+
+        // Test path resolution with input directory as parent of source root
+        let input_dir = Path::new("/project/../other/content");
+        let resolved = generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
+        assert_eq!(resolved, "/other/images/logo.png");
+
+        // Test path resolution with complex relative paths
+        let input_dir = Path::new("/project/content/posts");
+        let resolved = generator.resolve_relative_path("../../other/images/logo.png", input_dir, source_root);
+        assert_eq!(resolved, "other/images/logo.png");
     }
 
     #[test]
