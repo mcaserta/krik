@@ -134,7 +134,8 @@ The linter validates:
 - Duplicate slugs: within the same directory and language
 - Duplicate titles: warns within the same directory and language
 
-Exits non-zero on errors. In `--strict` mode, warnings are also treated as errors.
+Exits non-zero on errors. In `--strict` mode, warnings are also treated as
+errors.
 
 ### Production Build
 

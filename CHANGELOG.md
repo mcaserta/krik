@@ -8,6 +8,32 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.13] - 2025-08-07
+
+### Added
+
+- 📝 Comprehensive logging system with structured output
+  - `--verbose` flag for debug-level logging across all commands
+  - Module-specific logging with spans for better organization
+  - Rich context including file paths, line numbers, and timestamps
+  - Color support with automatic terminal detection
+  - Multiple log levels: INFO, DEBUG, WARN, ERROR
+- 🔧 Enhanced CLI experience with better feedback
+  - Detailed progress reporting during site generation
+  - File processing statistics and error tracking
+  - Improved debugging capabilities for troubleshooting
+
+### Changed
+
+- Replaced all `println!` and `eprintln!` calls with proper logging
+- Enhanced error reporting with structured logging format
+- Better user experience with configurable verbosity levels
+
+### Fixed
+
+- Consistent logging across all modules and commands
+- Improved error context and debugging information
+
 ## [0.1.12] - 2025-08-07
 
 ### Added
