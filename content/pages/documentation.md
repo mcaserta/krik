@@ -143,6 +143,7 @@ custom_field: "custom value"
 | `layout`      | String   | Template to use (`post`, `page`, or custom) |
 | `tags`        | Array    | Tags for categorization                     |
 | `toc`         | Boolean  | Enable table of contents generation         |
+| `pdf`         | Boolean  | Enable PDF generation                       |
 | `draft`       | Boolean  | Skip file from processing when `true`       |
 | Custom fields | Any      | Additional metadata accessible in templates |
 
@@ -290,6 +291,159 @@ Automatically generates SEO-optimized robots.txt:
 - Includes bot-specific rules for major search engines
 - Blocks known problematic crawlers/scrapers
 - Includes polite crawl delay settings
+
+## PDF Generation
+
+Krik supports automatic PDF generation for your content using pandoc and the
+typst engine. This feature allows you to provide downloadable PDF versions of
+your posts and pages.
+
+### Prerequisites
+
+Before using PDF generation, you need to install the required external tools:
+
+#### Install pandoc
+
+**macOS:**
+
+```bash
+brew install pandoc
+```
+
+**Ubuntu/Debian:**
+
+```bash
+sudo apt install pandoc
+```
+
+**Windows:** Download from [pandoc.org](https://pandoc.org/installing.html) or
+use:
+
+```bash
+winget install pandoc
+```
+
+#### Install typst
+
+**All platforms:**
+
+```bash
+cargo install typst-cli
+```
+
+**Alternative for macOS:**
+
+```bash
+brew install typst
+```
+
+### Enabling PDF Generation
+
+To enable PDF generation for a document, add `pdf: true` to your front matter:
+
+```yaml
+---
+title: "My Article"
+date: 2025-01-15T10:30:00Z
+pdf: true
+---
+# My Article
+
+This content will be available as both HTML and PDF.
+```
+
+### Features
+
+#### Automatic PDF Links
+
+When PDF generation is enabled, Krik automatically adds a PDF download link (📄)
+to your HTML templates, positioned next to the theme switcher. The link appears
+only for documents with `pdf: true` in their front matter.
+
+#### Language-Aware Filenames
+
+PDF files are generated with language-aware filenames:
+
+- `welcome.md` → `welcome.pdf`
+- `welcome.it.md` → `welcome.it.pdf`
+- `about.fr.md` → `about.fr.pdf`
+
+#### Conditional Appendix
+
+When your site has a `base_url` configured in `site.toml`, PDFs include an
+appendix with:
+
+- **Download URL**: Link to the original web version
+- **Generation timestamp**: When the PDF was created
+- **Multi-language support**: Appendix text translated based on document
+  language
+
+Supported appendix languages: English, Italian, Spanish, French, German,
+Portuguese, Japanese, Chinese, Russian, Arabic.
+
+#### Image Path Resolution
+
+Krik automatically resolves relative image paths in PDFs, handling complex
+patterns like:
+
+- `![Image](../images/photo.jpg)`
+- `![Diagram](../../assets/diagrams/flow.png)`
+- `![Logo](./logo.svg)`
+
+### Configuration
+
+PDF generation works with your existing site configuration. Make sure your
+`site.toml` includes:
+
+```toml
+title = "My Site"
+base_url = "https://mysite.com"  # Optional: enables PDF appendix with download URL
+```
+
+### Development Workflow
+
+```bash
+# 1. Add pdf: true to your document
+echo '---
+title: "My PDF Post"
+pdf: true
+---
+
+# My PDF Post
+
+Content goes here...' > content/posts/my-post.md
+
+# 2. Generate site (requires pandoc and typst)
+kk
+
+# 3. Check generated files
+ls _site/posts/
+# Output: my-post.html, my-post.pdf
+```
+
+### Troubleshooting
+
+**Error: "pandoc not found"**
+
+- Install pandoc using the instructions above
+- Ensure pandoc is in your system PATH
+
+**Error: "typst not found"**
+
+- Install typst-cli: `cargo install typst-cli`
+- Verify installation: `typst --version`
+
+**PDF links not appearing in HTML**
+
+- Ensure `pdf: true` is set in the document's front matter
+- Rebuild your site with `kk`
+- Check that the PDF file was generated in the output directory
+
+**Images missing in PDF**
+
+- Ensure image paths are relative to the content source directory
+- Use forward slashes in paths even on Windows
+- Verify image files exist at the specified paths
 
 ## Theme System
 
@@ -454,68 +608,9 @@ main branch.
 
 #### Setup Steps
 
-1. **Create the workflow file**: Add `.github/workflows/build-and-deploy.yml` to
-   your repository:
-
-```yaml
-name: Build and Deploy Site with Krik
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch: # Allow manual trigger
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Full clone needed for branch operations
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
-
-      - name: Install Krik
-        run: cargo install krik
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Run Krik to generate site
-        run: kk
-
-      - name: Deploy to gh-pages
-        run: |
-          mkdir -p /tmp/generated-site
-          cp -r _site/* /tmp/generated-site/
-
-          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-            git checkout gh-pages
-          else
-            git checkout --orphan gh-pages
-            git rm -rf .
-          fi
-
-          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
-          cp -r /tmp/generated-site/* .
-          touch .nojekyll
-
-          git add .
-          if ! git diff --staged --quiet; then
-            git commit -m "Deploy site generated on $(date)"
-            git push origin gh-pages
-          fi
-```
+1. **Create the workflow file**: Add
+   [.github/workflows/build-and-deploy.yml](.github/workflows/build-and-deploy.yml)
+   to your repository.
 
 2. **Enable GitHub Pages**:
    - Go to your repository settings
