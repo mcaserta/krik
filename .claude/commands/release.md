@@ -2,6 +2,7 @@
 
 - When releasing the software, automatically:
   - Update the documentation in `README.md`, `CLAUDE.md` and `content`
+  - Update the `CHANGELOG.md`
   - Reformat all modified Markdown files using prettier
   - Update version in `Cargo.toml`
   - Check that the software builds successfully
@@ -14,3 +15,6 @@
   - Push to GitHub
   - Release to GitHub using `gh release create`
   - Publish to crates.io using `cargo publish`
+
+It is of absolute importance that the release workflow is followed without
+skipping any steps.

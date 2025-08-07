@@ -53,6 +53,11 @@
                     </select>
                 </div>
                 {% endif %}
+                {% if pdf %}
+                <a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
+                    <span class="pdf-icon">📄</span>
+                </a>
+                {% endif %}
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>

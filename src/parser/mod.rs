@@ -17,6 +17,7 @@ use std::path::Path;
 /// date: 2024-01-15T10:30:00Z
 /// tags: ["rust", "web"]
 /// draft: false
+/// pdf: true
 /// custom_field: "custom value"
 /// ---
 /// ```
@@ -32,6 +33,8 @@ pub struct FrontMatter {
     pub lang: Option<String>,
     /// Whether this document should be skipped during generation
     pub draft: Option<bool>,
+    /// Whether to generate PDF for this document
+    pub pdf: Option<bool>,
     /// Additional custom fields accessible in templates
     #[serde(flatten)]
     pub extra: HashMap<String, serde_yaml::Value>,
@@ -122,6 +125,7 @@ pub fn parse_markdown_with_frontmatter_for_file(content: &str, file_path: &Path)
         tags: None,
         lang: None,
         draft: None,
+        pdf: None,
         extra: HashMap::new(),
     }, content.to_string()))
 }

@@ -151,6 +151,7 @@ pub fn generate_page(
     context.insert("tags", &document.front_matter.tags);
     context.insert("language", &document.language);
     context.insert("base_name", &document.base_name);
+    context.insert("pdf", &document.front_matter.pdf);
     
     // Generate and add description
     let frontmatter_desc = document.front_matter.extra.get("description").and_then(|v| v.as_str()).map(|s| s.to_string());
@@ -414,6 +415,7 @@ mod tests {
                 tags: None,
                 lang: None,
                 draft: None,
+                pdf: None,
                 extra: HashMap::new(),
             },
             content: String::new(),
@@ -432,6 +434,7 @@ mod tests {
                 tags: None,
                 lang: None,
                 draft: None,
+                pdf: None,
                 extra,
             },
             content: String::new(),

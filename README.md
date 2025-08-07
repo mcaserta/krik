@@ -33,6 +33,8 @@ theming ✨
 - Table of contents generation with `toc: true`
 - Bidirectional footnote navigation with smooth scrolling
 - Smart scroll-to-top button and theme-aware syntax highlighting
+- **PDF generation** with pandoc and typst engines (`pdf: true` in front matter)
+- Language-aware PDF links in HTML templates with responsive design
 
 ## 🌐 Demo
 

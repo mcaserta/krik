@@ -3,6 +3,7 @@ title: "Markdown Feature Showcase"
 date: 2024-01-20T14:30:00Z
 tags: ["markdown", "features", "demo"]
 toc: true
+pdf: true
 ---
 
 # Markdown Feature Showcase
@@ -171,9 +172,9 @@ This is a paragraph with [reference link][rust-lang] and another [link][github].
 
 ## Images
 
-Here's how images work (note: no actual image file in this demo):
+Here's how images work:
 
-![Alt text for image](../images/example.png "Optional title")
+![Alt text for image](../images/krik.png "Optional title")
 
 ## Footnotes in Detail
 

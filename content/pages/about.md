@@ -1,5 +1,6 @@
 ---
 title: "About Krik"
+pdf: true
 ---
 
 # About Krik

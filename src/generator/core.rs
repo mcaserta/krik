@@ -138,6 +138,7 @@ impl SiteGenerator {
     /// 4. Generate Atom feed
     /// 5. Generate XML sitemap
     /// 6. Generate robots.txt
+    /// 7. Generate PDFs (if pandoc and typst are available)
     pub fn generate_site(&self) -> KrikResult<()> {
         // Ensure output directory exists
         if !self.output_dir.exists() {
@@ -213,6 +214,31 @@ impl SiteGenerator {
                 context: "Generating robots.txt with sitemap reference".to_string(),
             }))?;
 
+        // Generate PDFs if tools are available
+        self.generate_pdfs_if_available();
+
         Ok(())
+    }
+
+    /// Generate PDFs for all documents if pandoc and typst are available
+    fn generate_pdfs_if_available(&self) {
+        if super::pdf::PdfGenerator::is_available() {
+            match super::pdf::PdfGenerator::new() {
+                Ok(pdf_generator) => {
+                    match pdf_generator.generate_pdfs(&self.documents, &self.source_dir, &self.output_dir, &self.site_config) {
+                        Ok(generated_pdfs) => {
+                            if !generated_pdfs.is_empty() {
+                                println!("Generated {} PDF files alongside their HTML counterparts", 
+                                        generated_pdfs.len());
+                            }
+                        }
+                        Err(e) => eprintln!("Warning: PDF generation failed: {}", e),
+                    }
+                }
+                Err(e) => eprintln!("Warning: Could not initialize PDF generator: {}", e),
+            }
+        } else {
+            println!("PDF generation skipped: pandoc and/or typst not available in PATH");
+        }
     }
 }

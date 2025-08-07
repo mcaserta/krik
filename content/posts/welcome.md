@@ -3,6 +3,7 @@ title: "Welcome to Krik"
 date: 2024-01-15T10:00:00Z
 tags: ["welcome", "static-site", "rust"]
 toc: true
+pdf: true
 ---
 
 # Welcome to Krik

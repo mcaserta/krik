@@ -73,6 +73,7 @@ impl ErrorRecovery {
             tags: None,
             lang: Some("en".to_string()),
             draft: Some(false),
+            pdf: None,
             extra: HashMap::new(),
         }
     }

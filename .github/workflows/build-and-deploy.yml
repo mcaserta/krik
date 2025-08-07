@@ -16,12 +16,18 @@ jobs:
           fetch-depth: 0  # Full clone needed for branch operations
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install pandoc # for pdf generation
+        uses: r-lib/actions/setup-pandoc@v2
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
           override: true
+
+      - name: Install typst # also for pdf generation
+        run: cargo install typst
 
       - name: Install Krik
         run: cargo install krik

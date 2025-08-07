@@ -9,6 +9,7 @@
 //! - `feeds`: Atom feed generation
 //! - `sitemap`: XML sitemap generation
 //! - `robots`: robots.txt generation
+//! - `pdf`: PDF generation using pandoc and typst
 
 pub mod core;
 pub mod markdown;
@@ -17,6 +18,7 @@ pub mod templates;
 pub mod feeds;
 pub mod sitemap;
 pub mod robots;
+pub mod pdf;
 
 // Re-export the main SiteGenerator for backwards compatibility
 pub use core::SiteGenerator;
