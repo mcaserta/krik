@@ -6,7 +6,7 @@ use std::process::Command;
 use std::fs;
 use chrono::Utc;
 use which::which;
-use tracing::{info, warn};
+use tracing::{info, warn, debug};
 
 /// PDF generation using pandoc with typst engine
 pub struct PdfGenerator {
@@ -28,6 +28,9 @@ impl PdfGenerator {
                 kind: GenerationErrorKind::FeedError("Typst not found in PATH. Install typst to enable PDF generation.".to_string()),
                 context: "Initializing PDF generator".to_string(),
             }))?;
+
+        debug!("Pandoc path: {}", pandoc_path.display());
+        debug!("Typst path: {}", typst_path.display());
 
         Ok(Self {
             pandoc_path,
@@ -63,6 +66,7 @@ impl PdfGenerator {
         // Run pandoc with typst engine on the temporary file
         let mut cmd = Command::new(&self.pandoc_path);
         cmd.arg(&temp_md_file)
+            .arg("--from=gfm")
             .arg("--pdf-engine=typst")
             .arg("--output")
             .arg(output_path)
