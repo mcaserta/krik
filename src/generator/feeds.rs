@@ -182,6 +182,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "test".to_string(),
+            toc: None,
         };
         assert!(is_post_for_feed(&post));
 
@@ -202,6 +203,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "about".to_string(),
+            toc: None,
         };
         assert!(!is_post_for_feed(&page));
     }

@@ -4,6 +4,7 @@
 //! 
 //! - `core`: Main SiteGenerator struct and orchestration
 //! - `markdown`: Markdown processing and content parsing  
+//! - `ast_parser`: AST-based parsing for TOC and footnotes
 //! - `assets`: Asset copying and file management
 //! - `templates`: HTML template rendering and page generation
 //! - `feeds`: Atom feed generation
@@ -13,6 +14,7 @@
 
 pub mod core;
 pub mod markdown;
+pub mod ast_parser;
 pub mod assets;
 pub mod templates;
 pub mod feeds;

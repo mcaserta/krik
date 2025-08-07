@@ -29,7 +29,7 @@
     <link rel="alternate" type="application/atom+xml" title="{{ site_title | default(value="Blog") }} - Feed" href="{{ feed_path }}">
 </head>
 <body>
-    <div class="layout-container">
+    <div class="layout-container{% if toc %} has-toc{% endif %}">
         <nav class="top-nav">
             <a href="{{ home_path }}" class="site-title">{{ site_title | default(value="Blog") }}</a>
             <div class="nav-controls">

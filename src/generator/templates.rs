@@ -159,12 +159,9 @@ pub fn generate_page(
     let content_without_title = super::markdown::remove_duplicate_title(&document.content, document.front_matter.title.as_deref());
     context.insert("content", &content_without_title);
 
-    // Process TOC if enabled (check for toc field in frontmatter)
-    if document.front_matter.extra.get("toc").and_then(|v| v.as_bool()).unwrap_or(false) {
-        let current_content = context.get("content").unwrap().as_str().unwrap();
-        let (toc_html, processed_content) = super::markdown::generate_toc_and_content(current_content, document.front_matter.title.as_deref());
-        context.insert("toc", &toc_html);
-        context.insert("content", &processed_content);
+    // Add TOC if available
+    if let Some(toc_html) = &document.toc {
+        context.insert("toc", toc_html);
     }
 
     // Process footnotes
@@ -410,6 +407,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "test".to_string(),
+            toc: None,
         };
         assert!(is_post(&post_doc));
 
@@ -429,6 +427,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "about".to_string(),
+            toc: None,
         };
         assert!(!is_post(&page_doc));
     }

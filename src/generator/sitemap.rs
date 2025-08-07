@@ -221,6 +221,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "test".to_string(),
+            toc: None,
         };
         assert!(should_include_in_sitemap(&document));
 
@@ -239,6 +240,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "draft".to_string(),
+            toc: None,
         };
         assert!(!should_include_in_sitemap(&draft_document));
 
@@ -257,6 +259,7 @@ mod tests {
             content: String::new(),
             language: "it".to_string(),
             base_name: "test".to_string(),
+            toc: None,
         };
         assert!(should_include_in_sitemap(&non_english_document));
     }
@@ -283,6 +286,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "some-post".to_string(),
+            toc: None,
         };
         assert!(is_post(&post_by_layout));
 
@@ -301,6 +305,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "test".to_string(),
+            toc: None,
         };
         assert!(is_post(&post_by_path));
 
@@ -319,6 +324,7 @@ mod tests {
             content: String::new(),
             language: "en".to_string(),
             base_name: "about".to_string(),
+            toc: None,
         };
         assert!(!is_post(&page));
     }

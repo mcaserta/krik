@@ -57,6 +57,8 @@ pub struct Document {
     pub language: String,
     /// Base filename without language suffix or extension
     pub base_name: String,
+    /// Generated table of contents HTML (if TOC is enabled)
+    pub toc: Option<String>,
 }
 
 /// Parses a Markdown document with YAML front matter.
