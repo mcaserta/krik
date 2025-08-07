@@ -2,7 +2,7 @@ use crate::parser::Document;
 use crate::theme::Theme;
 use crate::i18n::I18nManager;
 use crate::site::SiteConfig;
-use crate::error::{KrikResult, KrikError, ThemeError, ThemeErrorKind, GenerationError, GenerationErrorKind};
+use crate::error::{KrikResult, KrikError, ThemeError, ThemeErrorKind};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
@@ -140,96 +140,42 @@ impl SiteGenerator {
     /// 6. Generate robots.txt
     /// 7. Generate PDFs (if pandoc and typst are available)
     pub fn generate_site(&self) -> KrikResult<()> {
-        // Ensure output directory exists
-        if !self.output_dir.exists() {
-            std::fs::create_dir_all(&self.output_dir)
-                .map_err(|e| KrikError::Generation(GenerationError {
-                    kind: GenerationErrorKind::OutputDirError(e),
-                    context: format!("Creating output directory: {}", self.output_dir.display()),
-                }))?;
-        }
+        use super::pipeline::{EmitPhase, RenderPhase, ScanPhase, TransformPhase};
 
-        // Copy assets and non-markdown files
-        super::assets::copy_non_markdown_files(&self.source_dir, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::AssetCopyError {
-                    source: self.source_dir.clone(),
-                    target: self.output_dir.clone(),
-                    error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset copy failed: {}", e)),
-                },
-                context: "Copying non-markdown assets".to_string(),
-            }))?;
-        
-        super::assets::copy_theme_assets(&self.theme, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::AssetCopyError {
-                    source: self.theme.theme_path.clone(),
-                    target: self.output_dir.clone(),
-                    error: std::io::Error::new(std::io::ErrorKind::Other, format!("Theme asset copy failed: {}", e)),
-                },
-                context: "Copying theme assets".to_string(),
-            }))?;
+        let scan = ScanPhase;
+        let transform = TransformPhase;
+        let render = RenderPhase;
+        let emit = EmitPhase;
 
-        // Generate HTML pages
-        super::templates::generate_pages(&self.documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    format!("Page generation failed: {}", e)
-                )),
-                context: "Generating HTML pages from documents".to_string(),
-            }))?;
+        // Prepare output
+        emit.ensure_output_dir(&self.output_dir)?;
 
-        // Generate index page
-        super::templates::generate_index(&self.documents, &self.theme, &self.site_config, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    format!("Index page generation failed: {}", e)
-                )),
-                context: "Generating index page with post listings".to_string(),
-            }))?;
+        // Scan
+        let mut documents = scan.scan(&self.source_dir)?;
 
-        // Generate Atom feed
-        super::feeds::generate_feed(&self.documents, &self.site_config, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::FeedError(format!("Atom feed generation failed: {}", e)),
-                context: "Generating Atom feed for posts".to_string(),
-            }))?;
+        // Transform
+        transform.transform(&mut documents, &self.source_dir);
 
-        // Generate XML sitemap
-        super::sitemap::generate_sitemap(&self.documents, &self.site_config, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::SitemapError(format!("XML sitemap generation failed: {}", e)),
-                context: "Generating XML sitemap with multilingual support".to_string(),
-            }))?;
+        // Assets
+        emit.copy_assets(&self.source_dir, &self.theme, &self.output_dir)?;
 
-        // Generate robots.txt
-        super::robots::generate_robots(&self.site_config, &self.output_dir)
-            .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    format!("robots.txt generation failed: {}", e)
-                )),
-                context: "Generating robots.txt with sitemap reference".to_string(),
-            }))?;
+        // Render
+        render.render_pages(&documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)?;
+        render.render_index(&documents, &self.theme, &self.site_config, &self.output_dir)?;
+
+        // Emit ancillary artifacts
+        emit.emit_feed(&documents, &self.site_config, &self.output_dir)?;
+        emit.emit_sitemap(&documents, &self.site_config, &self.output_dir)?;
+        emit.emit_robots(&self.site_config, &self.output_dir)?;
 
         // Generate PDFs if tools are available
-        self.generate_pdfs_if_available();
-
-        Ok(())
-    }
-
-    /// Generate PDFs for all documents if pandoc and typst are available
-    fn generate_pdfs_if_available(&self) {
         if super::pdf::PdfGenerator::is_available() {
             match super::pdf::PdfGenerator::new() {
                 Ok(pdf_generator) => {
-                    match pdf_generator.generate_pdfs(&self.documents, &self.source_dir, &self.output_dir, &self.site_config) {
+                    match pdf_generator.generate_pdfs(&documents, &self.source_dir, &self.output_dir, &self.site_config) {
                         Ok(generated_pdfs) => {
                             if !generated_pdfs.is_empty() {
-                                println!("Generated {} PDF files alongside their HTML counterparts", 
-                                        generated_pdfs.len());
+                                println!("Generated {} PDF files alongside their HTML counterparts", generated_pdfs.len());
                             }
                         }
                         Err(e) => eprintln!("Warning: PDF generation failed: {}", e),
@@ -240,5 +186,7 @@ impl SiteGenerator {
         } else {
             println!("PDF generation skipped: pandoc and/or typst not available in PATH");
         }
+
+        Ok(())
     }
 }

@@ -19,6 +19,7 @@ pub mod feeds;
 pub mod sitemap;
 pub mod robots;
 pub mod pdf;
+pub mod pipeline;
 
 // Re-export the main SiteGenerator for backwards compatibility
 pub use core::SiteGenerator;
