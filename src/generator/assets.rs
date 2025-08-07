@@ -3,6 +3,39 @@ use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
 
+/// Return true if the asset should be ignored (not copied)
+fn is_ignored_asset(path: &Path) -> bool {
+    if let Some(file_name_os) = path.file_name() {
+        if let Some(file_name) = file_name_os.to_str() {
+            // Ignore dotfiles like .DS_Store and hidden files
+            if file_name.starts_with('.') {
+                return true;
+            }
+
+            let lower = file_name.to_lowercase();
+            // Common OS/editor temp files
+            if lower == "thumbs.db" {
+                return true;
+            }
+            if lower.ends_with('~') {
+                return true;
+            }
+            if lower.starts_with('#') && lower.ends_with('#') {
+                return true;
+            }
+
+            // Temporary/backup extensions
+            if let Some(ext) = path.extension().and_then(|s| s.to_str()).map(|s| s.to_lowercase()) {
+                match ext.as_str() {
+                    "swp" | "swo" | "swx" | "tmp" | "bak" | "orig" | "part" | "crdownload" => return true,
+                    _ => {}
+                }
+            }
+        }
+    }
+    false
+}
+
 /// Copy non-markdown files from source to output directory
 pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     for entry in WalkDir::new(source_dir)
@@ -19,6 +52,11 @@ pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> Result<(
 
         // Skip site.toml (site configuration file)
         if path.file_name() == Some(std::ffi::OsStr::new("site.toml")) {
+            continue;
+        }
+
+        // Skip ignored assets (dotfiles, editor temp files, backups)
+        if is_ignored_asset(path) {
             continue;
         }
 
@@ -67,6 +105,11 @@ fn copy_directory_contents(src: &Path, dest: &Path) -> Result<(), Box<dyn std::e
         let path = entry.path();
         
         if path.is_file() {
+            // Skip ignored assets (dotfiles, editor temp files, backups)
+            if is_ignored_asset(path) {
+                continue;
+            }
+
             let relative_path = path.strip_prefix(src)
                 .map_err(|_| format!("Failed to get relative path for: {}", path.display()))?;
             let dest_path = dest.join(relative_path);
