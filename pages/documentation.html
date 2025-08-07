@@ -105,28 +105,41 @@
       <li><a href="#heading-28">Atom Feed Generation</a></li>
       <li><a href="#heading-29">XML Sitemap Generation</a></li>
       <li><a href="#heading-30">robots.txt Generation</a></li>
-  <li><a href="#heading-31">Theme System</a></li>
-    <li><a href="#heading-32">Light/Dark Mode</a></li>
-    <li><a href="#heading-33">Customization</a></li>
-  <li><a href="#heading-34">Command Line Reference</a></li>
-    <li><a href="#heading-35">Main Commands</a></li>
-    <li><a href="#heading-36">Global Options</a></li>
-    <li><a href="#heading-37">Init Command</a></li>
-    <li><a href="#heading-38">Post/Page Commands</a></li>
-    <li><a href="#heading-39">Server Command</a></li>
-  <li><a href="#heading-40">Generated Output</a></li>
-    <li><a href="#heading-41">Example Output Structure</a></li>
-  <li><a href="#heading-42">Best Practices</a></li>
-    <li><a href="#heading-43">Content Organization</a></li>
-    <li><a href="#heading-44">Front Matter</a></li>
-    <li><a href="#heading-45">Performance</a></li>
-    <li><a href="#heading-46">Accessibility</a></li>
-  <li><a href="#heading-47">Deployment</a></li>
-    <li><a href="#heading-48">GitHub Pages</a></li>
-      <li><a href="#heading-49">Setup Steps</a></li>
-      <li><a href="#heading-50">What the Workflow Does</a></li>
-      <li><a href="#heading-51">Workflow Features</a></li>
-      <li><a href="#heading-52">Repository Structure</a></li>
+  <li><a href="#heading-31">PDF Generation</a></li>
+    <li><a href="#heading-32">Prerequisites</a></li>
+      <li><a href="#heading-33">Install pandoc</a></li>
+      <li><a href="#heading-34">Install typst</a></li>
+    <li><a href="#heading-35">Enabling PDF Generation</a></li>
+    <li><a href="#heading-36">Features</a></li>
+      <li><a href="#heading-37">Automatic PDF Links</a></li>
+      <li><a href="#heading-38">Language-Aware Filenames</a></li>
+      <li><a href="#heading-39">Conditional Appendix</a></li>
+      <li><a href="#heading-40">Image Path Resolution</a></li>
+    <li><a href="#heading-41">Configuration</a></li>
+    <li><a href="#heading-42">Development Workflow</a></li>
+    <li><a href="#heading-43">Troubleshooting</a></li>
+  <li><a href="#heading-44">Theme System</a></li>
+    <li><a href="#heading-45">Light/Dark Mode</a></li>
+    <li><a href="#heading-46">Customization</a></li>
+  <li><a href="#heading-47">Command Line Reference</a></li>
+    <li><a href="#heading-48">Main Commands</a></li>
+    <li><a href="#heading-49">Global Options</a></li>
+    <li><a href="#heading-50">Init Command</a></li>
+    <li><a href="#heading-51">Post/Page Commands</a></li>
+    <li><a href="#heading-52">Server Command</a></li>
+  <li><a href="#heading-53">Generated Output</a></li>
+    <li><a href="#heading-54">Example Output Structure</a></li>
+  <li><a href="#heading-55">Best Practices</a></li>
+    <li><a href="#heading-56">Content Organization</a></li>
+    <li><a href="#heading-57">Front Matter</a></li>
+    <li><a href="#heading-58">Performance</a></li>
+    <li><a href="#heading-59">Accessibility</a></li>
+  <li><a href="#heading-60">Deployment</a></li>
+    <li><a href="#heading-61">GitHub Pages</a></li>
+      <li><a href="#heading-62">Setup Steps</a></li>
+      <li><a href="#heading-63">What the Workflow Does</a></li>
+      <li><a href="#heading-64">Workflow Features</a></li>
+      <li><a href="#heading-65">Repository Structure</a></li>
 </ul>
             </div>
         </aside>
@@ -234,6 +247,7 @@ custom_field: "custom value"
 <tr><td><code>layout</code></td><td>String</td><td>Template to use (<code>post</code>, <code>page</code>, or custom)</td></tr>
 <tr><td><code>tags</code></td><td>Array</td><td>Tags for categorization</td></tr>
 <tr><td><code>toc</code></td><td>Boolean</td><td>Enable table of contents generation</td></tr>
+<tr><td><code>pdf</code></td><td>Boolean</td><td>Enable PDF generation</td></tr>
 <tr><td><code>draft</code></td><td>Boolean</td><td>Skip file from processing when <code>true</code></td></tr>
 <tr><td>Custom fields</td><td>Any</td><td>Additional metadata accessible in templates</td></tr>
 </tbody></table>
@@ -353,8 +367,121 @@ crawlers:</p>
 <li>Blocks known problematic crawlers/scrapers</li>
 <li>Includes polite crawl delay settings</li>
 </ul>
-<h2 id="heading-31">Theme System</h2>
-<h3 id="heading-32">Light/Dark Mode</h3>
+<h2 id="heading-31">PDF Generation</h2>
+<p>Krik supports automatic PDF generation for your content using pandoc and the
+typst engine. This feature allows you to provide downloadable PDF versions of
+your posts and pages.</p>
+<h3 id="heading-32">Prerequisites</h3>
+<p>Before using PDF generation, you need to install the required external tools:</p>
+<h4 id="heading-33">Install pandoc</h4>
+<p><strong>macOS:</strong></p>
+<pre><code class="language-bash">brew install pandoc
+</code></pre>
+<p><strong>Ubuntu/Debian:</strong></p>
+<pre><code class="language-bash">sudo apt install pandoc
+</code></pre>
+<p><strong>Windows:</strong> Download from <a href="https://pandoc.org/installing.html">pandoc.org</a> or
+use:</p>
+<pre><code class="language-bash">winget install pandoc
+</code></pre>
+<h4 id="heading-34">Install typst</h4>
+<p><strong>All platforms:</strong></p>
+<pre><code class="language-bash">cargo install typst-cli
+</code></pre>
+<p><strong>Alternative for macOS:</strong></p>
+<pre><code class="language-bash">brew install typst
+</code></pre>
+<h3 id="heading-35">Enabling PDF Generation</h3>
+<p>To enable PDF generation for a document, add <code>pdf: true</code> to your front matter:</p>
+<pre><code class="language-yaml">---
+title: "My Article"
+date: 2025-01-15T10:30:00Z
+pdf: true
+---
+# My Article
+
+This content will be available as both HTML and PDF.
+</code></pre>
+<h3 id="heading-36">Features</h3>
+<h4 id="heading-37">Automatic PDF Links</h4>
+<p>When PDF generation is enabled, Krik automatically adds a PDF download link (📄)
+to your HTML templates, positioned next to the theme switcher. The link appears
+only for documents with <code>pdf: true</code> in their front matter.</p>
+<h4 id="heading-38">Language-Aware Filenames</h4>
+<p>PDF files are generated with language-aware filenames:</p>
+<ul>
+<li><code>welcome.md</code> → <code>welcome.pdf</code></li>
+<li><code>welcome.it.md</code> → <code>welcome.it.pdf</code></li>
+<li><code>about.fr.md</code> → <code>about.fr.pdf</code></li>
+</ul>
+<h4 id="heading-39">Conditional Appendix</h4>
+<p>When your site has a <code>base_url</code> configured in <code>site.toml</code>, PDFs include an
+appendix with:</p>
+<ul>
+<li><strong>Download URL</strong>: Link to the original web version</li>
+<li><strong>Generation timestamp</strong>: When the PDF was created</li>
+<li><strong>Multi-language support</strong>: Appendix text translated based on document
+language</li>
+</ul>
+<p>Supported appendix languages: English, Italian, Spanish, French, German,
+Portuguese, Japanese, Chinese, Russian, Arabic.</p>
+<h4 id="heading-40">Image Path Resolution</h4>
+<p>Krik automatically resolves relative image paths in PDFs, handling complex
+patterns like:</p>
+<ul>
+<li><code>![Image](../images/photo.jpg)</code></li>
+<li><code>![Diagram](../../assets/diagrams/flow.png)</code></li>
+<li><code>![Logo](./logo.svg)</code></li>
+</ul>
+<h3 id="heading-41">Configuration</h3>
+<p>PDF generation works with your existing site configuration. Make sure your
+<code>site.toml</code> includes:</p>
+<pre><code class="language-toml">title = "My Site"
+base_url = "https://mysite.com"  # Optional: enables PDF appendix with download URL
+</code></pre>
+<h3 id="heading-42">Development Workflow</h3>
+<pre><code class="language-bash"># 1. Add pdf: true to your document
+echo '---
+title: "My PDF Post"
+pdf: true
+---
+
+# My PDF Post
+
+Content goes here...' &gt; content/posts/my-post.md
+
+# 2. Generate site (requires pandoc and typst)
+kk
+
+# 3. Check generated files
+ls _site/posts/
+# Output: my-post.html, my-post.pdf
+</code></pre>
+<h3 id="heading-43">Troubleshooting</h3>
+<p><strong>Error: “pandoc not found”</strong></p>
+<ul>
+<li>Install pandoc using the instructions above</li>
+<li>Ensure pandoc is in your system PATH</li>
+</ul>
+<p><strong>Error: “typst not found”</strong></p>
+<ul>
+<li>Install typst-cli: <code>cargo install typst-cli</code></li>
+<li>Verify installation: <code>typst --version</code></li>
+</ul>
+<p><strong>PDF links not appearing in HTML</strong></p>
+<ul>
+<li>Ensure <code>pdf: true</code> is set in the document’s front matter</li>
+<li>Rebuild your site with <code>kk</code></li>
+<li>Check that the PDF file was generated in the output directory</li>
+</ul>
+<p><strong>Images missing in PDF</strong></p>
+<ul>
+<li>Ensure image paths are relative to the content source directory</li>
+<li>Use forward slashes in paths even on Windows</li>
+<li>Verify image files exist at the specified paths</li>
+</ul>
+<h2 id="heading-44">Theme System</h2>
+<h3 id="heading-45">Light/Dark Mode</h3>
 <p><strong>Automatic Detection:</strong></p>
 <ul>
 <li>Detects OS theme preference via CSS <code>prefers-color-scheme</code></li>
@@ -368,7 +495,7 @@ crawlers:</p>
 <li>Overrides automatic detection</li>
 <li>Smooth 0.3s transitions</li>
 </ul>
-<h3 id="heading-33">Customization</h3>
+<h3 id="heading-46">Customization</h3>
 <p>The theme uses CSS custom properties for easy customization:</p>
 <pre><code class="language-css">:root {
   --bg-color: #ffffff;
@@ -377,15 +504,15 @@ crawlers:</p>
   /* ... more variables */
 }
 </code></pre>
-<h2 id="heading-34">Command Line Reference</h2>
-<h3 id="heading-35">Main Commands</h3>
+<h2 id="heading-47">Command Line Reference</h2>
+<h3 id="heading-48">Main Commands</h3>
 <pre><code class="language-bash">kk [OPTIONS]              # Generate static site
 kk init [DIR]             # Initialize new site
 kk post [TITLE]           # Create new blog post
 kk page [TITLE]           # Create new page
 kk server [OPTIONS]       # Start development server
 </code></pre>
-<h3 id="heading-36">Global Options</h3>
+<h3 id="heading-49">Global Options</h3>
 <table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
 <tr><td><code>-i, --input &lt;DIR&gt;</code></td><td>Input directory</td><td><code>content</code></td></tr>
 <tr><td><code>-o, --output &lt;DIR&gt;</code></td><td>Output directory</td><td><code>_site</code></td></tr>
@@ -393,14 +520,14 @@ kk server [OPTIONS]       # Start development server
 <tr><td><code>-h, --help</code></td><td>Show help</td><td></td></tr>
 <tr><td><code>-V, --version</code></td><td>Show version</td><td></td></tr>
 </tbody></table>
-<h3 id="heading-37">Init Command</h3>
+<h3 id="heading-50">Init Command</h3>
 <pre><code class="language-bash">kk init [DIR] [OPTIONS]
 </code></pre>
 <table><thead><tr><th>Option</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>[DIR]</code></td><td>Directory to initialize (default: current directory)</td></tr>
 <tr><td><code>-f, --force</code></td><td>Overwrite existing files</td></tr>
 </tbody></table>
-<h3 id="heading-38">Post/Page Commands</h3>
+<h3 id="heading-51">Post/Page Commands</h3>
 <pre><code class="language-bash">kk post [TITLE] [OPTIONS]
 kk page [TITLE] [OPTIONS]
 </code></pre>
@@ -409,7 +536,7 @@ kk page [TITLE] [OPTIONS]
 <tr><td><code>-f, --filename &lt;NAME&gt;</code></td><td>Custom filename (without .md)</td><td>Generated from title</td></tr>
 <tr><td><code>--content-dir &lt;DIR&gt;</code></td><td>Content directory path</td><td><code>content</code></td></tr>
 </tbody></table>
-<h3 id="heading-39">Server Command</h3>
+<h3 id="heading-52">Server Command</h3>
 <pre><code class="language-bash">kk server [OPTIONS]
 </code></pre>
 <table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
@@ -419,7 +546,7 @@ kk page [TITLE] [OPTIONS]
 <tr><td><code>-p, --port &lt;PORT&gt;</code></td><td>Server port</td><td><code>3000</code></td></tr>
 <tr><td><code>--no-live-reload</code></td><td>Disable live reload</td><td>Live reload enabled</td></tr>
 </tbody></table>
-<h2 id="heading-40">Generated Output</h2>
+<h2 id="heading-53">Generated Output</h2>
 <p>Krik generates a complete static site with:</p>
 <ul>
 <li><strong>HTML files</strong>: Preserving directory structure</li>
@@ -431,7 +558,7 @@ kk page [TITLE] [OPTIONS]
 <li><strong>robots.txt</strong>: SEO-optimized with sitemap reference</li>
 <li><strong>Navigation</strong>: TOCs, footnote links, scroll-to-top buttons</li>
 </ul>
-<h3 id="heading-41">Example Output Structure</h3>
+<h3 id="heading-54">Example Output Structure</h3>
 <pre><code>_site/
 ├── index.html          # Homepage
 ├── feed.xml           # Atom feed
@@ -448,104 +575,47 @@ kk page [TITLE] [OPTIONS]
 └── images/
     └── logo.png       # Static assets
 </code></pre>
-<h2 id="heading-42">Best Practices</h2>
-<h3 id="heading-43">Content Organization</h3>
+<h2 id="heading-55">Best Practices</h2>
+<h3 id="heading-56">Content Organization</h3>
 <ul>
 <li>Use <code>posts/</code> for blog entries and time-sensitive content</li>
 <li>Use <code>pages/</code> for static pages like About, Contact, etc.</li>
 <li>Keep assets organized in subdirectories</li>
 <li>Use consistent naming conventions for translations</li>
 </ul>
-<h3 id="heading-44">Front Matter</h3>
+<h3 id="heading-57">Front Matter</h3>
 <ul>
 <li>Always include a <code>title</code> for better navigation</li>
 <li>Use <code>date</code> for posts to ensure proper chronological ordering</li>
 <li>Add <code>tags</code> to posts for better categorization</li>
 <li>Enable <code>toc</code> for longer articles with multiple sections</li>
 </ul>
-<h3 id="heading-45">Performance</h3>
+<h3 id="heading-58">Performance</h3>
 <ul>
 <li>Optimize images before adding to content</li>
 <li>Use appropriate image formats (WebP when possible)</li>
 <li>Keep individual posts/pages to reasonable lengths</li>
 <li>Use drafts (<code>draft: true</code>) for work-in-progress content</li>
 </ul>
-<h3 id="heading-46">Accessibility</h3>
+<h3 id="heading-59">Accessibility</h3>
 <ul>
 <li>Use proper heading hierarchy (H1 → H2 → H3)</li>
 <li>Include alt text for images</li>
 <li>Ensure good color contrast in custom themes</li>
 <li>Test with keyboard navigation</li>
 </ul>
-<h2 id="heading-47">Deployment</h2>
-<h3 id="heading-48">GitHub Pages</h3>
+<h2 id="heading-60">Deployment</h2>
+<h3 id="heading-61">GitHub Pages</h3>
 <p>You can automatically deploy your Krik site to GitHub Pages using GitHub
 Actions. This workflow will build and deploy your site whenever you push to the
 main branch.</p>
-<h4 id="heading-49">Setup Steps</h4>
+<h4 id="heading-62">Setup Steps</h4>
 <ol>
-<li><strong>Create the workflow file</strong>: Add <code>.github/workflows/build-and-deploy.yml</code> to
-your repository:</li>
-</ol>
-<pre><code class="language-yaml">name: Build and Deploy Site with Krik
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch: # Allow manual trigger
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Full clone needed for branch operations
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
-
-      - name: Install Krik
-        run: cargo install krik
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Run Krik to generate site
-        run: kk
-
-      - name: Deploy to gh-pages
-        run: |
-          mkdir -p /tmp/generated-site
-          cp -r _site/* /tmp/generated-site/
-
-          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
-            git checkout gh-pages
-          else
-            git checkout --orphan gh-pages
-            git rm -rf .
-          fi
-
-          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
-          cp -r /tmp/generated-site/* .
-          touch .nojekyll
-
-          git add .
-          if ! git diff --staged --quiet; then
-            git commit -m "Deploy site generated on $(date)"
-            git push origin gh-pages
-          fi
-</code></pre>
-<ol start="2">
+<li>
+<p><strong>Create the workflow file</strong>: Add
+<a href=".github/workflows/build-and-deploy.yml">.github/workflows/build-and-deploy.yml</a>
+to your repository.</p>
+</li>
 <li>
 <p><strong>Enable GitHub Pages</strong>:</p>
 <ul>
@@ -565,7 +635,7 @@ with proper structure</p>
 <p><strong>Deploy</strong>: Push to your main branch to trigger the deployment</p>
 </li>
 </ol>
-<h4 id="heading-50">What the Workflow Does</h4>
+<h4 id="heading-63">What the Workflow Does</h4>
 <p>The GitHub Actions workflow automatically:</p>
 <ul>
 <li><strong>Installs dependencies</strong>: Sets up Rust toolchain and installs Krik from
@@ -576,7 +646,7 @@ crates.io</li>
 <li><strong>Adds .nojekyll</strong>: Prevents GitHub from processing files with Jekyll</li>
 <li><strong>Pushes changes</strong>: Commits and pushes the generated site</li>
 </ul>
-<h4 id="heading-51">Workflow Features</h4>
+<h4 id="heading-64">Workflow Features</h4>
 <ul>
 <li><strong>Automatic deployment</strong>: Triggers on every push to main branch</li>
 <li><strong>Manual trigger</strong>: Can be run manually via GitHub Actions interface</li>
@@ -584,7 +654,7 @@ crates.io</li>
 <li><strong>Clean deployment</strong>: Removes old files before deploying new ones</li>
 <li><strong>Skip empty deployments</strong>: Only commits when there are actual changes</li>
 </ul>
-<h4 id="heading-52">Repository Structure</h4>
+<h4 id="heading-65">Repository Structure</h4>
 <p>Your repository should look like this:</p>
 <pre><code>your-repository/
 ├── .github/
