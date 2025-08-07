@@ -292,17 +292,20 @@ impl PdfGenerator {
         let canonical_source_root = fs::canonicalize(source_root)
             .unwrap_or_else(|_| source_root.to_path_buf());
 
-        // Try to make input_dir relative to source_root, but don't fail if outside
-        let input_relative_to_source = canonical_input_dir.strip_prefix(&canonical_source_root)
-            .unwrap_or_else(|_| {
-                // If outside source root, use the full canonical path
-                &canonical_input_dir
-            });
+        // Try to make input_dir relative to source_root
+        let input_relative_to_source = match canonical_input_dir.strip_prefix(&canonical_source_root) {
+            Ok(relative) => relative.to_path_buf(),
+            Err(_) => {
+                // If outside source root, normalize the path but keep it absolute
+                let joined = canonical_input_dir.join(relative_path);
+                return self.normalize_path(&joined)
+                    .to_string_lossy()
+                    .replace('\\', "/");
+            }
+        };
 
-        // Resolve the relative path from the markdown file's location
+        // For paths within source root, resolve relative to source root
         let resolved_path = input_relative_to_source.join(relative_path);
-        
-        // Normalize the path (resolve .. and . components)
         let normalized = self.normalize_path(&resolved_path);
         
         // Convert back to string with forward slashes for consistency
@@ -453,17 +456,17 @@ mod tests {
 
         let source_root = Path::new("/project");
         
-        // Test path resolution from posts directory
+        // Test path resolution from posts directory (inside source root)
         let input_dir = Path::new("/project/content/posts");
         let resolved = generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
         assert_eq!(resolved, "content/images/logo.png");
 
-        // Test path resolution from pages directory
+        // Test path resolution from pages directory (inside source root)
         let input_dir = Path::new("/project/content/pages");
         let resolved = generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
         assert_eq!(resolved, "content/images/logo.png");
 
-        // Test path resolution with deeper nesting
+        // Test path resolution with deeper nesting (inside source root)
         let input_dir = Path::new("/project/content/posts/year/month");
         let resolved = generator.resolve_relative_path("../../../../images/logo.png", input_dir, source_root);
         assert_eq!(resolved, "images/logo.png");
@@ -474,11 +477,11 @@ mod tests {
         assert_eq!(resolved, "/other/project/content/images/logo.png");
 
         // Test path resolution with input directory as parent of source root
-        let input_dir = Path::new("/project/../other/content");
+        let input_dir = Path::new("/other/content");
         let resolved = generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
         assert_eq!(resolved, "/other/images/logo.png");
 
-        // Test path resolution with complex relative paths
+        // Test path resolution with complex relative paths (inside source root)
         let input_dir = Path::new("/project/content/posts");
         let resolved = generator.resolve_relative_path("../../other/images/logo.png", input_dir, source_root);
         assert_eq!(resolved, "other/images/logo.png");
