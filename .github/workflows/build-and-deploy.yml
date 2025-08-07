@@ -27,7 +27,7 @@ jobs:
           override: true
 
       - name: Install typst # also for pdf generation
-        run: cargo install typst
+        run: cargo install typst-cli
 
       - name: Install Krik
         run: cargo install krik
