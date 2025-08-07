@@ -299,6 +299,7 @@ impl PdfGenerator {
         normalized.to_string_lossy().replace('\\', "/")
     }
 
+
     /// Normalize a path by resolving . and .. components
     fn normalize_path(&self, path: &Path) -> PathBuf {
         let mut result = PathBuf::new();

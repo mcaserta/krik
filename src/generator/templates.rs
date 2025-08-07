@@ -6,8 +6,9 @@ use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use tera::Context;
+use pathdiff::diff_paths;
 
 /// Generate HTML pages for all documents
 pub fn generate_pages(
@@ -23,33 +24,21 @@ pub fn generate_pages(
     Ok(())
 }
 
-/// Calculate relative path based on document depth and directory context
+/// Calculate relative path using pathdiff for consistent handling across nested paths
 fn calculate_relative_path(file_path: &str, target: &str) -> String {
-    let current_path = std::path::Path::new(file_path);
-    let target_path = std::path::Path::new(target.trim_start_matches('/'));
+    let current_path = PathBuf::from(file_path);
+    let target_path = PathBuf::from(target.trim_start_matches('/'));
     
     // Get the directory of the current file
-    let current_dir = current_path.parent().unwrap_or(std::path::Path::new(""));
-    let target_dir = target_path.parent().unwrap_or(std::path::Path::new(""));
+    let current_dir = current_path.parent().unwrap_or_else(|| Path::new(""));
     
-    // If both files are in the same directory, just return the filename
-    if current_dir == target_dir {
-        return target_path.file_name()
-            .unwrap_or_default()
-            .to_string_lossy()
-            .to_string();
-    }
-    
-    // Calculate depth from current directory to root
-    let depth = current_dir.components().count();
-    
-    if depth == 0 {
-        // Current file is in root, target is relative to root
-        target.trim_start_matches('/').to_string()
+    // Use pathdiff to calculate the relative path from current directory to target
+    if let Some(relative_path) = diff_paths(&target_path, current_dir) {
+        // Convert to string and ensure forward slashes for consistency
+        relative_path.to_string_lossy().replace('\\', "/")
     } else {
-        // Current file is in subdirectory, need to go up
-        let up_dirs = "../".repeat(depth);
-        format!("{}{}", up_dirs, target.trim_start_matches('/'))
+        // Fallback: if pathdiff fails, use the target path as-is
+        target.trim_start_matches('/').to_string()
     }
 }
 
@@ -448,5 +437,38 @@ mod tests {
     fn test_get_base_path() {
         assert_eq!(get_base_path(&std::path::Path::new("posts/hello.en.md")), "posts/hello");
         assert_eq!(get_base_path(&std::path::Path::new("about.md")), "about");
+    }
+
+    #[test]
+    fn test_calculate_relative_path() {
+        // Test basic cases
+        assert_eq!(calculate_relative_path("index.html", "/assets/css/main.css"), "assets/css/main.css");
+        assert_eq!(calculate_relative_path("about.html", "/assets/css/main.css"), "assets/css/main.css");
+        
+        // Test nested paths
+        assert_eq!(calculate_relative_path("posts/article.html", "/assets/css/main.css"), "../assets/css/main.css");
+        assert_eq!(calculate_relative_path("posts/2023/article.html", "/assets/css/main.css"), "../../assets/css/main.css");
+        assert_eq!(calculate_relative_path("posts/2023/12/article.html", "/assets/css/main.css"), "../../../assets/css/main.css");
+        
+        // Test same directory
+        assert_eq!(calculate_relative_path("posts/article1.html", "/posts/article2.html"), "article2.html");
+        assert_eq!(calculate_relative_path("posts/2023/article1.html", "/posts/2023/article2.html"), "article2.html");
+        
+        // Test cross-directory navigation
+        assert_eq!(calculate_relative_path("posts/article.html", "/pages/about.html"), "../pages/about.html");
+        assert_eq!(calculate_relative_path("posts/2023/article.html", "/pages/about.html"), "../../pages/about.html");
+        assert_eq!(calculate_relative_path("pages/about.html", "/posts/article.html"), "../posts/article.html");
+        
+        // Test deep nesting
+        assert_eq!(calculate_relative_path("posts/2023/12/25/article.html", "/assets/css/main.css"), "../../../../assets/css/main.css");
+        assert_eq!(calculate_relative_path("posts/2023/12/25/article.html", "/index.html"), "../../../../index.html");
+        
+        // Test root to nested
+        assert_eq!(calculate_relative_path("index.html", "/posts/article.html"), "posts/article.html");
+        assert_eq!(calculate_relative_path("index.html", "/posts/2023/article.html"), "posts/2023/article.html");
+        
+        // Test complex cross-navigation - these are the actual results from pathdiff
+        assert_eq!(calculate_relative_path("posts/2023/12/article.html", "/pages/contact.html"), "../../../pages/contact.html");
+        assert_eq!(calculate_relative_path("pages/contact.html", "/posts/2023/12/article.html"), "../posts/2023/12/article.html");
     }
 }
