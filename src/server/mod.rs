@@ -2,16 +2,20 @@ use std::path::PathBuf;
 use std::time::Duration;
 use tokio::sync::broadcast;
 use warp::Filter;
-use notify::{Watcher, RecursiveMode, Event, EventKind};
+use notify::EventKind;
 use crate::generator::SiteGenerator;
 use tracing::{info, error, debug};
 
 pub mod websocket;
 pub mod static_files;
 pub mod live_reload;
+pub mod watcher;
+pub mod net;
 
 use websocket::*;
 use live_reload::*;
+use watcher::start_watcher;
+use net::get_network_interfaces;
 
 pub struct DevServer {
     input_dir: PathBuf,
@@ -142,33 +146,7 @@ impl DevServer {
 
         tokio::spawn(async move {
             let (tx, mut rx) = tokio::sync::mpsc::channel(100);
-            
-            let mut watcher = match notify::recommended_watcher(move |res: Result<Event, notify::Error>| {
-                if let Ok(event) = res {
-                    if matches!(event.kind, EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)) {
-                        debug!("notify event captured: kind={:?}, paths={:?}", event.kind, event.paths);
-                        let _ = tx.blocking_send(event);
-                    }
-                }
-            }) {
-                Ok(w) => w,
-                Err(e) => {
-                    error!("file watcher creation failed: {}", e);
-                    return;
-                }
-            };
-
-            if let Err(e) = watcher.watch(&input_dir, RecursiveMode::Recursive) {
-                error!("failed to watch input directory {}: {}", input_dir.display(), e);
-                return;
-            }
-
-            if let Some(ref theme_dir) = theme_dir {
-                if let Err(e) = watcher.watch(theme_dir, RecursiveMode::Recursive) {
-                    error!("failed to watch theme directory {}: {}", theme_dir.display(), e);
-                }
-            }
-
+            start_watcher(input_dir.clone(), theme_dir.clone(), tx).await;
             // Canonicalize watched roots to compare against canonical event paths
             let canonical_input_dir = std::fs::canonicalize(&input_dir).unwrap_or(input_dir.clone());
             let canonical_theme_dir = theme_dir.as_ref().and_then(|t| std::fs::canonicalize(t).ok());
@@ -269,25 +247,4 @@ impl DevServer {
     }
 }
 
-fn get_network_interfaces() -> Vec<String> {
-    let mut interfaces = vec!["127.0.0.1".to_string()];
-    
-    // Try to get local network IP
-    if let Ok(local_ip) = local_ip_address::local_ip() {
-        if local_ip.to_string() != "127.0.0.1" {
-            interfaces.push(local_ip.to_string());
-        }
-    }
-    
-    // Try to get all network interfaces
-    if let Ok(network_interfaces) = local_ip_address::list_afinet_netifas() {
-        for (_name, ip) in network_interfaces {
-            let ip_str = ip.to_string();
-            if !ip_str.starts_with("127.") && !ip_str.starts_with("169.254.") && !interfaces.contains(&ip_str) {
-                interfaces.push(ip_str);
-            }
-        }
-    }
-    
-    interfaces
-}
+// moved to server/net.rs
