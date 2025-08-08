@@ -207,7 +207,6 @@ mod tests {
     use super::*;
     use std::fs;
     use std::io::Write as _;
-    use std::path::PathBuf;
     use crate::theme::Theme;
     use crate::i18n::I18nManager;
     use crate::site::SiteConfig;
