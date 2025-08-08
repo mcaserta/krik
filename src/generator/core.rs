@@ -195,7 +195,7 @@ impl SiteGenerator {
         // Render
         info!("Rendering pages");
         render.render_pages(&documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)?;
-        render.render_index(&documents, &self.theme, &self.site_config, &self.output_dir)?;
+        render.render_index(&documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
 
         // Emit ancillary artifacts
         info!("Generating ancillary files");
@@ -345,7 +345,7 @@ impl SiteGenerator {
 
                 // Update global artifacts that depend on full document set
                 debug!("updating global artifacts (index/feed/sitemap/robots) after single-page change");
-                render.render_index(&documents, &self.theme, &self.site_config, &self.output_dir)?;
+                render.render_index(&documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
                 emit.emit_feed(&documents, &self.site_config, &self.output_dir)?;
                 emit.emit_sitemap(&documents, &self.site_config, &self.output_dir)?;
                 emit.emit_robots(&self.site_config, &self.output_dir)?;

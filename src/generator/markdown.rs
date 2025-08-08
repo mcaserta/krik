@@ -190,6 +190,13 @@ pub fn process_footnotes(content: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::io::Write as _;
+    use std::path::PathBuf;
+    use crate::theme::Theme;
+    use crate::i18n::I18nManager;
+    use crate::site::SiteConfig;
+    use crate::generator::templates;
 
     #[test]
     fn test_markdown_to_html() {
@@ -208,5 +215,48 @@ mod tests {
         assert!(toc.contains("Subsection"));
         assert!(!toc.contains("Title")); // h1 matching title should be excluded
         assert_eq!(processed, content); // Should return content as-is
+    }
+
+    #[test]
+    fn test_scan_and_generate_non_default_language_post() {
+        // Prepare a temporary content directory with posts/foo.it.md only
+        let tmp_root = std::env::temp_dir().join(format!("krik_test_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&tmp_root);
+        fs::create_dir_all(tmp_root.join("content/posts")).unwrap();
+
+        let post_path = tmp_root.join("content/posts/foo.it.md");
+        let mut f = fs::File::create(&post_path).unwrap();
+        writeln!(
+            f,
+            "---\ntitle: \"Ciao\"\nlayout: post\n---\n\n# Ciao\n\nContenuto in italiano."
+        )
+        .unwrap();
+
+        // Scan files
+        let source_dir = tmp_root.join("content");
+        let mut documents: Vec<crate::parser::Document> = Vec::new();
+        scan_files(&source_dir, &mut documents).unwrap();
+
+        assert_eq!(documents.len(), 1);
+        let doc = &documents[0];
+        assert_eq!(doc.language, "it");
+        assert_eq!(doc.base_name, "foo");
+        assert_eq!(doc.file_path, "posts/foo.it.md");
+
+        // Generate HTML for the document
+        let output_dir = tmp_root.join("_site");
+        fs::create_dir_all(&output_dir).unwrap();
+        let theme = Theme::load_from_path(Path::new("themes/default")).unwrap();
+        let i18n = I18nManager::new("en".to_string());
+        let site = SiteConfig::default();
+
+        templates::generate_pages(&documents, &theme, &i18n, &site, &output_dir).unwrap();
+
+        // Verify generated file exists
+        let generated = output_dir.join("posts/foo.it.html");
+        assert!(generated.exists(), "expected generated file: {}", generated.display());
+
+        // Cleanup
+        let _ = fs::remove_dir_all(&tmp_root);
     }
 }

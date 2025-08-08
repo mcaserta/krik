@@ -68,9 +68,10 @@ impl RenderPhase {
         documents: &[Document],
         theme: &Theme,
         site_config: &SiteConfig,
+        i18n: &I18nManager,
         output_dir: &Path,
     ) -> KrikResult<()> {
-        super::templates::generate_index(documents, theme, site_config, output_dir)
+        super::templates::generate_index(documents, theme, site_config, i18n, output_dir)
             .map_err(|e| KrikError::Generation(GenerationError {
                 kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                     std::io::ErrorKind::Other,
