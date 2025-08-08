@@ -1,0 +1,124 @@
+---
+description: project overview
+alwaysApply: false
+---
+# Krik Static Site Generator - Project Overview
+
+Krik is a fast static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with internationalization support and modern theming.
+
+## Core Architecture
+
+The main entry point is [src/main.rs](mdc:src/main.rs), which initializes the CLI and handles error reporting. The library interface is defined in [src/lib.rs](mdc:src/lib.rs).
+
+## Key Components
+
+### CLI & Commands
+- [src/cli/mod.rs](mdc:src/cli/mod.rs) - Main CLI interface
+- [src/cli/commands.rs](mdc:src/cli/commands.rs) - Individual command implementations
+
+### Content Processing
+- [src/content.rs](mdc:src/content.rs) - Content scanning and organization
+- [src/parser/mod.rs](mdc:src/parser/mod.rs) - Markdown parsing and front matter handling
+- [src/generator/mod.rs](mdc:src/generator/mod.rs) - Site generation orchestration
+
+### Site Generation Pipeline
+- [src/generator/core.rs](mdc:src/generator/core.rs) - Core generation logic
+- [src/generator/markdown.rs](mdc:src/generator/markdown.rs) - Markdown processing
+- [src/generator/templates.rs](mdc:src/generator/templates.rs) - Tera template rendering
+- [src/generator/pdf.rs](mdc:src/generator/pdf.rs) - PDF generation with pandoc/typst
+- [src/generator/feeds.rs](mdc:src/generator/feeds.rs) - Atom feed generation
+- [src/generator/sitemap.rs](mdc:src/generator/sitemap.rs) - XML sitemap generation
+- [src/generator/robots.rs](mdc:src/generator/robots.rs) - robots.txt generation
+
+### Internationalization
+- [src/i18n/mod.rs](mdc:src/i18n/mod.rs) - Multi-language support
+- Language detection from filename patterns (e.g., `post.it.md`)
+
+### Theme System
+- [src/theme/mod.rs](mdc:src/theme/mod.rs) - Theme loading and management
+- [themes/default/](mdc:themes/default/) - Default theme templates and assets
+
+### Development Server
+- [src/server/mod.rs](mdc:src/server/mod.rs) - Development server with live reload
+- [src/server/live_reload.rs](mdc:src/server/live_reload.rs) - Live reload functionality
+
+### Error Handling
+- [src/error/mod.rs](mdc:src/error/mod.rs) - Centralized error types
+- [src/error/recovery.rs](mdc:src/error/recovery.rs) - Error recovery strategies
+
+## Content Organization
+- `content/posts/` - Blog posts (uses post template)
+- `content/pages/` - Static pages (uses page template)  
+- `content/site.toml` - Site configuration
+- `content/images/` - Static assets (copied as-is)
+
+## Key Features
+- GitHub Flavored Markdown support
+- YAML front matter with custom fields
+- Draft support via `draft: true`
+- Automatic asset copying
+- Light/dark mode theming
+- Multi-language support
+- Development server with live reload
+- PDF generation (pandoc/typst)
+- Atom feeds and XML sitemaps
+# Krik Static Site Generator - Project Overview
+
+Krik is a fast static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with internationalization support and modern theming.
+
+## Core Architecture
+
+The main entry point is [src/main.rs](mdc:src/main.rs), which initializes the CLI and handles error reporting. The library interface is defined in [src/lib.rs](mdc:src/lib.rs).
+
+## Key Components
+
+### CLI & Commands
+- [src/cli/mod.rs](mdc:src/cli/mod.rs) - Main CLI interface
+- [src/cli/commands.rs](mdc:src/cli/commands.rs) - Individual command implementations
+
+### Content Processing
+- [src/content.rs](mdc:src/content.rs) - Content scanning and organization
+- [src/parser/mod.rs](mdc:src/parser/mod.rs) - Markdown parsing and front matter handling
+- [src/generator/mod.rs](mdc:src/generator/mod.rs) - Site generation orchestration
+
+### Site Generation Pipeline
+- [src/generator/core.rs](mdc:src/generator/core.rs) - Core generation logic
+- [src/generator/markdown.rs](mdc:src/generator/markdown.rs) - Markdown processing
+- [src/generator/templates.rs](mdc:src/generator/templates.rs) - Tera template rendering
+- [src/generator/pdf.rs](mdc:src/generator/pdf.rs) - PDF generation with pandoc/typst
+- [src/generator/feeds.rs](mdc:src/generator/feeds.rs) - Atom feed generation
+- [src/generator/sitemap.rs](mdc:src/generator/sitemap.rs) - XML sitemap generation
+- [src/generator/robots.rs](mdc:src/generator/robots.rs) - robots.txt generation
+
+### Internationalization
+- [src/i18n/mod.rs](mdc:src/i18n/mod.rs) - Multi-language support
+- Language detection from filename patterns (e.g., `post.it.md`)
+
+### Theme System
+- [src/theme/mod.rs](mdc:src/theme/mod.rs) - Theme loading and management
+- [themes/default/](mdc:themes/default/) - Default theme templates and assets
+
+### Development Server
+- [src/server/mod.rs](mdc:src/server/mod.rs) - Development server with live reload
+- [src/server/live_reload.rs](mdc:src/server/live_reload.rs) - Live reload functionality
+
+### Error Handling
+- [src/error/mod.rs](mdc:src/error/mod.rs) - Centralized error types
+- [src/error/recovery.rs](mdc:src/error/recovery.rs) - Error recovery strategies
+
+## Content Organization
+- `content/posts/` - Blog posts (uses post template)
+- `content/pages/` - Static pages (uses page template)  
+- `content/site.toml` - Site configuration
+- `content/images/` - Static assets (copied as-is)
+
+## Key Features
+- GitHub Flavored Markdown support
+- YAML front matter with custom fields
+- Draft support via `draft: true`
+- Automatic asset copying
+- Light/dark mode theming
+- Multi-language support
+- Development server with live reload
+- PDF generation (pandoc/typst)
+- Atom feeds and XML sitemaps

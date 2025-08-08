@@ -1,0 +1,30 @@
+---
+description: content organization
+alwaysApply: false
+---
+```
+
+### Front Matter Fields
+- `title` (required) - Page title
+- `date` (optional) - Publication date (ISO 8601 format)
+- `layout` (optional) - Override template selection
+- `tags` (optional) - Array of tags
+- `toc` (optional) - Generate table of contents
+- `draft` (optional) - Skip processing if true
+- `pdf` (optional) - Generate PDF version
+
+## Template Selection
+
+Template selection is automatic based on directory:
+- `content/posts/` → `post.html` template
+- `content/pages/` → `page.html` template
+- Root level files → `page.html` template
+- Override with `layout` field in front matter
+
+## Site Configuration
+
+[content/site.toml](mdc:content/site.toml) contains site-wide settings:
+- Site title
+- Base URL (for feeds and absolute links)
+- Author information
+- Custom metadata

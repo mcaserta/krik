@@ -1,0 +1,84 @@
+---
+description: generator pipeline architecture
+alwaysApply: false
+---
+# Generator Pipeline Architecture
+
+The site generation pipeline is orchestrated through the generator module. Understanding the flow is crucial for working with site generation.
+
+## Pipeline Flow
+
+1. **Content Scanning**: [src/generator/core.rs](mdc:src/generator/core.rs) scans for markdown files
+2. **Parsing**: [src/generator/markdown.rs](mdc:src/generator/markdown.rs) processes markdown and front matter
+3. **Template Rendering**: [src/generator/templates.rs](mdc:src/generator/templates.rs) renders content with Tera templates
+4. **Asset Processing**: [src/generator/assets.rs](mdc:src/generator/assets.rs) copies static assets
+5. **SEO Generation**: [src/generator/sitemap.rs](mdc:src/generator/sitemap.rs) and [src/generator/robots.rs](mdc:src/generator/robots.rs) create SEO files
+6. **Feed Generation**: [src/generator/feeds.rs](mdc:src/generator/feeds.rs) creates Atom feeds
+7. **PDF Generation**: [src/generator/pdf.rs](mdc:src/generator/pdf.rs) generates PDFs when requested
+
+## Key Data Structures
+
+- `SiteGenerator` in [src/generator/core.rs](mdc:src/generator/core.rs) - Main orchestrator
+- `Content` in [src/content.rs](mdc:src/content.rs) - Represents a markdown file with metadata
+- `Site` in [src/site/mod.rs](mdc:src/site/mod.rs) - Site-wide configuration and content
+
+## Template System
+
+Templates are Tera-based and located in [themes/default/templates/](mdc:themes/default/templates/):
+- `index.html` - Homepage template
+- `post.html` - Blog post template  
+- `page.html` - Static page template
+
+## Internationalization
+
+Language detection happens in [src/i18n/mod.rs](mdc:src/i18n/mod.rs) based on filename patterns:
+- `post.md` → English (default)
+- `post.it.md` → Italian
+- `post.es.md` → Spanish
+
+## PDF Generation
+
+PDF generation in [src/generator/pdf.rs](mdc:src/generator/pdf.rs) supports:
+- Pandoc engine (default)
+- Typst engine (alternative)
+- Triggered by `pdf: true` in front matter
+# Generator Pipeline Architecture
+
+The site generation pipeline is orchestrated through the generator module. Understanding the flow is crucial for working with site generation.
+
+## Pipeline Flow
+
+1. **Content Scanning**: [src/generator/core.rs](mdc:src/generator/core.rs) scans for markdown files
+2. **Parsing**: [src/generator/markdown.rs](mdc:src/generator/markdown.rs) processes markdown and front matter
+3. **Template Rendering**: [src/generator/templates.rs](mdc:src/generator/templates.rs) renders content with Tera templates
+4. **Asset Processing**: [src/generator/assets.rs](mdc:src/generator/assets.rs) copies static assets
+5. **SEO Generation**: [src/generator/sitemap.rs](mdc:src/generator/sitemap.rs) and [src/generator/robots.rs](mdc:src/generator/robots.rs) create SEO files
+6. **Feed Generation**: [src/generator/feeds.rs](mdc:src/generator/feeds.rs) creates Atom feeds
+7. **PDF Generation**: [src/generator/pdf.rs](mdc:src/generator/pdf.rs) generates PDFs when requested
+
+## Key Data Structures
+
+- `SiteGenerator` in [src/generator/core.rs](mdc:src/generator/core.rs) - Main orchestrator
+- `Content` in [src/content.rs](mdc:src/content.rs) - Represents a markdown file with metadata
+- `Site` in [src/site/mod.rs](mdc:src/site/mod.rs) - Site-wide configuration and content
+
+## Template System
+
+Templates are Tera-based and located in [themes/default/templates/](mdc:themes/default/templates/):
+- `index.html` - Homepage template
+- `post.html` - Blog post template  
+- `page.html` - Static page template
+
+## Internationalization
+
+Language detection happens in [src/i18n/mod.rs](mdc:src/i18n/mod.rs) based on filename patterns:
+- `post.md` → English (default)
+- `post.it.md` → Italian
+- `post.es.md` → Spanish
+
+## PDF Generation
+
+PDF generation in [src/generator/pdf.rs](mdc:src/generator/pdf.rs) supports:
+- Pandoc engine (default)
+- Typst engine (alternative)
+- Triggered by `pdf: true` in front matter

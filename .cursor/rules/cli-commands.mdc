@@ -1,0 +1,116 @@
+---
+description: cli commands architecture
+alwaysApply: false
+---
+# CLI Commands Architecture
+
+The CLI is built using `clap` and organized in the `cli` module. Understanding the command structure is essential for CLI development.
+
+## Main CLI Structure
+
+- [src/cli/mod.rs](mdc:src/cli/mod.rs) - Main CLI interface using `KrikCli`
+- [src/cli/commands.rs](mdc:src/cli/commands.rs) - Individual command implementations
+
+## Available Commands
+
+### Core Commands
+- `kk` - Generate site (default command)
+- `kk init [DIR]` - Initialize new site
+- `kk post [TITLE]` - Create new blog post
+- `kk page [TITLE]` - Create new page
+- `kk server` - Start development server
+- `kk lint` - Lint content files
+
+### Command Options
+- `--input <DIR>` - Input directory (default: `content`)
+- `--output <DIR>` - Output directory (default: `_site`)
+- `--theme <DIR>` - Theme directory (default: `themes/default`)
+- `--port <PORT>` - Server port (default: `3000`)
+- `--no-live-reload` - Disable live reload (server only)
+
+## Error Handling
+
+CLI errors are handled in [src/main.rs](mdc:src/main.rs) with appropriate exit codes:
+- Config errors: exit code 2
+- I/O errors: exit code 3
+- Markdown errors: exit code 4
+- Template errors: exit code 5
+- Theme errors: exit code 6
+- Server errors: exit code 7
+- Content errors: exit code 8
+- Generation errors: exit code 9
+
+## Development Server
+
+The development server in [src/server/mod.rs](mdc:src/server/mod.rs) provides:
+- Live reload functionality
+- File watching with `notify`
+- Multi-interface binding
+- WebSocket support for live reload
+
+## Content Linting
+
+The linter in [src/lint.rs](mdc:src/lint.rs) validates:
+- Required title fields
+- Language code consistency
+- Slug format validation
+- Layout validation
+- Date validation
+- Tag format validation
+- Duplicate detection
+# CLI Commands Architecture
+
+The CLI is built using `clap` and organized in the `cli` module. Understanding the command structure is essential for CLI development.
+
+## Main CLI Structure
+
+- [src/cli/mod.rs](mdc:src/cli/mod.rs) - Main CLI interface using `KrikCli`
+- [src/cli/commands.rs](mdc:src/cli/commands.rs) - Individual command implementations
+
+## Available Commands
+
+### Core Commands
+- `kk` - Generate site (default command)
+- `kk init [DIR]` - Initialize new site
+- `kk post [TITLE]` - Create new blog post
+- `kk page [TITLE]` - Create new page
+- `kk server` - Start development server
+- `kk lint` - Lint content files
+
+### Command Options
+- `--input <DIR>` - Input directory (default: `content`)
+- `--output <DIR>` - Output directory (default: `_site`)
+- `--theme <DIR>` - Theme directory (default: `themes/default`)
+- `--port <PORT>` - Server port (default: `3000`)
+- `--no-live-reload` - Disable live reload (server only)
+
+## Error Handling
+
+CLI errors are handled in [src/main.rs](mdc:src/main.rs) with appropriate exit codes:
+- Config errors: exit code 2
+- I/O errors: exit code 3
+- Markdown errors: exit code 4
+- Template errors: exit code 5
+- Theme errors: exit code 6
+- Server errors: exit code 7
+- Content errors: exit code 8
+- Generation errors: exit code 9
+
+## Development Server
+
+The development server in [src/server/mod.rs](mdc:src/server/mod.rs) provides:
+- Live reload functionality
+- File watching with `notify`
+- Multi-interface binding
+- WebSocket support for live reload
+
+## Content Linting
+
+The linter in [src/lint.rs](mdc:src/lint.rs) validates:
+- Required title fields
+- Language code consistency
+- Slug format validation
+- Layout validation
+- Date validation
+- Tag format validation
+- Duplicate detection

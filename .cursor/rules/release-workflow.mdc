@@ -1,0 +1,97 @@
+---
+description: release workflow
+alwaysApply: false
+---
+# Release Workflow
+
+The release workflow is critical and must be followed exactly without skipping any steps. This ensures consistent, reliable releases.
+
+## Pre-Release Checklist
+
+Before starting a release, ensure:
+- All features are complete and tested
+- Documentation is up to date
+- No breaking changes without proper migration notes
+- All tests pass locally
+
+## Release Steps (Must Follow in Order)
+
+### 1. Documentation Updates
+- Update [README.md](mdc:README.md) with new features/changes
+- Update [CLAUDE.md](mdc:CLAUDE.md) if needed
+- Update documentation in [content/](mdc:content/) directory
+- Ensure all examples and screenshots are current
+
+### 2. Version Management
+- Update version in [Cargo.toml](mdc:Cargo.toml)
+- Update [CHANGELOG.md](mdc:CHANGELOG.md) with:
+  - New features
+  - Bug fixes
+  - Breaking changes
+  - Migration notes if needed
+- Follow semantic versioning (MAJOR.MINOR.PATCH)
+
+### 3. Code Quality
+- Reformat all modified Markdown files using prettier
+- Ensure code follows Rust coding standards
+- Run `cargo clippy` to check for code quality issues
+- Fix any warnings or errors
+
+### 4. Build Verification
+- Run `cargo build --release` to ensure successful compilation
+- Verify the CLI binary works correctly
+- Test that the site under [content/](mdc:content/) builds successfully
+- Run `cargo test` to ensure all tests pass
+- Verify CLI outputs correct version with `kk --version`
+
+### 5. Git Management
+- Stage all changes: `git add .`
+- Commit changes with descriptive message: `git commit -m "Release vX.Y.Z"`
+- Ensure everything is committed: `git status`
+- Tag the release: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
+- Push to GitHub: `git push origin main --tags`
+
+### 6. Distribution
+- Create GitHub release: `gh release create vX.Y.Z --generate-notes`
+- Publish to crates.io: `cargo publish`
+
+## Post-Release Verification
+
+### GitHub Release
+- Verify release notes are accurate
+- Check that assets are properly attached
+- Ensure release is marked as latest
+
+### Crates.io
+- Verify package appears on crates.io
+- Check that documentation builds correctly
+- Test installation: `cargo install krik`
+
+### User Experience
+- Test fresh installation on clean environment
+- Verify all CLI commands work as expected
+- Check that example sites build correctly
+
+## Critical Reminders
+
+- **Never skip any step** - Each step is essential for a reliable release
+- **Test thoroughly** - Both the build process and the generated sites
+- **Document changes** - Users rely on accurate changelog and documentation
+- **Follow semantic versioning** - MAJOR for breaking changes, MINOR for features, PATCH for fixes
+- **Verify distribution** - Ensure both GitHub and crates.io releases are successful
+
+## Rollback Procedure
+
+If issues are discovered after release:
+1. Immediately create a patch release if possible
+2. Update documentation with known issues
+3. Consider yanking the crates.io release if critical
+4. Communicate clearly with users about the issue
+
+## Version Numbering
+
+- **MAJOR**: Breaking changes, incompatible API changes
+- **MINOR**: New features, backward compatible
+- **PATCH**: Bug fixes, backward compatible
+
+Example: `0.1.13` → `0.1.14` (patch), `0.2.0` (minor), `1.0.0` (major)

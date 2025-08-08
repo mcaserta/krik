@@ -1,0 +1,136 @@
+---
+description: theme system architecture
+alwaysApply: false
+---
+# Theme System Architecture
+
+Krik uses a Tera-based templating system with support for light/dark mode and responsive design.
+
+## Theme Structure
+
+Default theme located in [themes/default/](mdc:themes/default/):
+- [themes/default/templates/](mdc:themes/default/templates/) - HTML templates
+- [themes/default/assets/css/](mdc:themes/default/assets/css/) - Stylesheets
+- [themes/default/assets/js/](mdc:themes/default/assets/js/) - JavaScript
+- [themes/default/theme.toml](mdc:themes/default/theme.toml) - Theme configuration
+
+## Template Files
+
+### Core Templates
+- `index.html` - Homepage with post listing
+- `post.html` - Individual blog post template
+- `page.html` - Static page template
+
+### Template Context
+
+Templates receive context including:
+- `site` - Site configuration from `site.toml`
+- `content` - Current page/post content
+- `posts` - All blog posts (for index)
+- `pages` - All static pages
+- `current_url` - Current page URL
+- `base_url` - Site base URL
+
+## Theme Features
+
+### Light/Dark Mode
+- Automatic OS detection
+- Manual toggle button
+- Theme-aware syntax highlighting
+- CSS custom properties for theming
+
+### Responsive Design
+- Mobile-first approach
+- Flexible layouts
+- Responsive images
+- Touch-friendly navigation
+
+### Advanced Features
+- Table of contents generation
+- Footnote navigation
+- Scroll-to-top button
+- Syntax highlighting with Prism.js
+
+## Theme Development
+
+To create a custom theme:
+1. Copy `themes/default/` to `themes/your-theme/`
+2. Modify templates in `templates/` directory
+3. Update styles in `assets/css/main.css`
+4. Configure theme in `theme.toml`
+
+## Template Variables
+
+Common template variables:
+- `{{ content.title }}` - Page title
+- `{{ content.date }}` - Publication date
+- `{{ content.tags }}` - Post tags
+- `{{ content.toc }}` - Table of contents
+- `{{ site.title }}` - Site title
+- `{{ site.base_url }}` - Site base URL
+# Theme System Architecture
+
+Krik uses a Tera-based templating system with support for light/dark mode and responsive design.
+
+## Theme Structure
+
+Default theme located in [themes/default/](mdc:themes/default/):
+- [themes/default/templates/](mdc:themes/default/templates/) - HTML templates
+- [themes/default/assets/css/](mdc:themes/default/assets/css/) - Stylesheets
+- [themes/default/assets/js/](mdc:themes/default/assets/js/) - JavaScript
+- [themes/default/theme.toml](mdc:themes/default/theme.toml) - Theme configuration
+
+## Template Files
+
+### Core Templates
+- `index.html` - Homepage with post listing
+- `post.html` - Individual blog post template
+- `page.html` - Static page template
+
+### Template Context
+
+Templates receive context including:
+- `site` - Site configuration from `site.toml`
+- `content` - Current page/post content
+- `posts` - All blog posts (for index)
+- `pages` - All static pages
+- `current_url` - Current page URL
+- `base_url` - Site base URL
+
+## Theme Features
+
+### Light/Dark Mode
+- Automatic OS detection
+- Manual toggle button
+- Theme-aware syntax highlighting
+- CSS custom properties for theming
+
+### Responsive Design
+- Mobile-first approach
+- Flexible layouts
+- Responsive images
+- Touch-friendly navigation
+
+### Advanced Features
+- Table of contents generation
+- Footnote navigation
+- Scroll-to-top button
+- Syntax highlighting with Prism.js
+
+## Theme Development
+
+To create a custom theme:
+1. Copy `themes/default/` to `themes/your-theme/`
+2. Modify templates in `templates/` directory
+3. Update styles in `assets/css/main.css`
+4. Configure theme in `theme.toml`
+
+## Template Variables
+
+Common template variables:
+- `{{ content.title }}` - Page title
+- `{{ content.date }}` - Publication date
+- `{{ content.tags }}` - Post tags
+- `{{ content.toc }}` - Table of contents
+- `{{ site.title }}` - Site title
+- `{{ site.base_url }}` - Site base URL

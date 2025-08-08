@@ -1,0 +1,206 @@
+---
+description: project configuration, testing, running
+alwaysApply: false
+---
+# Project Configuration
+
+## Cargo Configuration
+
+The project is configured in [Cargo.toml](mdc:Cargo.toml) with the following key settings:
+
+### Package Information
+- Name: `krik`
+- Version: `0.1.13`
+- Edition: `2021`
+- Rust version: `1.70`
+- License: `MIT`
+
+### Binary Configuration
+- Binary name: `kk`
+- Entry point: [src/main.rs](mdc:src/main.rs)
+
+### Key Dependencies
+
+#### Core Dependencies
+- `serde` - Serialization/deserialization
+- `serde_yaml` - YAML front matter parsing
+- `pulldown-cmark` - Markdown processing
+- `clap` - CLI argument parsing
+- `tera` - Template engine
+
+#### Server Dependencies
+- `tokio` - Async runtime
+- `warp` - HTTP server
+- `notify` - File watching
+- `serde_json` - JSON handling
+
+#### Utility Dependencies
+- `chrono` - Date/time handling
+- `walkdir` - Directory traversal
+- `which` - External tool detection
+- `tracing` - Logging framework
+- `regex` - Regular expressions
+
+## Build Configuration
+
+### Excluded Files
+The following are excluded from the build:
+- `_site/*` - Generated site files
+- `target/*` - Build artifacts
+- `.git/*` - Version control
+- `*.png` - Image files
+- `CLAUDE.md` - Documentation
+
+### Development Tools
+
+#### Required External Tools
+- `pandoc` - PDF generation (default engine)
+- `typst` - Alternative PDF engine
+
+#### Optional Tools
+- `cargo flamegraph` - Performance profiling
+- `cargo install-update` - Dependency updates
+
+## Project Structure
+
+### Source Organization
+- [src/lib.rs](mdc:src/lib.rs) - Library interface
+- [src/main.rs](mdc:src/main.rs) - Binary entry point
+- [src/cli/](mdc:src/cli/) - Command-line interface
+- [src/generator/](mdc:src/generator/) - Site generation
+- [src/server/](mdc:src/server/) - Development server
+- [src/theme/](mdc:src/theme/) - Theme system
+
+### Content Organization
+- [content/](mdc:content/) - Site content
+- [themes/default/](mdc:themes/default/) - Default theme
+- `_site/` - Generated output (gitignored)
+
+## Development Setup
+
+### Prerequisites
+```bash
+# Install Rust toolchain
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install external tools
+brew install pandoc  # macOS
+# or
+sudo apt install pandoc  # Ubuntu
+```
+
+### Build Commands
+```bash
+cargo build              # Debug build
+cargo build --release    # Release build
+cargo test               # Run tests
+cargo check              # Type checking
+cargo clippy             # Linting
+```
+
+### Installation
+```bash
+cargo install --path .   # Install locally
+cargo install krik       # Install from crates.io
+```
+# Project Configuration
+
+## Cargo Configuration
+
+The project is configured in [Cargo.toml](mdc:Cargo.toml) with the following key settings:
+
+### Package Information
+- Name: `krik`
+- Version: `0.1.13`
+- Edition: `2021`
+- Rust version: `1.70`
+- License: `MIT`
+
+### Binary Configuration
+- Binary name: `kk`
+- Entry point: [src/main.rs](mdc:src/main.rs)
+
+### Key Dependencies
+
+#### Core Dependencies
+- `serde` - Serialization/deserialization
+- `serde_yaml` - YAML front matter parsing
+- `pulldown-cmark` - Markdown processing
+- `clap` - CLI argument parsing
+- `tera` - Template engine
+
+#### Server Dependencies
+- `tokio` - Async runtime
+- `warp` - HTTP server
+- `notify` - File watching
+- `serde_json` - JSON handling
+
+#### Utility Dependencies
+- `chrono` - Date/time handling
+- `walkdir` - Directory traversal
+- `which` - External tool detection
+- `tracing` - Logging framework
+- `regex` - Regular expressions
+
+## Build Configuration
+
+### Excluded Files
+The following are excluded from the build:
+- `_site/*` - Generated site files
+- `target/*` - Build artifacts
+- `.git/*` - Version control
+- `*.png` - Image files
+- `CLAUDE.md` - Documentation
+
+### Development Tools
+
+#### Required External Tools
+- `pandoc` - PDF generation (default engine)
+- `typst` - Alternative PDF engine
+
+#### Optional Tools
+- `cargo flamegraph` - Performance profiling
+- `cargo install-update` - Dependency updates
+
+## Project Structure
+
+### Source Organization
+- [src/lib.rs](mdc:src/lib.rs) - Library interface
+- [src/main.rs](mdc:src/main.rs) - Binary entry point
+- [src/cli/](mdc:src/cli/) - Command-line interface
+- [src/generator/](mdc:src/generator/) - Site generation
+- [src/server/](mdc:src/server/) - Development server
+- [src/theme/](mdc:src/theme/) - Theme system
+
+### Content Organization
+- [content/](mdc:content/) - Site content
+- [themes/default/](mdc:themes/default/) - Default theme
+- `_site/` - Generated output (gitignored)
+
+## Development Setup
+
+### Prerequisites
+```bash
+# Install Rust toolchain
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install external tools
+brew install pandoc  # macOS
+# or
+sudo apt install pandoc  # Ubuntu
+```
+
+### Build Commands
+```bash
+cargo build              # Debug build
+cargo build --release    # Release build
+cargo test               # Run tests
+cargo check              # Type checking
+cargo clippy             # Linting
+```
+
+### Installation
+```bash
+cargo install --path .   # Install locally
+cargo install krik       # Install from crates.io
+```

@@ -1,0 +1,80 @@
+---
+description: coding standards
+alwaysApply: false
+---
+# Rust Coding Standards for Krik
+
+## Error Handling
+- Use the centralized error types from [src/error/mod.rs](mdc:src/error/mod.rs)
+- Always use `Result<T, KrikError>` for functions that can fail
+- Use `?` operator for error propagation
+- Provide meaningful error messages with context
+
+## Logging
+- Use the `tracing` crate for logging (imported in [src/logging.rs](mdc:src/logging.rs))
+- Use appropriate log levels: `debug!`, `info!`, `warn!`, `error!`
+- Include relevant context in log messages
+
+## Module Organization
+- Keep modules focused and single-purpose
+- Use `mod.rs` files for module declarations
+- Export public APIs through `lib.rs`
+
+## Documentation
+- Use `///` for public API documentation
+- Include examples in doc comments where helpful
+- Document error conditions and edge cases
+
+## Testing
+- Write unit tests in the same file as the code being tested
+- Use integration tests for complex workflows
+- Test error conditions and edge cases
+
+## Performance
+- Prefer iterators over manual loops
+- Use `&str` over `String` when possible
+- Avoid unnecessary allocations
+- Use `Cow<'a, str>` for string operations that might not need to allocate
+
+## Async/Await
+- Use `tokio` for async operations
+- Handle async errors properly with `?` operator
+- Use appropriate async patterns for I/O operations
+# Rust Coding Standards for Krik
+
+## Error Handling
+- Use the centralized error types from [src/error/mod.rs](mdc:src/error/mod.rs)
+- Always use `Result<T, KrikError>` for functions that can fail
+- Use `?` operator for error propagation
+- Provide meaningful error messages with context
+
+## Logging
+- Use the `tracing` crate for logging (imported in [src/logging.rs](mdc:src/logging.rs))
+- Use appropriate log levels: `debug!`, `info!`, `warn!`, `error!`
+- Include relevant context in log messages
+
+## Module Organization
+- Keep modules focused and single-purpose
+- Use `mod.rs` files for module declarations
+- Export public APIs through `lib.rs`
+
+## Documentation
+- Use `///` for public API documentation
+- Include examples in doc comments where helpful
+- Document error conditions and edge cases
+
+## Testing
+- Write unit tests in the same file as the code being tested
+- Use integration tests for complex workflows
+- Test error conditions and edge cases
+
+## Performance
+- Prefer iterators over manual loops
+- Use `&str` over `String` when possible
+- Avoid unnecessary allocations
+- Use `Cow<'a, str>` for string operations that might not need to allocate
+
+## Async/Await
+- Use `tokio` for async operations
+- Handle async errors properly with `?` operator
+- Use appropriate async patterns for I/O operations

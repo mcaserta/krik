@@ -1,0 +1,192 @@
+---
+description: development workflow
+alwaysApply: false
+---
+# Development Workflow
+
+## Building and Testing
+
+### Build Commands
+```bash
+cargo build              # Debug build
+cargo build --release    # Release build
+cargo test               # Run tests
+cargo check              # Type checking only
+```
+
+### Development Server
+```bash
+cargo run -- server      # Start dev server on port 3000
+cargo run -- server --port 8080  # Custom port
+cargo run -- server --no-live-reload  # Disable live reload
+```
+
+### Content Generation
+```bash
+cargo run -- --input ./content --output ./_site  # Generate site
+cargo run -- lint        # Lint content files
+cargo run -- init        # Initialize new site
+```
+
+## Debugging
+
+### Logging
+- Use `tracing` macros: `debug!`, `info!`, `warn!`, `error!`
+- Set log level with `RUST_LOG` environment variable
+- Example: `RUST_LOG=debug cargo run -- server`
+
+### Error Handling
+- All errors use `KrikError` from [src/error/mod.rs](mdc:src/error/mod.rs)
+- Error context is preserved through the chain
+- Exit codes are defined in [src/main.rs](mdc:src/main.rs)
+
+### Common Issues
+
+#### Template Errors
+- Check Tera syntax in [themes/default/templates/](mdc:themes/default/templates/)
+- Verify template variables are available in context
+- Use `{{ debug }}` in templates for debugging
+
+#### Content Issues
+- Validate front matter YAML syntax
+- Check file naming conventions
+- Verify language codes match filename patterns
+
+#### PDF Generation
+- Ensure pandoc or typst is installed
+- Check `pdf: true` in front matter
+- Verify output directory permissions
+
+## Testing Strategy
+
+### Unit Tests
+- Test individual functions and modules
+- Mock external dependencies
+- Test error conditions
+
+### Integration Tests
+- Test complete site generation
+- Test CLI commands
+- Test server functionality
+
+### Content Tests
+- Use `kk lint` to validate content
+- Test with various front matter combinations
+- Test internationalization features
+
+## Performance Optimization
+
+### Build Performance
+- Use `cargo build --release` for production
+- Profile with `cargo flamegraph`
+- Monitor memory usage
+
+### Site Generation
+- Large sites may benefit from parallel processing
+- Optimize template rendering
+- Minimize file I/O operations
+
+## Deployment
+
+### Local Testing
+- Generate site: `cargo run -- --input ./content --output ./_site`
+- Serve locally: `python -m http.server 8000 --directory _site`
+
+### Production
+- Use release build: `cargo build --release`
+- Binary location: `target/release/kk`
+- Deploy generated `_site` directory
+# Development Workflow
+
+## Building and Testing
+
+### Build Commands
+```bash
+cargo build              # Debug build
+cargo build --release    # Release build
+cargo test               # Run tests
+cargo check              # Type checking only
+```
+
+### Development Server
+```bash
+cargo run -- server      # Start dev server on port 3000
+cargo run -- server --port 8080  # Custom port
+cargo run -- server --no-live-reload  # Disable live reload
+```
+
+### Content Generation
+```bash
+cargo run -- --input ./content --output ./_site  # Generate site
+cargo run -- lint        # Lint content files
+cargo run -- init        # Initialize new site
+```
+
+## Debugging
+
+### Logging
+- Use `tracing` macros: `debug!`, `info!`, `warn!`, `error!`
+- Set log level with `RUST_LOG` environment variable
+- Example: `RUST_LOG=debug cargo run -- server`
+
+### Error Handling
+- All errors use `KrikError` from [src/error/mod.rs](mdc:src/error/mod.rs)
+- Error context is preserved through the chain
+- Exit codes are defined in [src/main.rs](mdc:src/main.rs)
+
+### Common Issues
+
+#### Template Errors
+- Check Tera syntax in [themes/default/templates/](mdc:themes/default/templates/)
+- Verify template variables are available in context
+- Use `{{ debug }}` in templates for debugging
+
+#### Content Issues
+- Validate front matter YAML syntax
+- Check file naming conventions
+- Verify language codes match filename patterns
+
+#### PDF Generation
+- Ensure pandoc or typst is installed
+- Check `pdf: true` in front matter
+- Verify output directory permissions
+
+## Testing Strategy
+
+### Unit Tests
+- Test individual functions and modules
+- Mock external dependencies
+- Test error conditions
+
+### Integration Tests
+- Test complete site generation
+- Test CLI commands
+- Test server functionality
+
+### Content Tests
+- Use `kk lint` to validate content
+- Test with various front matter combinations
+- Test internationalization features
+
+## Performance Optimization
+
+### Build Performance
+- Use `cargo build --release` for production
+- Profile with `cargo flamegraph`
+- Monitor memory usage
+
+### Site Generation
+- Large sites may benefit from parallel processing
+- Optimize template rendering
+- Minimize file I/O operations
+
+## Deployment
+
+### Local Testing
+- Generate site: `cargo run -- --input ./content --output ./_site`
+- Serve locally: `python -m http.server 8000 --directory _site`
+
+### Production
+- Use release build: `cargo build --release`
+- Binary location: `target/release/kk`
+- Deploy generated `_site` directory
