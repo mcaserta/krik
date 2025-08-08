@@ -2,6 +2,7 @@ use crate::error::{IoError, IoErrorKind, KrikError, KrikResult};
 use crate::parser::{extract_language_from_filename, parse_markdown_with_frontmatter_for_file};
 use chrono::Utc;
 use regex::Regex;
+use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
@@ -39,10 +40,9 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
 
     let mut report = LintReport::default();
 
-    // slug pattern: lowercase letters/numbers separated by single hyphens
-    let slug_regex: Regex = Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").map_err(|e| KrikError::Generation(
-        crate::error::GenerationError { kind: crate::error::GenerationErrorKind::FeedError(format!("Invalid slug regex: {}", e)), context: "Compiling slug regex".to_string() }
-    ))?;
+    // Precompiled regexes
+    static SLUG_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap());
+    static MD_LINK_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[[^\]]+\]\(([^)\s]+\.md)(?:#[^)]+)?\)").unwrap());
 
     // Track duplicates: (relative_parent_dir, base_name, language) -> Vec<paths>
     let mut seen_slugs: HashMap<(String, String, String), Vec<PathBuf>> = HashMap::new();
@@ -118,7 +118,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
                 }
 
                 // Validate slug format
-                if !slug_regex.is_match(&base_name) {
+                if !SLUG_REGEX.is_match(&base_name) {
                     report.errors.push(format!(
                         "{}: invalid slug '{}' (use lowercase letters, numbers, and hyphens)",
                         path.display(),
@@ -274,14 +274,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
         // Check for unresolved .md links in markdown body (naive pattern)
         // This is a lightweight check to catch links that likely should be .html
         // Patterns considered: [text](path.md) or [text](../dir/file.md)
-        let md_link_re = match Regex::new(r"\[[^\]]+\]\(([^)\s]+\.md)(?:#[^)]+)?\)") {
-            Ok(r) => r,
-            Err(e) => {
-                report.warnings.push(format!("Failed compiling markdown link regex: {}", e));
-                continue;
-            }
-        };
-        for cap in md_link_re.captures_iter(&content) {
+        for cap in MD_LINK_REGEX.captures_iter(&content) {
             let target = &cap[1];
             // Skip absolute URLs
             if target.starts_with("http://") || target.starts_with("https://") {
