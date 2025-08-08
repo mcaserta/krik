@@ -7,22 +7,14 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/posts/welcome.html</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://mirkocaserta.com/krik/posts/markdown-showcase.html</loc>
+    <lastmod>2024-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="it" href="https://mirkocaserta.com/krik/posts/welcome.it.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mirkocaserta.com/krik/posts/welcome.html" />
   </url>
   <url>
     <loc>https://mirkocaserta.com/krik/posts/advanced-features.html</loc>
     <lastmod>2024-01-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://mirkocaserta.com/krik/posts/markdown-showcase.html</loc>
-    <lastmod>2024-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -39,13 +31,21 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/pages/contact.html</loc>
+    <loc>https://mirkocaserta.com/krik/posts/welcome.html</loc>
+    <lastmod>2024-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://mirkocaserta.com/krik/posts/welcome.it.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mirkocaserta.com/krik/posts/welcome.html" />
+  </url>
+  <url>
+    <loc>https://mirkocaserta.com/krik/pages/documentation.html</loc>
     <lastmod>2025-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/pages/documentation.html</loc>
+    <loc>https://mirkocaserta.com/krik/pages/contact.html</loc>
     <lastmod>2025-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -55,7 +55,7 @@
     <lastmod>2025-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://mirkocaserta.com/krik/pages/about.html" />
     <xhtml:link rel="alternate" hreflang="it" href="https://mirkocaserta.com/krik/pages/about.it.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://mirkocaserta.com/krik/pages/about.html" />
   </url>
 </urlset>
