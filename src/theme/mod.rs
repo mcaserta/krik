@@ -91,4 +91,17 @@ index = "index"
         // Fall back to original name
         Ok(self.templates.render(template_name, context)?)
     }
+
+    /// Attempt to reload templates from disk. Safe to call in dev when templates change.
+    /// If reload fails, keep existing templates.
+    pub fn try_reload_templates(&mut self) {
+        let templates_path = self.theme_path.join("templates");
+        if templates_path.exists() {
+            if let Ok(new_tera) = Tera::new(&format!("{}/**/*.html", templates_path.display())) {
+                let mut tera = new_tera;
+                tera.autoescape_on(vec![]);
+                self.templates = tera;
+            }
+        }
+    }
 }

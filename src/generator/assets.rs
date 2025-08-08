@@ -127,3 +127,53 @@ fn copy_directory_contents(src: &Path, dest: &Path) -> Result<(), Box<dyn std::e
     Ok(())
 }
 
+/// Copy a single asset file from `source_dir` into the mirrored path under `output_dir`.
+/// Skips markdown files and ignored assets. Returns Ok even if the path is not a regular file.
+pub fn copy_single_asset(
+    source_dir: &Path,
+    output_dir: &Path,
+    file_path: &Path,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if !file_path.exists() || file_path.is_dir() {
+        return Ok(());
+    }
+    // Skip markdown and site.toml
+    if file_path.extension().map_or(false, |ext| ext == "md") {
+        return Ok(());
+    }
+    if file_path.file_name() == Some(std::ffi::OsStr::new("site.toml")) {
+        return Ok(());
+    }
+    if is_ignored_asset(file_path) {
+        return Ok(());
+    }
+
+    let relative_path = file_path.strip_prefix(source_dir)
+        .map_err(|_| format!("Failed to get relative path for: {}", file_path.display()))?;
+    let dest_path = output_dir.join(relative_path);
+
+    if let Some(parent) = dest_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::copy(file_path, &dest_path)?;
+    Ok(())
+}
+
+/// Remove a single asset file from the mirrored path under `output_dir`.
+/// Safe to call even if the destination file does not exist.
+pub fn remove_single_asset(
+    source_dir: &Path,
+    output_dir: &Path,
+    file_path: &Path,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let relative_path = match file_path.strip_prefix(source_dir) {
+        Ok(rel) => rel,
+        Err(_) => return Ok(()),
+    };
+    let dest_path = output_dir.join(relative_path);
+    if dest_path.exists() && dest_path.is_file() {
+        let _ = fs::remove_file(dest_path);
+    }
+    Ok(())
+}
+

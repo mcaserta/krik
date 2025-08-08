@@ -78,11 +78,19 @@ impl SiteGenerator {
         output_dir: P,
         theme_dir: Option<P>,
     ) -> KrikResult<Self> {
-        let source_dir = source_dir.as_ref().to_path_buf();
-        let output_dir = output_dir.as_ref().to_path_buf();
+        // Normalize paths to avoid mismatches between absolute and relative paths
+        let mut source_dir = source_dir.as_ref().to_path_buf();
+        if let Ok(abs) = std::fs::canonicalize(&source_dir) { source_dir = abs; }
+
+        let mut output_dir = output_dir.as_ref().to_path_buf();
+        // Output directory might not exist yet; canonicalize only if it does
+        if output_dir.exists() {
+            if let Ok(abs) = std::fs::canonicalize(&output_dir) { output_dir = abs; }
+        }
         
         let theme = if let Some(theme_path) = theme_dir {
-            let path = theme_path.as_ref().to_path_buf();
+            let mut path = theme_path.as_ref().to_path_buf();
+            if let Ok(abs) = std::fs::canonicalize(&path) { path = abs; }
             Theme::load_from_path(&path)
                 .map_err(|_| KrikError::Theme(ThemeError {
                     kind: ThemeErrorKind::NotFound,
@@ -91,6 +99,7 @@ impl SiteGenerator {
                 }))?
         } else {
             let default_path = PathBuf::from("themes/default");
+            let default_path = if let Ok(abs) = std::fs::canonicalize(&default_path) { abs } else { default_path };
             Theme::load_from_path(&default_path).unwrap_or_else(|_| {
                 Theme {
                     config: crate::theme::ThemeConfig {
@@ -210,5 +219,165 @@ impl SiteGenerator {
 
         info!("Site generation completed successfully");
         Ok(())
+    }
+
+    /// Incrementally (re)generate outputs affected by a single changed content or asset file.
+    ///
+    /// Behavior:
+    /// - If a markdown file changed: re-scan just that file, update/emit its HTML, and re-render index/feed/sitemap.
+    /// - If a non-markdown content asset changed: copy that single asset into the output.
+    /// - If a content file was removed: remove the mirrored output file and refresh index/feed/sitemap.
+    /// - If a theme file changed (templates/assets), fall back to full regeneration as templates affect many pages.
+    pub fn generate_incremental_for_path<P: AsRef<Path>>(
+        &self,
+        changed_path: P,
+        is_removed: bool,
+    ) -> KrikResult<()> {
+        use super::pipeline::{EmitPhase, RenderPhase, TransformPhase};
+        use std::ffi::OsStr;
+
+        let changed_path = changed_path.as_ref();
+        // no need to instantiate ScanPhase here
+        let transform = TransformPhase;
+        let render = RenderPhase;
+        let emit = EmitPhase;
+
+        emit.ensure_output_dir(&self.output_dir)?;
+
+        // If change is inside theme dir or is an HTML template, do full regen.
+        let is_theme_related = self.theme.theme_path.as_path().is_dir()
+            && changed_path.starts_with(&self.theme.theme_path);
+        let is_template_ext = changed_path
+            .extension()
+            .and_then(OsStr::to_str)
+            .map(|ext| ext.eq_ignore_ascii_case("html"))
+            .unwrap_or(false)
+            && changed_path
+                .components()
+                .any(|c| c.as_os_str() == OsStr::new("templates"));
+        if is_theme_related || is_template_ext {
+            debug!(
+                "theme-related change detected at {} (template_ext={}), triggering full regeneration",
+                changed_path.display(),
+                is_template_ext
+            );
+            // Templates affect all pages; safest to rebuild fully.
+            return self.generate_site();
+        }
+
+        // Changes within content directory
+        // Compare using canonicalized paths to avoid absolute/relative mismatches
+        let canonical_changed = std::fs::canonicalize(changed_path).unwrap_or_else(|_| changed_path.to_path_buf());
+        let canonical_source = std::fs::canonicalize(&self.source_dir).unwrap_or_else(|_| self.source_dir.clone());
+
+        if canonical_changed.starts_with(&canonical_source) {
+            let is_markdown = changed_path.extension().map_or(false, |ext| ext == "md");
+            let is_site_toml = changed_path.file_name() == Some(OsStr::new("site.toml"));
+            if is_site_toml {
+                debug!("site.toml changed ({}), triggering full regeneration", changed_path.display());
+                // Site configuration changes can affect all pages
+                return self.generate_site();
+            }
+
+            if is_markdown {
+                // Determine relative path for matching Document
+                let relative_path = match canonical_changed.strip_prefix(&canonical_source) {
+                    Ok(rel) => rel.to_string_lossy().to_string(),
+                    Err(_) => {
+                        debug!(
+                            "failed to compute relative path for {}, falling back to full regeneration",
+                            changed_path.display()
+                        );
+                        return self.generate_site();
+                    }
+                };
+
+                // Re-scan all to keep global artifacts correct
+                let mut documents = Vec::new();
+                super::markdown::scan_files(&self.source_dir, &mut documents)?;
+
+                // Transform documents for correct dates before rendering
+                transform.transform(&mut documents, &self.source_dir);
+
+                if is_removed {
+                    debug!("removing generated page for {}", relative_path);
+                    // Remove the mirrored HTML file
+                    let mut output_path = std::path::PathBuf::from(&relative_path);
+                    output_path.set_extension("html");
+                    let output_path = self.output_dir.join(output_path);
+                    if output_path.exists() {
+                        let _ = std::fs::remove_file(output_path);
+                    }
+                } else {
+                    // Render only the changed page
+                    if let Some(doc) = documents.iter().find(|d| d.file_path == relative_path) {
+                        debug!("re-rendering single page {}", relative_path);
+                        super::templates::generate_page(
+                            doc,
+                            &documents,
+                            &self.theme,
+                            &self.i18n,
+                            &self.site_config,
+                            &self.output_dir,
+                        )
+                        .map_err(|e| KrikError::Generation(crate::error::GenerationError {
+                            kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                format!("Page generation failed: {}", e),
+                            )),
+                            context: "Incremental page generation".to_string(),
+                        }))?;
+                    } else {
+                        debug!(
+                            "changed page {} not present in scanned documents; triggering full regeneration",
+                            relative_path
+                        );
+                        // If not found, fall back to full regeneration
+                        return self.generate_site();
+                    }
+                }
+
+                // Update global artifacts that depend on full document set
+                debug!("updating global artifacts (index/feed/sitemap/robots) after single-page change");
+                render.render_index(&documents, &self.theme, &self.site_config, &self.output_dir)?;
+                emit.emit_feed(&documents, &self.site_config, &self.output_dir)?;
+                emit.emit_sitemap(&documents, &self.site_config, &self.output_dir)?;
+                emit.emit_robots(&self.site_config, &self.output_dir)?;
+                return Ok(());
+            } else {
+                // Non-markdown asset changed under content: copy or remove the single file
+                if is_removed {
+                    debug!("removing single asset {}", changed_path.display());
+                    super::assets::remove_single_asset(&self.source_dir, &self.output_dir, changed_path)
+                        .map_err(|e| KrikError::Generation(crate::error::GenerationError {
+                            kind: crate::error::GenerationErrorKind::AssetCopyError {
+                                source: self.source_dir.clone(),
+                                target: self.output_dir.clone(),
+                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset remove failed: {}", e)),
+                            },
+                            context: "Removing single changed asset".to_string(),
+                        }))?;
+                } else {
+                    debug!("copying single asset {}", changed_path.display());
+                    super::assets::copy_single_asset(&self.source_dir, &self.output_dir, changed_path)
+                        .map_err(|e| KrikError::Generation(crate::error::GenerationError {
+                            kind: crate::error::GenerationErrorKind::AssetCopyError {
+                                source: self.source_dir.clone(),
+                                target: self.output_dir.clone(),
+                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset copy failed: {}", e)),
+                            },
+                            context: "Copying single changed asset".to_string(),
+                        }))?;
+                }
+                return Ok(());
+            }
+        }
+
+        debug!(
+            "change at {} not under source/theme (or canonicalization mismatch); triggering full regeneration",
+            changed_path.display()
+        );
+        // Default: fall back to full regeneration
+        self.generate_site()
     }
 }

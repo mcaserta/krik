@@ -4,7 +4,7 @@ use tokio::sync::broadcast;
 use warp::Filter;
 use notify::{Watcher, RecursiveMode, Event, EventKind};
 use crate::generator::SiteGenerator;
-use tracing::{info, error};
+use tracing::{info, error, debug};
 
 pub mod websocket;
 pub mod static_files;
@@ -146,6 +146,7 @@ impl DevServer {
             let mut watcher = notify::recommended_watcher(move |res: Result<Event, notify::Error>| {
                 if let Ok(event) = res {
                     if matches!(event.kind, EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)) {
+                        debug!("notify event captured: kind={:?}, paths={:?}", event.kind, event.paths);
                         let _ = tx.blocking_send(event);
                     }
                 }
@@ -159,29 +160,88 @@ impl DevServer {
                     .expect("Failed to watch theme directory");
             }
 
-            let mut last_generation = std::time::Instant::now();
-            
-            while let Some(_event) = rx.recv().await {
-                // Debounce rapid file changes
-                let now = std::time::Instant::now();
-                if now.duration_since(last_generation) < Duration::from_millis(100) {
-                    continue;
-                }
-                last_generation = now;
+            // Canonicalize watched roots to compare against canonical event paths
+            let canonical_input_dir = std::fs::canonicalize(&input_dir).unwrap_or(input_dir.clone());
+            let canonical_theme_dir = theme_dir.as_ref().and_then(|t| std::fs::canonicalize(t).ok());
 
-                info!("📝 File changed, regenerating site...");
-                
-                // Regenerate site
-                if let Ok(mut generator) = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
-                    if let Err(e) = generator.scan_files() {
-                        error!("❌ Error scanning files: {}", e);
-                        continue;
+            loop {
+                // Wait for one event
+                let event = match rx.recv().await {
+                    Some(ev) => ev,
+                    None => break,
+                };
+
+                // Start a short debounce window to coalesce bursty editor events
+                use std::collections::HashMap;
+                let mut batched: HashMap<std::path::PathBuf, bool> = HashMap::new(); // path -> is_remove
+
+                let first_is_remove = matches!(event.kind, EventKind::Remove(_));
+                for p in event.paths.iter() {
+                    let canonical_path = std::fs::canonicalize(p).unwrap_or(p.clone());
+                    batched
+                        .entry(canonical_path)
+                        .and_modify(|r| *r |= first_is_remove)
+                        .or_insert(first_is_remove);
+                }
+
+                // Collect more events for 250ms of idle
+                loop {
+                    match tokio::time::timeout(Duration::from_millis(250), rx.recv()).await {
+                        Ok(Some(ev)) => {
+                            let is_remove = matches!(ev.kind, EventKind::Remove(_));
+                            for p in ev.paths.iter() {
+                                let canonical_path = std::fs::canonicalize(p).unwrap_or(p.clone());
+                                batched
+                                    .entry(canonical_path)
+                                    .and_modify(|r| *r |= is_remove)
+                                    .or_insert(is_remove);
+                            }
+                            continue;
+                        }
+                        _ => break,
                     }
-                    if let Err(e) = generator.generate_site() {
-                        error!("❌ Error generating site: {}", e);
-                        continue;
+                }
+
+                // Log the batched set
+                if !batched.is_empty() {
+                    let mut dbg_paths: Vec<String> = batched
+                        .iter()
+                        .map(|(p, r)| format!("{} (remove={})", p.display(), r))
+                        .collect();
+                    dbg_paths.sort();
+                    debug!("batched paths: {}", dbg_paths.join(", "));
+                }
+                info!("📝 {} changed path(s), running incremental build...", batched.len());
+
+                // Run incremental for the batched unique paths
+                if let Ok(generator) = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
+                    let mut did_anything = false;
+                    for (path, is_remove) in batched.into_iter() {
+                        // Only handle changes under input_dir or theme_dir
+                        let relevant = path.starts_with(&canonical_input_dir) || canonical_theme_dir.as_ref().map(|t| path.starts_with(t)).unwrap_or(false);
+                        if !relevant {
+                            debug!("skipping unrelated change: {}", path.display());
+                            continue;
+                        }
+                        debug!("incremental build for {} (remove={})", path.display(), is_remove);
+                        match generator.generate_incremental_for_path(&path, is_remove) {
+                            Ok(()) => { did_anything = true; }
+                            Err(e) => {
+                                error!("❌ Incremental generation failed for {}: {}", path.display(), e);
+                                if let Err(full_err) = generator.generate_site() {
+                                    error!("❌ Full regeneration after failure also failed: {}", full_err);
+                                } else {
+                                    debug!("fallback full regeneration completed after incremental failure");
+                                    did_anything = true;
+                                }
+                            }
+                        }
                     }
-                    
+
+                    if !did_anything {
+                        let _ = generator.generate_site();
+                    }
+
                     // Conditionally inject live reload script
                     if live_reload {
                         if let Err(e) = inject_live_reload_script(&output_dir, port) {
@@ -189,10 +249,8 @@ impl DevServer {
                             continue;
                         }
                     }
-                    
-                    info!("✅ Site regenerated");
-                    
-                    // Notify connected clients to reload
+
+                    info!("✅ Incremental build complete");
                     let _ = reload_tx.send(());
                 }
             }
