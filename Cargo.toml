@@ -51,4 +51,5 @@ pathdiff = "0.2"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 atty = "0.2"
+rayon = "1.10"
 once_cell = "1"

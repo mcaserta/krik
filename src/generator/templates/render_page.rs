@@ -13,6 +13,8 @@ use super::context::{
 };
 use super::paths::{determine_output_path};
 use super::select::determine_template_name;
+use rayon::prelude::*;
+use std::sync::Mutex;
 
 pub fn generate_pages(
     documents: &[Document],
@@ -21,8 +23,25 @@ pub fn generate_pages(
     site_config: &SiteConfig,
     output_dir: &Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    for document in documents {
-        generate_page(document, documents, theme, i18n, site_config, output_dir)?;
+    // Render pages in parallel. File writes target distinct paths, so no shared file contention.
+    // Aggregate errors to avoid partial silent failures.
+    let errors: Mutex<Vec<String>> = Mutex::new(Vec::new());
+
+    documents.par_iter().for_each(|document| {
+        if let Err(e) = generate_page(document, documents, theme, i18n, site_config, output_dir) {
+            if let Ok(mut guard) = errors.lock() {
+                guard.push(format!(
+                    "{}: {}",
+                    document.file_path,
+                    e
+                ));
+            }
+        }
+    });
+
+    let errs = errors.into_inner().unwrap_or_default();
+    if !errs.is_empty() {
+        return Err(format!("page generation failed for {} file(s): {}", errs.len(), errs.join(" | ")).into());
     }
     Ok(())
 }
@@ -81,6 +100,7 @@ pub fn generate_page(
     add_page_links_context(&mut context, all_documents, &document.file_path);
 
     let template_name = determine_template_name(document);
+    // Rendering is CPU-bound and can be parallelized at a higher level, but file writes must be serialized per path.
     let rendered = theme
         .templates
         .render(&template_name, &context)

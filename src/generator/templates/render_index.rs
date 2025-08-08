@@ -53,6 +53,7 @@ pub fn generate_index(
 
     add_page_links_context(&mut context, documents, "index.html");
 
+    // Rendering can be parallelized if needed, but index is a single template render.
     let rendered = theme
         .templates
         .render("index.html", &context)
