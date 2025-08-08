@@ -13,6 +13,7 @@
 - [x] Dev server modularization: extracted `server/watcher.rs` and `server/net.rs`; cleaned up imports and warnings
 - [x] CLI validation module: centralize path normalization/validation and return typed errors with user-friendly suggestions
 - [x] Adopt `thiserror` for error enums while preserving `KrikError` facade and exit-code mapping
+- [x] Dependencies: upgraded `warp` to 0.4.1 (enabled `server` + `websocket` features), `notify` to 8.2.0, and `serde` to 1.0.219; verified via `cargo test` and `cargo run --`
 
 ### 🔺 High-priority next steps
 - [ ] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans
@@ -40,6 +41,7 @@
 
 ### 🚀 Release readiness
 - [ ] Update CHANGELOG with parallelization, index fix, error-handling improvements
+- [x] Add dependency bumps (`warp` 0.4.1, `notify` 8.2.0, `serde` 1.0.219) to CHANGELOG
 - [ ] Bump version; note performance improvements and safer defaults
 
 

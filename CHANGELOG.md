@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- deps: bump `warp` to `0.4.1` with `server` and `websocket` features enabled
+- deps: bump `notify` to `8.2.0`
+- deps: bump `serde` to `1.0.219`
+
+### Fixed
+
+- Verified all dependency bumps with `cargo test` and `cargo run --` (exit 0)
+
 ## [0.1.15] - 2025-01-27
 
 ### Added
