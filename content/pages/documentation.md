@@ -109,7 +109,8 @@ kk lint --strict           # Treat warnings as errors
 - Duplicate slugs: within the same directory and language
 - Duplicate titles: warns within the same directory and language
 
-The command exits non-zero on errors. In `--strict` mode, warnings are also treated as errors.
+The command exits non-zero on errors. In `--strict` mode, warnings are also
+treated as errors.
 
 ## Content Organization
 

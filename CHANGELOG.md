@@ -8,6 +8,18 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.14] - 2025-08-08
+
+### Fixed
+
+- Addressed various clippy warnings and minor code quality issues
+- Polished README and documentation for clarity
+
+### Changed
+
+- Improved logging defaults and CLI help text
+- Minor performance tweaks in generation pipeline
+
 ## [0.1.13] - 2025-08-07
 
 ### Added
