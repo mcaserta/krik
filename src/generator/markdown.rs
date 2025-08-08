@@ -1,4 +1,5 @@
 use crate::parser::{Document, extract_language_from_filename, parse_markdown_with_frontmatter_for_file};
+use crate::generator::ast_parser::{parse_markdown_ast, generate_toc_from_headings};
 use crate::error::{KrikResult, KrikError, IoError, IoErrorKind};
 use regex::Regex;
 use std::path::Path;
@@ -118,38 +119,25 @@ pub fn markdown_to_html(markdown: &str) -> String {
 
 /// Convert markdown content to HTML and extract TOC data
 pub fn markdown_to_html_with_toc(markdown: &str, title: Option<&str>) -> (String, String) {
-    // Use simple pulldown-cmark HTML generation
-    let mut options = Options::empty();
-    options.insert(Options::ENABLE_TABLES);
-    options.insert(Options::ENABLE_FOOTNOTES);
-    options.insert(Options::ENABLE_STRIKETHROUGH);
-    options.insert(Options::ENABLE_TASKLISTS);
-    
-    let parser = Parser::new_ext(markdown, options);
-    let mut html_output = String::new();
-    html::push_html(&mut html_output, parser);
-    
-    // Generate TOC using simple regex approach
-    let toc_html = generate_toc_from_html(&html_output, title);
-    
-    // Add IDs to headings in the HTML
-    let html_with_ids = add_heading_ids_to_html(&html_output);
-    
-    (html_with_ids, toc_html)
+    // Use AST-based parsing for robust heading IDs and TOC generation
+    let result = parse_markdown_ast(markdown);
+    let toc_html = generate_toc_from_headings(&result.headings, title);
+    (result.html_content, toc_html)
 }
 
-/// Generate TOC from HTML content using regex
-fn generate_toc_from_html(html: &str, title: Option<&str>) -> String {
+/// Generate table of contents and process content for TOC-enabled documents
+pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, String) {
+    // Generate a TOC directly from HTML using a lightweight regex, to preserve existing behavior.
     let mut toc_items = Vec::new();
     let heading_regex = match Regex::new(r"<h([1-6])[^>]*>([^<]+)</h[1-6]>") {
         Ok(r) => r,
-        Err(_) => return String::new(),
+        Err(_) => return (String::new(), content.to_string()),
     };
-    
-    for caps in heading_regex.captures_iter(html) {
+
+    for caps in heading_regex.captures_iter(content) {
         let level: u8 = caps[1].parse().unwrap_or(1);
         let text = caps[2].trim();
-        
+
         // Skip h1 if it matches the title
         if !(level == 1 && title.map_or(false, |t| t.trim() == text)) {
             let id = text
@@ -160,51 +148,19 @@ fn generate_toc_from_html(html: &str, title: Option<&str>) -> String {
                 .replace(' ', "-")
                 .trim_matches('-')
                 .to_string();
-            
+
             let indent = "  ".repeat((level - 1) as usize);
             toc_items.push(format!("{}<li><a href=\"#{}\">{}</a></li>", indent, id, text));
         }
     }
-    
-    if toc_items.is_empty() {
+
+    let toc = if toc_items.is_empty() {
         String::new()
     } else {
         format!("<ul class=\"toc\">\n{}\n</ul>", toc_items.join("\n"))
-    }
-}
-
-/// Add IDs to headings in HTML content
-fn add_heading_ids_to_html(html: &str) -> String {
-    let mut result = html.to_string();
-    let heading_regex = match Regex::new(r"<h([1-6])([^>]*)>([^<]+)</h[1-6]>") {
-        Ok(r) => r,
-        Err(_) => return html.to_string(),
     };
-    
-    result = heading_regex.replace_all(&result, |caps: &regex::Captures| {
-        let level = &caps[1];
-        let attrs = &caps[2];
-        let text = &caps[3];
-        
-        let id = text
-            .to_lowercase()
-            .chars()
-            .filter(|c| c.is_alphanumeric() || c.is_whitespace())
-            .collect::<String>()
-            .replace(' ', "-")
-            .trim_matches('-')
-            .to_string();
-        
-        format!("<h{}{} id=\"{}\">{}</h{}>", level, attrs, id, text, level)
-    }).to_string();
-    
-    result
-}
 
-/// Generate table of contents and process content for TOC-enabled documents
-pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, String) {
-    let toc_html = generate_toc_from_html(content, title);
-    (toc_html, content.to_string())
+    (toc, content.to_string())
 }
 
 /// Remove duplicate H1 title from content if it matches the frontmatter title
