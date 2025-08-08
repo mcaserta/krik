@@ -2,6 +2,7 @@ use crate::i18n::I18nManager;
 use crate::parser::Document;
 use crate::site::SiteConfig;
 use crate::theme::Theme;
+use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -22,26 +23,23 @@ pub fn generate_pages(
     i18n: &I18nManager,
     site_config: &SiteConfig,
     output_dir: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> KrikResult<()> {
     // Render pages in parallel. File writes target distinct paths, so no shared file contention.
     // Aggregate errors to avoid partial silent failures.
-    let errors: Mutex<Vec<String>> = Mutex::new(Vec::new());
+    let first_error: Mutex<Option<KrikError>> = Mutex::new(None);
 
     documents.par_iter().for_each(|document| {
         if let Err(e) = generate_page(document, documents, theme, i18n, site_config, output_dir) {
-            if let Ok(mut guard) = errors.lock() {
-                guard.push(format!(
-                    "{}: {}",
-                    document.file_path,
-                    e
-                ));
+            if let Ok(mut guard) = first_error.lock() {
+                if guard.is_none() {
+                    *guard = Some(e);
+                }
             }
         }
     });
 
-    let errs = errors.into_inner().unwrap_or_default();
-    if !errs.is_empty() {
-        return Err(format!("page generation failed for {} file(s): {}", errs.len(), errs.join(" | ")).into());
+    if let Ok(guard) = first_error.into_inner() {
+        if let Some(err) = guard { return Err(err); }
     }
     Ok(())
 }
@@ -53,7 +51,7 @@ pub fn generate_page(
     i18n: &I18nManager,
     site_config: &SiteConfig,
     output_dir: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> KrikResult<()> {
     let mut context = Context::new();
     context.insert("title", &document.front_matter.title);
     context.insert("content", &document.content);
@@ -104,7 +102,11 @@ pub fn generate_page(
     let rendered = theme
         .templates
         .render(&template_name, &context)
-        .map_err(|e| format!("Failed to render template '{}': {}", template_name, e))?;
+        .map_err(|e| KrikError::Template(TemplateError {
+            kind: TemplateErrorKind::RenderError(e),
+            template: template_name.clone(),
+            context: format!("Rendering page for {}", document.file_path),
+        }))?;
 
     let output_path = determine_output_path(&document.file_path, output_dir);
     if let Some(parent) = output_path.parent() { std::fs::create_dir_all(parent)?; }

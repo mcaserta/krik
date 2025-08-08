@@ -9,9 +9,9 @@
 - [x] Index bug fix: include non-default language posts (e.g., `foo.it.md`) even without a default-language counterpart; choose one per base name preferring default language
 - [x] Lint performance: precompile regexes with `once_cell::sync::Lazy`
 - [x] Parallelization: scan markdown files in parallel; render pages in parallel; generate PDFs in parallel with unique temp files
+- [x] Template error typing: `render_page` and `render_index` map template errors to `KrikError::Template` with template name and context
 
 ### 🔺 High-priority next steps
-- [ ] Template error typing: replace string `map_err` in `render_page.rs`/`render_index.rs` with `KrikError::Template` carrying template name and context
 - [ ] Dev server modularization: extract watcher to `server/watcher.rs` and network discovery to `server/net.rs`; replace remaining stringy errors with `KrikError::Server`
 - [ ] Live reload integration: add a `live_reload` flag in page/index context and include snippet in a base template; remove HTML post-processing injection
 - [ ] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans

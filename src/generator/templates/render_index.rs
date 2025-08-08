@@ -2,6 +2,7 @@ use crate::parser::Document;
 use crate::i18n::I18nManager;
 use crate::site::SiteConfig;
 use crate::theme::Theme;
+use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
 use chrono::{DateTime, Utc};
 use std::fs::File;
 use std::io::Write;
@@ -17,7 +18,7 @@ pub fn generate_index(
     site_config: &SiteConfig,
     i18n: &I18nManager,
     output_dir: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> KrikResult<()> {
     let mut context = Context::new();
     add_site_context(&mut context, site_config, i18n.default_language(), "index.html");
 
@@ -57,7 +58,11 @@ pub fn generate_index(
     let rendered = theme
         .templates
         .render("index.html", &context)
-        .map_err(|e| format!("Failed to render index template: {}", e))?;
+        .map_err(|e| KrikError::Template(TemplateError {
+            kind: TemplateErrorKind::RenderError(e),
+            template: "index.html".to_string(),
+            context: "Rendering index page".to_string(),
+        }))?;
     let index_path = output_dir.join("index.html");
     let mut file = File::create(&index_path)?;
     file.write_all(rendered.as_bytes())?;
