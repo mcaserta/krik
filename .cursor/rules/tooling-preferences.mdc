@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+description: Local tooling preferences and shell usage conventions
+---
+# Tooling Preferences
+
+- Prettier usage: Use the system Prettier on PATH for formatting. Do not invoke Prettier via npx.
+  - Example: `prettier --write "**/*.md"`
+
+- Shell command output: Do not pipe commands through `cat`. Run commands directly unless explicitly needed to avoid a pager.
+
+These preferences apply to development tasks and release workflow steps that involve formatting or shell commands.

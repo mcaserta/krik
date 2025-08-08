@@ -29,6 +29,7 @@ Before starting a release, ensure:
   - Bug fixes
   - Breaking changes
   - Migration notes if needed
+  - use `git log` to go through all unreleased changes
 - Follow semantic versioning (MAJOR.MINOR.PATCH)
 
 ### 3. Code Quality
