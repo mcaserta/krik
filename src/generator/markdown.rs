@@ -141,7 +141,10 @@ pub fn markdown_to_html_with_toc(markdown: &str, title: Option<&str>) -> (String
 /// Generate TOC from HTML content using regex
 fn generate_toc_from_html(html: &str, title: Option<&str>) -> String {
     let mut toc_items = Vec::new();
-    let heading_regex = Regex::new(r"<h([1-6])[^>]*>([^<]+)</h[1-6]>").unwrap();
+    let heading_regex = match Regex::new(r"<h([1-6])[^>]*>([^<]+)</h[1-6]>") {
+        Ok(r) => r,
+        Err(_) => return String::new(),
+    };
     
     for caps in heading_regex.captures_iter(html) {
         let level: u8 = caps[1].parse().unwrap_or(1);
@@ -173,7 +176,10 @@ fn generate_toc_from_html(html: &str, title: Option<&str>) -> String {
 /// Add IDs to headings in HTML content
 fn add_heading_ids_to_html(html: &str) -> String {
     let mut result = html.to_string();
-    let heading_regex = Regex::new(r"<h([1-6])([^>]*)>([^<]+)</h[1-6]>").unwrap();
+    let heading_regex = match Regex::new(r"<h([1-6])([^>]*)>([^<]+)</h[1-6]>") {
+        Ok(r) => r,
+        Err(_) => return html.to_string(),
+    };
     
     result = heading_regex.replace_all(&result, |caps: &regex::Captures| {
         let level = &caps[1];
@@ -204,7 +210,10 @@ pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, 
 /// Remove duplicate H1 title from content if it matches the frontmatter title
 pub fn remove_duplicate_title(content: &str, title: Option<&str>) -> String {
     if let Some(title) = title {
-        let h1_regex = Regex::new(r"<h1[^>]*>([^<]+)</h1>").unwrap();
+    let h1_regex = match Regex::new(r"<h1[^>]*>([^<]+)</h1>") {
+        Ok(r) => r,
+        Err(_) => return content.to_string(),
+    };
         if let Some(cap) = h1_regex.captures(content) {
             let heading_text = &cap[1];
             if heading_text.trim() == title.trim() {

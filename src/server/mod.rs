@@ -143,21 +143,30 @@ impl DevServer {
         tokio::spawn(async move {
             let (tx, mut rx) = tokio::sync::mpsc::channel(100);
             
-            let mut watcher = notify::recommended_watcher(move |res: Result<Event, notify::Error>| {
+            let mut watcher = match notify::recommended_watcher(move |res: Result<Event, notify::Error>| {
                 if let Ok(event) = res {
                     if matches!(event.kind, EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)) {
                         debug!("notify event captured: kind={:?}, paths={:?}", event.kind, event.paths);
                         let _ = tx.blocking_send(event);
                     }
                 }
-            }).expect("Failed to create file watcher");
+            }) {
+                Ok(w) => w,
+                Err(e) => {
+                    error!("file watcher creation failed: {}", e);
+                    return;
+                }
+            };
 
-            watcher.watch(&input_dir, RecursiveMode::Recursive)
-                .expect("Failed to watch input directory");
+            if let Err(e) = watcher.watch(&input_dir, RecursiveMode::Recursive) {
+                error!("failed to watch input directory {}: {}", input_dir.display(), e);
+                return;
+            }
 
             if let Some(ref theme_dir) = theme_dir {
-                watcher.watch(theme_dir, RecursiveMode::Recursive)
-                    .expect("Failed to watch theme directory");
+                if let Err(e) = watcher.watch(theme_dir, RecursiveMode::Recursive) {
+                    error!("failed to watch theme directory {}: {}", theme_dir.display(), e);
+                }
             }
 
             // Canonicalize watched roots to compare against canonical event paths

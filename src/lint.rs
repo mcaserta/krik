@@ -40,7 +40,9 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
     let mut report = LintReport::default();
 
     // slug pattern: lowercase letters/numbers separated by single hyphens
-    let slug_regex: Regex = Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap();
+    let slug_regex: Regex = Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").map_err(|e| KrikError::Generation(
+        crate::error::GenerationError { kind: crate::error::GenerationErrorKind::FeedError(format!("Invalid slug regex: {}", e)), context: "Compiling slug regex".to_string() }
+    ))?;
 
     // Track duplicates: (relative_parent_dir, base_name, language) -> Vec<paths>
     let mut seen_slugs: HashMap<(String, String, String), Vec<PathBuf>> = HashMap::new();
@@ -272,7 +274,13 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
         // Check for unresolved .md links in markdown body (naive pattern)
         // This is a lightweight check to catch links that likely should be .html
         // Patterns considered: [text](path.md) or [text](../dir/file.md)
-        let md_link_re = Regex::new(r"\[[^\]]+\]\(([^)\s]+\.md)(?:#[^)]+)?\)").unwrap();
+        let md_link_re = match Regex::new(r"\[[^\]]+\]\(([^)\s]+\.md)(?:#[^)]+)?\)") {
+            Ok(r) => r,
+            Err(e) => {
+                report.warnings.push(format!("Failed compiling markdown link regex: {}", e));
+                continue;
+            }
+        };
         for cap in md_link_re.captures_iter(&content) {
             let target = &cap[1];
             // Skip absolute URLs

@@ -18,8 +18,9 @@ pub fn init_logging(verbose: bool) {
         .with_ansi(atty::is(atty::Stream::Stderr))
         .finish();
 
-    tracing::subscriber::set_global_default(subscriber)
-        .expect("Failed to set tracing subscriber");
+    if let Err(e) = tracing::subscriber::set_global_default(subscriber) {
+        eprintln!("Logging initialization failed: {}", e);
+    }
 }
 
 /// Get a logger for a specific module

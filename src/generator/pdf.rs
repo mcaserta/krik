@@ -146,7 +146,10 @@ impl PdfGenerator {
         // Create temporary file
         let temp_file = std::env::temp_dir().join(format!(
             "krik_pdf_{}_{}.md",
-            input_path.file_stem().unwrap().to_string_lossy(),
+            input_path
+                .file_stem()
+                .map(|s| s.to_string_lossy())
+                .unwrap_or_default(),
             std::process::id()
         ));
 

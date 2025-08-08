@@ -166,7 +166,10 @@ pub fn generate_page(
     }
 
     // Process footnotes
-    let processed_content = super::markdown::process_footnotes(context.get("content").unwrap().as_str().unwrap());
+    let processed_content = match context.get("content").and_then(|v| v.as_str()) {
+        Some(s) => super::markdown::process_footnotes(s),
+        None => super::markdown::process_footnotes(""),
+    };
     context.insert("content", &processed_content);
 
     // Add navigation data
@@ -376,14 +379,17 @@ fn determine_output_path(document: &Document, output_dir: &Path) -> std::path::P
 
 /// Get base path without language suffix
 fn get_base_path(path: &Path) -> String {
-    let stem = path.file_stem().unwrap().to_string_lossy();
+    let stem = path
+        .file_stem()
+        .map(|s| s.to_string_lossy())
+        .unwrap_or_default();
     let parent = path.parent().map(|p| p.to_string_lossy()).unwrap_or_default();
     
     // Remove language suffix if present (e.g., "file.en" -> "file")
     let base_stem = if let Some(dot_pos) = stem.rfind('.') {
         let (base, lang) = stem.split_at(dot_pos);
         // Check if the suffix looks like a language code
-        if lang.len() == 3 && lang.chars().nth(1).unwrap() != '.' {
+        if lang.len() == 3 && lang.chars().nth(1).unwrap_or('.') != '.' {
             base
         } else {
             &stem

@@ -14,12 +14,26 @@ pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("server");
     let _enter = _span.enter();
     
-    let input_dir = PathBuf::from(server_matches.get_one::<String>("input").unwrap());
-    let output_dir = PathBuf::from(server_matches.get_one::<String>("output").unwrap());
+    let input_dir = PathBuf::from(
+        server_matches
+            .get_one::<String>("input")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
+    );
+    let output_dir = PathBuf::from(
+        server_matches
+            .get_one::<String>("output")
+            .map(|s| s.as_str())
+            .unwrap_or("_site"),
+    );
     let theme_dir = server_matches.get_one::<String>("theme")
         .map(PathBuf::from)
         .or_else(|| Some(PathBuf::from("themes/default")));
-    let port: u16 = server_matches.get_one::<String>("port").unwrap().parse()
+    let port_str = server_matches
+        .get_one::<String>("port")
+        .map(|s| s.as_str())
+        .unwrap_or("3000");
+    let port: u16 = port_str.parse()
         .map_err(|_| KrikError::Server(ServerError {
             kind: ServerErrorKind::BindError { 
                 port: 0, 
@@ -55,7 +69,12 @@ pub fn handle_init(init_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("init");
     let _enter = _span.enter();
     
-    let directory = PathBuf::from(init_matches.get_one::<String>("directory").unwrap());
+    let directory = PathBuf::from(
+        init_matches
+            .get_one::<String>("directory")
+            .map(|s| s.as_str())
+            .unwrap_or("."),
+    );
     let force = init_matches.get_flag("force");
     
     info!("Initializing new Krik site in: {}", directory.display());
@@ -69,9 +88,17 @@ pub fn handle_post(post_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("post");
     let _enter = _span.enter();
     
-    let title = post_matches.get_one::<String>("title").unwrap();
+    let title = post_matches
+        .get_one::<String>("title")
+        .map(|s| s.as_str())
+        .unwrap_or("New post");
     let filename = post_matches.get_one::<String>("filename");
-    let content_dir = PathBuf::from(post_matches.get_one::<String>("content-dir").unwrap());
+    let content_dir = PathBuf::from(
+        post_matches
+            .get_one::<String>("content-dir")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
+    );
     
     info!("Creating new post: {}", title);
     debug!("Content directory: {}", content_dir.display());
@@ -85,9 +112,17 @@ pub fn handle_page(page_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("page");
     let _enter = _span.enter();
     
-    let title = page_matches.get_one::<String>("title").unwrap();
+    let title = page_matches
+        .get_one::<String>("title")
+        .map(|s| s.as_str())
+        .unwrap_or("New page");
     let filename = page_matches.get_one::<String>("filename");
-    let content_dir = PathBuf::from(page_matches.get_one::<String>("content-dir").unwrap());
+    let content_dir = PathBuf::from(
+        page_matches
+            .get_one::<String>("content-dir")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
+    );
     
     info!("Creating new page: {}", title);
     debug!("Content directory: {}", content_dir.display());
@@ -101,7 +136,12 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("lint");
     let _enter = _span.enter();
     
-    let input_dir = PathBuf::from(lint_matches.get_one::<String>("input").unwrap());
+    let input_dir = PathBuf::from(
+        lint_matches
+            .get_one::<String>("input")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
+    );
     let strict = lint_matches.get_flag("strict");
     let _verbose = lint_matches.get_flag("verbose");
 
@@ -151,8 +191,18 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("generate");
     let _enter = _span.enter();
     
-    let input_dir = PathBuf::from(matches.get_one::<String>("input").unwrap());
-    let output_dir = PathBuf::from(matches.get_one::<String>("output").unwrap());
+    let input_dir = PathBuf::from(
+        matches
+            .get_one::<String>("input")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
+    );
+    let output_dir = PathBuf::from(
+        matches
+            .get_one::<String>("output")
+            .map(|s| s.as_str())
+            .unwrap_or("_site"),
+    );
     let theme_dir = matches.get_one::<String>("theme").map(PathBuf::from);
 
     info!("Scanning files in: {}", input_dir.display());

@@ -91,7 +91,11 @@ fn extract_embedded_dir(embedded_dir: &Dir, target_path: &Path, force: bool) -> 
     
     // Extract all files in this directory level
     for file in embedded_dir.files() {
-        let file_path = target_path.join(file.path().file_name().unwrap());
+        let file_name = match file.path().file_name() {
+            Some(n) => n,
+            None => continue,
+        };
+        let file_path = target_path.join(file_name);
         
         // Check if file exists and force is not specified
         if file_path.exists() && !force {
@@ -111,7 +115,7 @@ fn extract_embedded_dir(embedded_dir: &Dir, target_path: &Path, force: bool) -> 
     
     // Recursively extract subdirectories
     for subdir in embedded_dir.dirs() {
-        let subdir_name = subdir.path().file_name().unwrap();
+        let Some(subdir_name) = subdir.path().file_name() else { continue };
         let subdir_path = target_path.join(subdir_name);
         extract_embedded_dir(subdir, &subdir_path, force)?;
     }
