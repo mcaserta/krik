@@ -103,5 +103,15 @@
     </script>
     <script src="{{ assets_path }}/js/main.js"></script>
     <script src="{{ assets_path }}/js/prism-init.js"></script>
+    {% if live_reload %}
+    <script>
+    (function() {
+        if (typeof window !== 'undefined') {
+            const ws = new WebSocket('ws://localhost:{{ live_reload_port }}/__krik_reload');
+            ws.onmessage = function(event) { if (event.data === 'reload') { window.location.reload(); } };
+        }
+    })();
+    </script>
+    {% endif %}
 </body>
 </html>

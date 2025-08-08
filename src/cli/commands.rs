@@ -8,39 +8,29 @@ use crate::error::{KrikResult, KrikError, ServerError, ServerErrorKind, Generati
 use crate::logging;
 use std::path::PathBuf;
 use tracing::{info, warn, error, debug};
+use super::validate::{validate_directory, ensure_directory, normalize_path, validate_theme_dir, parse_port};
 
 /// Handle the server subcommand
 pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("server");
     let _enter = _span.enter();
     
-    let input_dir = PathBuf::from(
-        server_matches
-            .get_one::<String>("input")
-            .map(|s| s.as_str())
-            .unwrap_or("content"),
-    );
-    let output_dir = PathBuf::from(
-        server_matches
-            .get_one::<String>("output")
-            .map(|s| s.as_str())
-            .unwrap_or("_site"),
-    );
-    let theme_dir = server_matches.get_one::<String>("theme")
-        .map(PathBuf::from)
-        .or_else(|| Some(PathBuf::from("themes/default")));
-    let port_str = server_matches
-        .get_one::<String>("port")
-        .map(|s| s.as_str())
-        .unwrap_or("3000");
-    let port: u16 = port_str.parse()
-        .map_err(|_| KrikError::Server(ServerError {
-            kind: ServerErrorKind::BindError { 
-                port: 0, 
-                source: std::io::Error::new(std::io::ErrorKind::InvalidInput, "Invalid port number") 
-            },
-            context: "Parsing port number from command line".to_string(),
-        }))?;
+    let input_dir = validate_directory(
+        server_matches.get_one::<String>("input").map(|s| s.as_str()).unwrap_or("content"),
+        "Validating --input directory for server",
+    )?;
+    let output_dir = ensure_directory(
+        server_matches.get_one::<String>("output").map(|s| s.as_str()).unwrap_or("_site"),
+        "Ensuring --output directory for server",
+    )?;
+    let theme_dir = validate_theme_dir(
+        server_matches.get_one::<String>("theme").map(|s| s.as_str()),
+        "Validating --theme directory for server",
+    )?.or_else(|| Some(PathBuf::from("themes/default")));
+    let port = parse_port(
+        server_matches.get_one::<String>("port").map(|s| s.as_str()).unwrap_or("3000"),
+        "Parsing --port value for server",
+    )?;
     let no_live_reload = server_matches.get_flag("no-live-reload");
 
     info!("Starting development server on port {}", port);
@@ -69,12 +59,11 @@ pub fn handle_init(init_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("init");
     let _enter = _span.enter();
     
-    let directory = PathBuf::from(
-        init_matches
-            .get_one::<String>("directory")
-            .map(|s| s.as_str())
-            .unwrap_or("."),
-    );
+    let directory = normalize_path(
+        init_matches.get_one::<String>("directory").map(|s| s.as_str()).unwrap_or("."),
+        false,
+        "Normalizing target directory for init",
+    )?;
     let force = init_matches.get_flag("force");
     
     info!("Initializing new Krik site in: {}", directory.display());
@@ -93,12 +82,10 @@ pub fn handle_post(post_matches: &ArgMatches) -> KrikResult<()> {
         .map(|s| s.as_str())
         .unwrap_or("New post");
     let filename = post_matches.get_one::<String>("filename");
-    let content_dir = PathBuf::from(
-        post_matches
-            .get_one::<String>("content-dir")
-            .map(|s| s.as_str())
-            .unwrap_or("content"),
-    );
+    let content_dir = ensure_directory(
+        post_matches.get_one::<String>("content-dir").map(|s| s.as_str()).unwrap_or("content"),
+        "Ensuring content directory for post",
+    )?;
     
     info!("Creating new post: {}", title);
     debug!("Content directory: {}", content_dir.display());
@@ -117,12 +104,10 @@ pub fn handle_page(page_matches: &ArgMatches) -> KrikResult<()> {
         .map(|s| s.as_str())
         .unwrap_or("New page");
     let filename = page_matches.get_one::<String>("filename");
-    let content_dir = PathBuf::from(
-        page_matches
-            .get_one::<String>("content-dir")
-            .map(|s| s.as_str())
-            .unwrap_or("content"),
-    );
+    let content_dir = ensure_directory(
+        page_matches.get_one::<String>("content-dir").map(|s| s.as_str()).unwrap_or("content"),
+        "Ensuring content directory for page",
+    )?;
     
     info!("Creating new page: {}", title);
     debug!("Content directory: {}", content_dir.display());
@@ -136,12 +121,10 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("lint");
     let _enter = _span.enter();
     
-    let input_dir = PathBuf::from(
-        lint_matches
-            .get_one::<String>("input")
-            .map(|s| s.as_str())
-            .unwrap_or("content"),
-    );
+    let input_dir = validate_directory(
+        lint_matches.get_one::<String>("input").map(|s| s.as_str()).unwrap_or("content"),
+        "Validating --input directory for lint",
+    )?;
     let strict = lint_matches.get_flag("strict");
     let _verbose = lint_matches.get_flag("verbose");
 
@@ -191,19 +174,18 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("generate");
     let _enter = _span.enter();
     
-    let input_dir = PathBuf::from(
-        matches
-            .get_one::<String>("input")
-            .map(|s| s.as_str())
-            .unwrap_or("content"),
-    );
-    let output_dir = PathBuf::from(
-        matches
-            .get_one::<String>("output")
-            .map(|s| s.as_str())
-            .unwrap_or("_site"),
-    );
-    let theme_dir = matches.get_one::<String>("theme").map(PathBuf::from);
+    let input_dir = validate_directory(
+        matches.get_one::<String>("input").map(|s| s.as_str()).unwrap_or("content"),
+        "Validating --input directory for generate",
+    )?;
+    let output_dir = ensure_directory(
+        matches.get_one::<String>("output").map(|s| s.as_str()).unwrap_or("_site"),
+        "Ensuring --output directory for generate",
+    )?;
+    let theme_dir = super::validate::validate_theme_dir(
+        matches.get_one::<String>("theme").map(|s| s.as_str()),
+        "Validating --theme directory for generate",
+    )?;
 
     info!("Scanning files in: {}", input_dir.display());
     info!("Output directory: {}", output_dir.display());

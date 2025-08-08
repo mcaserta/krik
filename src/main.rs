@@ -18,6 +18,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         
         // Set appropriate exit code based on error type
         let exit_code = match &e {
+            KrikError::Cli(_) => 1,
             KrikError::Config(_) => 2,
             KrikError::Io(_) => 3,
             KrikError::Markdown(_) => 4,

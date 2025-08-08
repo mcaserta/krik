@@ -1,7 +1,7 @@
 use clap::{Arg, ArgMatches, Command};
 use crate::error::KrikResult;
 use crate::logging;
-
+mod validate;
 mod commands;
 
 /// CLI configuration and command handling for Krik

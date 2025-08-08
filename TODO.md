@@ -13,7 +13,6 @@
 - [x] Dev server modularization: extracted `server/watcher.rs` and `server/net.rs`; cleaned up imports and warnings
 
 ### 🔺 High-priority next steps
-- [ ] Live reload integration: add a `live_reload` flag in page/index context and include snippet in a base template; remove HTML post-processing injection
 - [ ] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans
 - [ ] CLI validation module: centralize path normalization/validation and return typed errors with user-friendly suggestions
 - [ ] Adopt `thiserror` for error enums to reduce boilerplate while preserving `KrikError` facade and exit-code mapping

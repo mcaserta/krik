@@ -13,6 +13,8 @@ pub type KrikResult<T> = Result<T, KrikError>;
 /// Main error type for the Krik static site generator
 #[derive(Debug)]
 pub enum KrikError {
+    /// CLI argument and validation errors
+    Cli(CliError),
     /// Configuration-related errors
     Config(ConfigError),
     /// File I/O errors
@@ -30,6 +32,32 @@ pub enum KrikError {
     /// Site generation errors
     Generation(GenerationError),
 }
+/// CLI validation and argument parsing errors
+#[derive(Debug)]
+pub struct CliError {
+    pub kind: CliErrorKind,
+    pub path: Option<PathBuf>,
+    pub context: String,
+}
+
+#[derive(Debug)]
+pub enum CliErrorKind {
+    /// Provided path does not exist
+    PathDoesNotExist,
+    /// Provided path exists but is not a directory
+    NotADirectory,
+    /// Permissions do not allow the requested operation
+    PermissionDenied,
+    /// Failed to create a directory
+    CreateDirFailed(std::io::Error),
+    /// Failed to canonicalize a path
+    CanonicalizeFailed(std::io::Error),
+    /// Invalid port number provided to the CLI
+    InvalidPort(String),
+    /// Theme directory not found or invalid
+    ThemeNotFound,
+}
+
 
 /// Configuration file and parsing errors
 #[derive(Debug)]
@@ -212,6 +240,7 @@ pub enum GenerationErrorKind {
 impl fmt::Display for KrikError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            KrikError::Cli(e) => write!(f, "CLI error: {}", e),
             KrikError::Config(e) => write!(f, "Configuration error: {}", e),
             KrikError::Io(e) => write!(f, "I/O error: {}", e),
             KrikError::Markdown(e) => write!(f, "Markdown error: {}", e),
@@ -220,6 +249,54 @@ impl fmt::Display for KrikError {
             KrikError::Server(e) => write!(f, "Server error: {}", e),
             KrikError::Content(e) => write!(f, "Content error: {}", e),
             KrikError::Generation(e) => write!(f, "Generation error: {}", e),
+        }
+    }
+}
+
+impl fmt::Display for CliError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let path_str = self
+            .path
+            .as_ref()
+            .map(|p| p.to_string_lossy().to_string())
+            .unwrap_or_else(|| "<unknown>".to_string());
+
+        match &self.kind {
+            CliErrorKind::PathDoesNotExist => write!(
+                f,
+                "Path does not exist: {}\n  Context: {}\n  Suggestion: Create it with `mkdir -p {}` or double-check the --path argument",
+                path_str, self.context, path_str
+            ),
+            CliErrorKind::NotADirectory => write!(
+                f,
+                "Not a directory: {}\n  Context: {}\n  Suggestion: Provide a directory path, not a file",
+                path_str, self.context
+            ),
+            CliErrorKind::PermissionDenied => write!(
+                f,
+                "Permission denied for: {}\n  Context: {}\n  Suggestion: Check permissions or run with appropriate privileges",
+                path_str, self.context
+            ),
+            CliErrorKind::CreateDirFailed(e) => write!(
+                f,
+                "Failed to create directory: {}\n  Error: {}\n  Context: {}\n  Suggestion: Ensure parent directory exists and you have write permissions",
+                path_str, e, self.context
+            ),
+            CliErrorKind::CanonicalizeFailed(e) => write!(
+                f,
+                "Failed to resolve absolute path: {}\n  Error: {}\n  Context: {}\n  Suggestion: Ensure the path exists and is accessible",
+                path_str, e, self.context
+            ),
+            CliErrorKind::InvalidPort(value) => write!(
+                f,
+                "Invalid port number: {}\n  Context: {}\n  Suggestion: Use a value between 1 and 65535 (e.g., --port 3000)",
+                value, self.context
+            ),
+            CliErrorKind::ThemeNotFound => write!(
+                f,
+                "Theme directory not found: {}\n  Context: {}\n  Suggestion: Ensure the theme exists or run `kk init` to install the default theme",
+                path_str, self.context
+            ),
         }
     }
 }
@@ -450,6 +527,7 @@ impl fmt::Display for GenerationError {
 impl std::error::Error for KrikError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
+            KrikError::Cli(e) => Some(e),
             KrikError::Config(e) => Some(e),
             KrikError::Io(e) => Some(e),
             KrikError::Markdown(e) => Some(e),
@@ -462,6 +540,7 @@ impl std::error::Error for KrikError {
     }
 }
 
+impl std::error::Error for CliError {}
 impl std::error::Error for ConfigError {}
 impl std::error::Error for IoError {}
 impl std::error::Error for MarkdownError {}
