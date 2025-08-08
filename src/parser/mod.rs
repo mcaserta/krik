@@ -2,6 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use crate::error::{KrikResult, KrikError, MarkdownError, MarkdownErrorKind};
+use crate::i18n::SUPPORTED_LANGUAGES;
 use std::path::Path;
 
 /// Front matter metadata extracted from the YAML header of Markdown files.
@@ -132,17 +133,14 @@ pub fn parse_markdown_with_frontmatter_for_file(content: &str, file_path: &Path)
     }, content.to_string()))
 }
 
-/// Supported language codes
-const SUPPORTED_LANGUAGES: &[&str] = &["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"];
-
 pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, String)> {
     // filename is already without extension (e.g., "sample.it" or "sample")
     if let Some(dot_pos) = filename.rfind('.') {
         let base_part = &filename[..dot_pos];
         let potential_lang = &filename[dot_pos + 1..];
         if potential_lang.len() == 2 {
-            // Validate language code
-            if !SUPPORTED_LANGUAGES.contains(&potential_lang) {
+            // Validate language code via i18n map
+            if !SUPPORTED_LANGUAGES.contains_key(potential_lang) {
                 return Err(KrikError::Markdown(MarkdownError {
                     kind: MarkdownErrorKind::InvalidLanguage(potential_lang.to_string()),
                     file: Path::new(filename).to_path_buf(),
