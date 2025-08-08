@@ -8,6 +8,23 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.15] - 2025-01-27
+
+### Added
+
+- Tag chips now display on post cards in the index page for better content
+  categorization
+- Tags are rendered as small rounded pills below the post title and date
+
+### Improved
+
+- Enhanced visual hierarchy on the index page with better tag placement
+- Improved post card layout aesthetics and usability
+
+### Removed
+
+- Unused `.post-cta` CSS class that was no longer referenced
+
 ## [0.1.14] - 2025-08-08
 
 ### Fixed
