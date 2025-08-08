@@ -7,6 +7,9 @@ use std::fs;
 use chrono::Utc;
 use which::which;
 use tracing::{info, warn, debug};
+use rayon::prelude::*;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 /// PDF generation using pandoc with typst engine
 pub struct PdfGenerator {
@@ -143,14 +146,19 @@ impl PdfGenerator {
             filtered_content.push_str(&format!("{} {}\n", generated_text, timestamp));
         }
 
-        // Create temporary file
+        // Create unique temporary file for concurrent jobs
+        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        let unique = COUNTER.fetch_add(1, Ordering::Relaxed);
+        let safe_stem = input_path
+            .file_stem()
+            .map(|s| s.to_string_lossy())
+            .unwrap_or_default()
+            .replace(|c: char| !c.is_ascii_alphanumeric(), "_");
         let temp_file = std::env::temp_dir().join(format!(
-            "krik_pdf_{}_{}.md",
-            input_path
-                .file_stem()
-                .map(|s| s.to_string_lossy())
-                .unwrap_or_default(),
-            std::process::id()
+            "krik_pdf_{}_{}_{}.md",
+            safe_stem,
+            std::process::id(),
+            unique
         ));
 
         // Write the filtered content to temporary file
@@ -342,8 +350,6 @@ impl PdfGenerator {
 
     /// Generate PDFs for documents that have pdf: true in their front matter
     pub fn generate_pdfs(&self, documents: &[Document], source_dir: &Path, output_dir: &Path, site_config: &SiteConfig) -> KrikResult<Vec<PathBuf>> {
-        let mut generated_pdfs = Vec::new();
-
         // Filter documents that have pdf: true
         let pdf_documents: Vec<&Document> = documents
             .iter()
@@ -352,7 +358,7 @@ impl PdfGenerator {
 
         if pdf_documents.is_empty() {
             info!("No documents marked for PDF generation (pdf: true)");
-            return Ok(generated_pdfs);
+            return Ok(Vec::new());
         }
 
         info!("Generating PDFs for {} documents marked with pdf: true", pdf_documents.len());
@@ -364,29 +370,31 @@ impl PdfGenerator {
                 path: source_dir.to_path_buf(),
                 context: "Canonicalizing source directory path".to_string(),
             }))?;
-            
-        let project_root = canonical_source_dir.parent()
-            .unwrap_or(&canonical_source_dir)
-            .to_path_buf();
+        
+        let project_root = canonical_source_dir.parent().unwrap_or(&canonical_source_dir).to_path_buf();
 
-        for document in pdf_documents {
-            // Construct input path (source file) and output path (PDF file)
+        let results: Mutex<Vec<PathBuf>> = Mutex::new(Vec::with_capacity(pdf_documents.len()));
+
+        pdf_documents.par_iter().for_each(|document| {
             let input_path = source_dir.join(&document.file_path);
             let output_path = self.determine_pdf_output_path(document, output_dir);
 
             match self.generate_pdf_from_file(&input_path, &output_path, &project_root, site_config, &document.language) {
                 Ok(()) => {
                     info!("Generated PDF: {}", output_path.display());
-                    generated_pdfs.push(output_path);
+                    if let Ok(mut guard) = results.lock() {
+                        guard.push(output_path);
+                    }
                 }
                 Err(e) => {
-                    warn!("Warning: Failed to generate PDF for {}: {}", 
-                             document.file_path, e);
+                    warn!("Warning: Failed to generate PDF for {}: {}", document.file_path, e);
                 }
             }
-        }
+        });
 
-        Ok(generated_pdfs)
+        let mut generated = results.into_inner().unwrap_or_default();
+        generated.sort();
+        Ok(generated)
     }
 
     /// Determine the output path for a PDF file (same directory as HTML)
