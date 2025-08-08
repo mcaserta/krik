@@ -660,12 +660,20 @@ pre code {
     white-space: nowrap;
 }
 
-.post-cta {
+.post-tags {
+    margin-top: 0.5rem;
+}
+
+.post-tags .tag {
+    background: var(--tag-bg-color);
+    color: var(--text-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    margin-right: 0.4rem;
+    margin-bottom: 0.4rem;
     display: inline-block;
-    margin-top: 0.25rem;
-    color: var(--link-color);
-    font-size: var(--font-size-sm);
-    opacity: 0.8;
+    font-size: var(--font-size-xs);
+    line-height: 1;
 }
 
 @media (max-width: 600px) {
