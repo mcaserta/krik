@@ -117,8 +117,14 @@ impl SiteGenerator {
 
         let i18n = I18nManager::new("en".to_string());
         
-        // Load site configuration
-        let site_config = SiteConfig::load_from_path(&source_dir);
+        // Load site configuration with proper error handling
+        let site_config = match SiteConfig::load_from_path(&source_dir) {
+            Ok(cfg) => cfg,
+            Err(e) => {
+                warn!("Failed to load site configuration: {}. Falling back to defaults.", e);
+                SiteConfig::default()
+            }
+        };
 
         Ok(Self {
             source_dir,
