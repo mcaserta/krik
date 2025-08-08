@@ -146,7 +146,7 @@ pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, Str
                     file: Path::new(filename).to_path_buf(),
                     line: None,
                     column: None,
-                    context: format!("Extracting language from filename: {}", filename),
+                    context: format!("Extracting language from filename: {filename}"),
                 }));
             }
             return Ok((base_part.to_string(), potential_lang.to_string()));

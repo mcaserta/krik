@@ -21,7 +21,7 @@ pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResul
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.path().is_file())
-        .filter(|e| e.path().extension().map_or(false, |ext| ext == "md"))
+        .filter(|e| e.path().extension().is_some_and(|ext| ext == "md"))
         .filter(|e| e.path().file_name() != Some(std::ffi::OsStr::new("site.toml")))
         .collect();
 
@@ -154,7 +154,7 @@ pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, 
         let text = caps[2].trim();
 
         // Skip h1 if it matches the title
-        if !(level == 1 && title.map_or(false, |t| t.trim() == text)) {
+        if !(level == 1 && title.is_some_and(|t| t.trim() == text)) {
             let id = text
                 .to_lowercase()
                 .chars()
@@ -165,7 +165,7 @@ pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, 
                 .to_string();
 
             let indent = "  ".repeat((level - 1) as usize);
-            toc_items.push(format!("{}<li><a href=\"#{}\">{}</a></li>", indent, id, text));
+            toc_items.push(format!("{indent}<li><a href=\"#{id}\">{text}</a></li>"));
         }
     }
 

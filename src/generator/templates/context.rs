@@ -35,10 +35,10 @@ pub fn add_language_context(
     all_documents: &[Document],
     i18n: &I18nManager,
 ) {
-    let base_path = get_base_path(&std::path::Path::new(&document.file_path));
+    let base_path = get_base_path(std::path::Path::new(&document.file_path));
     let mut available_translations: Vec<_> = all_documents
         .iter()
-        .filter(|doc| get_base_path(&std::path::Path::new(&doc.file_path)) == base_path)
+        .filter(|doc| get_base_path(std::path::Path::new(&doc.file_path)) == base_path)
         .map(|doc| {
             let mut translation = HashMap::new();
             translation.insert("lang", doc.language.clone());
@@ -123,7 +123,7 @@ pub fn is_post(document: &Document) -> bool {
 
 pub fn generate_description(content: &str, frontmatter_description: Option<&String>) -> String {
     if let Some(desc) = frontmatter_description {
-        desc.trim().replace('\n', " ").replace('\r', " ")
+        desc.trim().replace(['\n', '\r'], " ")
     } else {
         let mut text_content = content.to_string();
         while let Some(start) = text_content.find('<') {

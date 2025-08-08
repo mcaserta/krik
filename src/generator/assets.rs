@@ -46,7 +46,7 @@ pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> Result<(
         let path = entry.path();
         
         // Skip directories and markdown files
-        if path.is_dir() || path.extension().map_or(false, |ext| ext == "md") {
+        if path.is_dir() || path.extension().is_some_and(|ext| ext == "md") {
             continue;
         }
 
@@ -138,7 +138,7 @@ pub fn copy_single_asset(
         return Ok(());
     }
     // Skip markdown and site.toml
-    if file_path.extension().map_or(false, |ext| ext == "md") {
+    if file_path.extension().is_some_and(|ext| ext == "md") {
         return Ok(());
     }
     if file_path.file_name() == Some(std::ffi::OsStr::new("site.toml")) {

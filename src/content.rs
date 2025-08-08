@@ -21,7 +21,7 @@ pub fn create_post(content_dir: &Path, title: &str, custom_filename: Option<&Str
     
     // Generate filename
     let filename = if let Some(custom) = custom_filename {
-        format!("{}.md", custom)
+        format!("{custom}.md")
     } else {
         generate_filename_from_title(title)
     };
@@ -71,7 +71,7 @@ pub fn create_page(content_dir: &Path, title: &str, custom_filename: Option<&Str
     
     // Generate filename
     let filename = if let Some(custom) = custom_filename {
-        format!("{}.md", custom)
+        format!("{custom}.md")
     } else {
         generate_filename_from_title(title)
     };
@@ -122,7 +122,7 @@ fn generate_filename_from_title(title: &str) -> String {
         .collect::<Vec<&str>>()
         .join("-");
     
-    format!("{}.md", slug)
+    format!("{slug}.md")
 }
 
 /// Generate post content with YAML front matter
@@ -131,14 +131,14 @@ fn generate_post_content(title: &str) -> String {
     let formatted_date = now.format("%Y-%m-%dT%H:%M:%SZ");
     
     format!(r#"---
-title: "{}"
-date: {}
+title: "{title}"
+date: {formatted_date}
 layout: post
 tags: []
 draft: false
 ---
 
-# {}
+# {title}
 
 Write your blog post content here. You can use:
 
@@ -159,7 +159,7 @@ This is a sample blog post created with Krik. Replace this content with your own
 - Add relevant tags to help categorize your content
 
 Happy writing! 🚀
-"#, title, formatted_date, title)
+"#)
 }
 
 /// Generate page content with YAML front matter
@@ -168,13 +168,13 @@ fn generate_page_content(title: &str) -> String {
     let formatted_date = now.format("%Y-%m-%dT%H:%M:%SZ");
     
     format!(r#"---
-title: "{}"
-date: {}
+title: "{title}"
+date: {formatted_date}
 layout: page
 draft: false
 ---
 
-# {}
+# {title}
 
 This is a new page created with Krik. Add your content here.
 
@@ -199,7 +199,7 @@ You can use all the same Markdown features available in blog posts:
 - And much more!
 
 Replace this placeholder content with your own information.
-"#, title, formatted_date, title)
+"#)
 }
 
 #[cfg(test)]

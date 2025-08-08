@@ -44,7 +44,7 @@ pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
         .map_err(|e| match e.downcast::<std::io::Error>() {
             Ok(io_err) => KrikError::Server(ServerError {
                 kind: ServerErrorKind::BindError { port, source: *io_err },
-                context: format!("Starting development server on port {}", port),
+                context: format!("Starting development server on port {port}"),
             }),
             Err(other_err) => KrikError::Server(ServerError {
                 kind: ServerErrorKind::WebSocketError(other_err.to_string()),

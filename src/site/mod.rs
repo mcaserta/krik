@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use crate::error::{KrikResult, KrikError, ConfigError, ConfigErrorKind};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Default)]
 pub struct SiteConfig {
     pub title: Option<String>,
     pub base_url: Option<String>,
@@ -48,7 +49,7 @@ impl SiteConfig {
                         kind: match e.kind() {
                             std::io::ErrorKind::NotFound => ConfigErrorKind::NotFound,
                             std::io::ErrorKind::PermissionDenied => ConfigErrorKind::PermissionDenied,
-                            _ => ConfigErrorKind::InvalidValue { field: "file".to_string(), expected: "readable file".to_string(), found: format!("{}", e) },
+                            _ => ConfigErrorKind::InvalidValue { field: "file".to_string(), expected: "readable file".to_string(), found: format!("{e}") },
                         },
                         path: Some(PathBuf::from(config_path)),
                         context: "Reading site configuration".to_string(),
@@ -68,11 +69,3 @@ impl SiteConfig {
     }
 }
 
-impl Default for SiteConfig {
-    fn default() -> Self {
-        Self {
-            title: None,
-            base_url: None,
-        }
-    }
-}

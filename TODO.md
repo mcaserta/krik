@@ -11,11 +11,11 @@
 - [x] Parallelization: scan markdown files in parallel; render pages in parallel; generate PDFs in parallel with unique temp files
 - [x] Template error typing: `render_page` and `render_index` map template errors to `KrikError::Template` with template name and context
 - [x] Dev server modularization: extracted `server/watcher.rs` and `server/net.rs`; cleaned up imports and warnings
+- [x] CLI validation module: centralize path normalization/validation and return typed errors with user-friendly suggestions
+- [x] Adopt `thiserror` for error enums while preserving `KrikError` facade and exit-code mapping
 
 ### 🔺 High-priority next steps
 - [ ] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans
-- [ ] CLI validation module: centralize path normalization/validation and return typed errors with user-friendly suggestions
-- [ ] Adopt `thiserror` for error enums to reduce boilerplate while preserving `KrikError` facade and exit-code mapping
 
 ### 🧪 Testing
 - [ ] Add integration test: index selection when both default and non-default language variants exist (ensure default wins)

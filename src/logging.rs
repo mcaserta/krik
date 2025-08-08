@@ -19,7 +19,7 @@ pub fn init_logging(verbose: bool) {
         .finish();
 
     if let Err(e) = tracing::subscriber::set_global_default(subscriber) {
-        eprintln!("Logging initialization failed: {}", e);
+        eprintln!("Logging initialization failed: {e}");
     }
 }
 

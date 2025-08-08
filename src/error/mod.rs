@@ -4,6 +4,7 @@ pub use recovery::{ErrorRecovery, ErrorRecoverable};
 
 use std::fmt;
 use std::path::PathBuf;
+use thiserror::Error;
 
 /// Result type alias for Krik operations  
 /// Large error types are intentional for detailed error context
@@ -11,26 +12,35 @@ use std::path::PathBuf;
 pub type KrikResult<T> = Result<T, KrikError>;
 
 /// Main error type for the Krik static site generator
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum KrikError {
     /// CLI argument and validation errors
-    Cli(CliError),
+    #[error(transparent)]
+    Cli(#[from] CliError),
     /// Configuration-related errors
-    Config(ConfigError),
+    #[error(transparent)]
+    Config(#[from] ConfigError),
     /// File I/O errors
-    Io(IoError),
+    #[error(transparent)]
+    Io(#[from] IoError),
     /// Markdown parsing errors
-    Markdown(MarkdownError),
+    #[error(transparent)]
+    Markdown(#[from] MarkdownError),
     /// Template processing errors
-    Template(TemplateError),
+    #[error(transparent)]
+    Template(#[from] TemplateError),
     /// Theme-related errors
-    Theme(ThemeError),
+    #[error(transparent)]
+    Theme(#[from] ThemeError),
     /// Server-related errors
-    Server(ServerError),
+    #[error(transparent)]
+    Server(#[from] ServerError),
     /// Content creation errors
-    Content(ContentError),
+    #[error(transparent)]
+    Content(#[from] ContentError),
     /// Site generation errors
-    Generation(GenerationError),
+    #[error(transparent)]
+    Generation(#[from] GenerationError),
 }
 /// CLI validation and argument parsing errors
 #[derive(Debug)]
@@ -235,23 +245,7 @@ pub enum GenerationErrorKind {
     SitemapError(String),
 }
 
-// Display implementations for user-friendly error messages
-
-impl fmt::Display for KrikError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            KrikError::Cli(e) => write!(f, "CLI error: {}", e),
-            KrikError::Config(e) => write!(f, "Configuration error: {}", e),
-            KrikError::Io(e) => write!(f, "I/O error: {}", e),
-            KrikError::Markdown(e) => write!(f, "Markdown error: {}", e),
-            KrikError::Template(e) => write!(f, "Template error: {}", e),
-            KrikError::Theme(e) => write!(f, "Theme error: {}", e),
-            KrikError::Server(e) => write!(f, "Server error: {}", e),
-            KrikError::Content(e) => write!(f, "Content error: {}", e),
-            KrikError::Generation(e) => write!(f, "Generation error: {}", e),
-        }
-    }
-}
+// Display implementations for user-friendly error messages (inner types)
 
 impl fmt::Display for CliError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -309,7 +303,7 @@ impl fmt::Display for ConfigError {
 
         match &self.kind {
             ConfigErrorKind::NotFound => {
-                write!(f, "Configuration file not found: {}", path_str)
+                write!(f, "Configuration file not found: {path_str}")
             }
             ConfigErrorKind::InvalidToml(e) => {
                 write!(f, "Invalid TOML in {}: {}\n  Context: {}", path_str, e, self.context)
@@ -325,7 +319,7 @@ impl fmt::Display for ConfigError {
                        field, path_str, expected, found, self.context)
             }
             ConfigErrorKind::PermissionDenied => {
-                write!(f, "Permission denied accessing configuration file: {}", path_str)
+                write!(f, "Permission denied accessing configuration file: {path_str}")
             }
         }
     }
@@ -362,8 +356,8 @@ impl fmt::Display for MarkdownError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let file_str = self.file.to_string_lossy();
         let location = match (self.line, self.column) {
-            (Some(line), Some(col)) => format!(" at line {}, column {}", line, col),
-            (Some(line), None) => format!(" at line {}", line),
+            (Some(line), Some(col)) => format!(" at line {line}, column {col}"),
+            (Some(line), None) => format!(" at line {line}"),
             _ => String::new(),
         };
 
@@ -487,9 +481,9 @@ impl fmt::Display for ContentError {
                        filename, self.context)
             }
             ContentErrorKind::ValidationFailed(errors) => {
-                write!(f, "Content validation failed for {}\n  Issues:\n", path_str)?;
+                write!(f, "Content validation failed for {path_str}\n  Issues:\n")?;
                 for error in errors {
-                    write!(f, "    - {}\n", error)?;
+                    writeln!(f, "    - {error}")?;
                 }
                 write!(f, "  Context: {}", self.context)
             }
@@ -523,22 +517,6 @@ impl fmt::Display for GenerationError {
 }
 
 // Standard Error trait implementations
-
-impl std::error::Error for KrikError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            KrikError::Cli(e) => Some(e),
-            KrikError::Config(e) => Some(e),
-            KrikError::Io(e) => Some(e),
-            KrikError::Markdown(e) => Some(e),
-            KrikError::Template(e) => Some(e),
-            KrikError::Theme(e) => Some(e),
-            KrikError::Server(e) => Some(e),
-            KrikError::Content(e) => Some(e),
-            KrikError::Generation(e) => Some(e),
-        }
-    }
-}
 
 impl std::error::Error for CliError {}
 impl std::error::Error for ConfigError {}

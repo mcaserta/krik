@@ -8,7 +8,7 @@ pub fn inject_live_reload_script(output_dir: &Path, port: u16) -> Result<(), Box
 (function() {{
     // Krik Live Reload
     if (typeof window !== 'undefined') {{
-        const ws = new WebSocket('ws://localhost:{}/__krik_reload');
+        const ws = new WebSocket('ws://localhost:{port}/__krik_reload');
         
         ws.onopen = function() {{
             console.log('🔄 Krik live reload connected');
@@ -37,7 +37,7 @@ pub fn inject_live_reload_script(output_dir: &Path, port: u16) -> Result<(), Box
     }}
 }})();
 </script>
-</body>"#, port);
+</body>"#);
 
     // Find all HTML files and inject the script
     for entry in WalkDir::new(output_dir) {

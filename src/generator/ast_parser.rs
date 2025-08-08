@@ -181,7 +181,7 @@ impl AstParser {
         let base_id = id.clone();
         let mut counter = 1;
         while self.headings.iter().any(|h| h.id == id) {
-            id = format!("{}-{}", base_id, counter);
+            id = format!("{base_id}-{counter}");
             counter += 1;
         }
         
@@ -219,7 +219,7 @@ pub fn generate_toc_from_headings(headings: &[Heading], title: Option<&str>) -> 
     
     for heading in headings {
         // Skip h1 if it matches the title
-        if !(heading.level == HeadingLevel::H1 && title.map_or(false, |t| t.trim() == heading.text.trim())) {
+        if !(heading.level == HeadingLevel::H1 && title.is_some_and(|t| t.trim() == heading.text.trim())) {
             let indent = "  ".repeat((heading.level as u8).saturating_sub(1) as usize);
             toc_html.push_str(&format!(
                 "{}<li><a href=\"#{}\">{}</a></li>\n",
@@ -229,7 +229,7 @@ pub fn generate_toc_from_headings(headings: &[Heading], title: Option<&str>) -> 
     }
     
     if !toc_html.is_empty() {
-        toc_html = format!("<ul class=\"toc\">\n{}</ul>", toc_html);
+        toc_html = format!("<ul class=\"toc\">\n{toc_html}</ul>");
     }
     
     toc_html
@@ -242,7 +242,7 @@ pub fn process_footnotes_ast(footnotes: &HashMap<String, Footnote>) -> HashMap<S
     for (id, footnote) in processed_footnotes.iter_mut() {
         // Ensure proper ID format
         if !id.starts_with("fn:") {
-            footnote.id = format!("fn:{}", id);
+            footnote.id = format!("fn:{id}");
         }
     }
     

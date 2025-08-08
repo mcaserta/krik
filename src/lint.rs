@@ -100,7 +100,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
                 let (base_name, language) = match extract_language_from_filename(&stem) {
                     Ok(pair) => pair,
                     Err(e) => {
-                        report.errors.push(format!("{}", e));
+                        report.errors.push(format!("{e}"));
                         continue;
                     }
                 };
@@ -231,14 +231,12 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
                             ));
                         }
                     }
-                } else {
-                    if let Some(layout) = front.extra.get("layout").and_then(|v| v.as_str()) {
-                        if layout == "post" && path.to_string_lossy().contains(&format!("{}pages{}", std::path::MAIN_SEPARATOR, std::path::MAIN_SEPARATOR)) {
-                            report.warnings.push(format!(
-                                "{}: file appears under pages but layout is 'post'",
-                                path.display()
-                            ));
-                        }
+                } else if let Some(layout) = front.extra.get("layout").and_then(|v| v.as_str()) {
+                    if layout == "post" && path.to_string_lossy().contains(&format!("{}pages{}", std::path::MAIN_SEPARATOR, std::path::MAIN_SEPARATOR)) {
+                        report.warnings.push(format!(
+                            "{}: file appears under pages but layout is 'post'",
+                            path.display()
+                        ));
                     }
                 }
 
@@ -267,7 +265,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
                 }
             }
             Err(e) => {
-                report.errors.push(format!("{}", e));
+                report.errors.push(format!("{e}"));
             }
         }
 
@@ -297,8 +295,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
                 .collect::<Vec<_>>()
                 .join(", ");
             report.errors.push(format!(
-                "Duplicate slug '{}' (lang '{}') under '{}' in files: {}",
-                base, lang, rel_parent, list
+                "Duplicate slug '{base}' (lang '{lang}') under '{rel_parent}' in files: {list}"
             ));
         }
     }
@@ -312,8 +309,7 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
                 .collect::<Vec<_>>()
                 .join(", ");
             report.warnings.push(format!(
-                "Duplicate title '{}' (lang '{}') under '{}' in files: {}",
-                title, lang, rel_parent, list
+                "Duplicate title '{title}' (lang '{lang}') under '{rel_parent}' in files: {list}"
             ));
         }
     }

@@ -79,14 +79,14 @@ impl PdfGenerator {
         // Execute pandoc
         let output = cmd.output()
             .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::FeedError(format!("Failed to execute pandoc: {}", e)),
+                kind: GenerationErrorKind::FeedError(format!("Failed to execute pandoc: {e}")),
                 context: "Running pandoc to generate PDF".to_string(),
             }))?;
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
             return Err(KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::FeedError(format!("Pandoc failed: {}", stderr)),
+                kind: GenerationErrorKind::FeedError(format!("Pandoc failed: {stderr}")),
                 context: "Converting markdown to PDF with pandoc".to_string(),
             }));
         }
@@ -119,7 +119,7 @@ impl PdfGenerator {
         // Add title heading if it exists in front matter and not already in content
         if let Some(title) = &front_matter.title {
             if !content_with_fixed_paths.trim_start().starts_with("# ") {
-                filtered_content.push_str(&format!("# {}\n\n", title));
+                filtered_content.push_str(&format!("# {title}\n\n"));
             }
         }
 
@@ -134,16 +134,16 @@ impl PdfGenerator {
             
             // Document Information heading
             let doc_info_heading = self.translate_string("document_information", document_language);
-            filtered_content.push_str(&format!("## {}\n\n", doc_info_heading));
+            filtered_content.push_str(&format!("## {doc_info_heading}\n\n"));
             
             // Download URL line
             let download_text = self.translate_string("document_downloaded_from", document_language);
-            filtered_content.push_str(&format!("{} {}\n\n", download_text, absolute_pdf_url));
+            filtered_content.push_str(&format!("{download_text} {absolute_pdf_url}\n\n"));
             
             // Generation timestamp line
             let generated_text = self.translate_string("generated_at", document_language);
             let timestamp = Utc::now().format("%Y-%m-%d %H:%M:%S UTC");
-            filtered_content.push_str(&format!("{} {}\n", generated_text, timestamp));
+            filtered_content.push_str(&format!("{generated_text} {timestamp}\n"));
         }
 
         // Create unique temporary file for concurrent jobs
@@ -181,7 +181,7 @@ impl PdfGenerator {
     fn generate_absolute_pdf_url(&self, output_path: &Path, base_url: &str) -> String {
         let relative_path = self.generate_relative_pdf_path(output_path);
         let base_url_trimmed = base_url.trim_end_matches('/');
-        format!("{}{}", base_url_trimmed, relative_path)
+        format!("{base_url_trimmed}{relative_path}")
     }
 
     /// Generate the relative PDF path
@@ -256,7 +256,7 @@ impl PdfGenerator {
         
         let img_regex = Regex::new(r#"!\[([^]]*)]\(([^)]+?)(?:\s+["']([^"']*?)["'])?\)"#)
             .map_err(|e| KrikError::Generation(GenerationError {
-                kind: GenerationErrorKind::FeedError(format!("Failed to compile image regex: {}", e)),
+                kind: GenerationErrorKind::FeedError(format!("Failed to compile image regex: {e}")),
                 context: "Processing markdown image paths".to_string(),
             }))?;
 
@@ -283,9 +283,9 @@ impl PdfGenerator {
                     
                     // Create the replacement markdown image syntax
                     let replacement = if let Some(title_text) = title {
-                        format!("![{}]({} \"{}\")", alt_text, resolved_path, title_text)
+                        format!("![{alt_text}]({resolved_path} \"{title_text}\")")
                     } else {
-                        format!("![{}]({})", alt_text, resolved_path)
+                        format!("![{alt_text}]({resolved_path})")
                     };
                     
                     // Replace in the content

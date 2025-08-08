@@ -277,7 +277,7 @@ impl SiteGenerator {
         let canonical_source = std::fs::canonicalize(&self.source_dir).unwrap_or_else(|_| self.source_dir.clone());
 
         if canonical_changed.starts_with(&canonical_source) {
-            let is_markdown = changed_path.extension().map_or(false, |ext| ext == "md");
+            let is_markdown = changed_path.extension().is_some_and(|ext| ext == "md");
             let is_site_toml = changed_path.file_name() == Some(OsStr::new("site.toml"));
             if is_site_toml {
                 debug!("site.toml changed ({}), triggering full regeneration", changed_path.display());
@@ -329,7 +329,7 @@ impl SiteGenerator {
                         .map_err(|e| KrikError::Generation(crate::error::GenerationError {
                             kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
                                 std::io::ErrorKind::Other,
-                                format!("Page generation failed: {}", e),
+                                format!("Page generation failed: {e}"),
                             )),
                             context: "Incremental page generation".to_string(),
                         }))?;
@@ -359,7 +359,7 @@ impl SiteGenerator {
                             kind: crate::error::GenerationErrorKind::AssetCopyError {
                                 source: self.source_dir.clone(),
                                 target: self.output_dir.clone(),
-                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset remove failed: {}", e)),
+                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset remove failed: {e}")),
                             },
                             context: "Removing single changed asset".to_string(),
                         }))?;
@@ -370,7 +370,7 @@ impl SiteGenerator {
                             kind: crate::error::GenerationErrorKind::AssetCopyError {
                                 source: self.source_dir.clone(),
                                 target: self.output_dir.clone(),
-                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset copy failed: {}", e)),
+                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset copy failed: {e}")),
                             },
                             context: "Copying single changed asset".to_string(),
                         }))?;

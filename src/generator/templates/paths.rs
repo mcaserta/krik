@@ -40,7 +40,7 @@ pub fn get_base_path(path: &Path) -> String {
     if parent.is_empty() {
         base_stem.to_string()
     } else {
-        format!("{}/{}", parent, base_stem)
+        format!("{parent}/{base_stem}")
     }
 }
 

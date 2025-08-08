@@ -39,7 +39,7 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
         .map_err(|e| KrikError::Generation(GenerationError {
             kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                 std::io::ErrorKind::Other,
-                format!("Failed to extract content directory: {}", e)
+                format!("Failed to extract content directory: {e}")
             )),
             context: "Extracting embedded content directory".to_string(),
         }))?;
@@ -51,7 +51,7 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
         .map_err(|e| KrikError::Generation(GenerationError {
             kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                 std::io::ErrorKind::Other,
-                format!("Failed to extract themes directory: {}", e)
+                format!("Failed to extract themes directory: {e}")
             )),
             context: "Extracting embedded themes directory".to_string(),
         }))?;
