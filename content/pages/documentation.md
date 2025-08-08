@@ -211,23 +211,16 @@ Add language codes to filenames:
 
 ### Supported Languages
 
-| Code | Language   | Native Name |
-| ---- | ---------- | ----------- |
-| `en` | English    | English     |
-| `it` | Italian    | Italiano    |
-| `es` | Spanish    | Español     |
-| `fr` | French     | Français    |
-| `de` | German     | Deutsch     |
-| `pt` | Portuguese | Português   |
-| `ja` | Japanese   | 日本語      |
-| `zh` | Chinese    | 中文        |
-| `ru` | Russian    | Русский     |
-| `ar` | Arabic     | العربية     |
+Krik maintains an internal language map used for validation and display names.
+Out of the box it supports: `en`, `it`, `es`, `fr`, `de`, `pt`, `ja`, `zh`, `ru`, `ar`.
+Language names in the UI are resolved from this map.
 
-### Language Navigation
+### Language Navigation & Index Selection
 
-Pages with translations automatically show a language selector dropdown in the
-navigation bar.
+- Pages with translations automatically show a language selector dropdown.
+- The posts index shows one entry per post base name. If multiple language
+  versions exist, the index prefers the default language. If only a non-default
+  language exists (e.g., only `foo.it.md`), that translation is included.
 
 ## Advanced Features
 
@@ -244,7 +237,7 @@ toc: true
 
 **Features:**
 
-- Automatic ID generation for headings
+- Automatic ID generation for headings (AST-based)
 - Hierarchical structure preservation
 - Clickable navigation links
 - Smooth scrolling to sections
@@ -469,6 +462,33 @@ ls _site/posts/
 - Ensure image paths are relative to the content source directory
 - Use forward slashes in paths even on Windows
 - Verify image files exist at the specified paths
+
+## ⚠️ Error Handling
+
+Krik uses typed errors for clear diagnostics and actionable messages.
+
+### Error Types
+
+- `ConfigError`: configuration files and parsing
+- `IoError`: file and directory operations
+- `MarkdownError`: front matter and markdown parsing
+- `TemplateError`: template compilation and rendering (includes template name)
+- `ThemeError`: theme loading and asset handling
+- `ServerError`: development server issues
+- `ContentError`: content creation and validation failures
+- `GenerationError`: site generation pipeline failures
+
+### Exit Codes
+
+The CLI maps error types to exit codes:
+
+- Config (2), I/O (3), Markdown (4), Template (5), Theme (6), Server (7),
+  Content (8), Generation (9)
+
+### Tips
+
+- Use `-v/--verbose` for detailed logs
+- Error messages include paths/template names for faster troubleshooting
 
 ## Theme System
 

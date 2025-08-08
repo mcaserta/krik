@@ -19,8 +19,11 @@ theming ✨
 ### Theming & i18n
 
 - Light/dark mode with OS detection and manual toggle
-- Language detection from `file.lang.md` pattern
-- Supported languages: en, it, es, fr, de, pt, ja, zh, ru, ar
+- Language detection from `file.lang.md` pattern (e.g., `post.it.md` → Italian)
+- Supported languages (via an internal language map): en, it, es, fr, de, pt, ja, zh, ru, ar
+- Index selection rule: for multiple language variants of the same post base name,
+  the index shows a single entry preferring the default language; if only a non-default
+  language exists (e.g., only `foo.it.md`), it will be included
 - Tera-based templating with responsive design
 
 ### Advanced
@@ -199,6 +202,18 @@ Fields: `title`, `date`, `draft`, `layout`, `tags`, `toc`
 Tera-based templates with light/dark mode auto-detection and manual toggle.
 Templates automatically chosen based on directory (`posts/` → post template,
 `pages/` → page template). Override with `layout` field in front matter.
+
+## ⚠️ Error Handling
+
+Krik uses typed errors for clear diagnostics and proper exit codes:
+
+- Central error type: `KrikError` (configuration, I/O, markdown, template, theme, server, content, generation)
+- Template render errors include the template name and context
+- CLI exits with appropriate codes (e.g., config: 2, I/O: 3, markdown: 4, template: 5, theme: 6, server: 7, content: 8, generation: 9)
+
+Tips:
+- Run with `-v/--verbose` for detailed logs
+- Check paths and theme directories; messages include file/template names for faster debugging
 
 ## 🚀 Deployment
 
