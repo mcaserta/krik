@@ -73,7 +73,13 @@
                             <time class="post-date" datetime="{{ post.date | date(format="%Y-%m-%d") }}">{{ post.date | date(format="%b %d, %Y") }}</time>
                             {% endif %}
                         </div>
-                        <span class="post-cta" aria-hidden="true">Read →</span>
+                        {% if post.tags %}
+                        <div class="post-tags">
+                            {% for tag in post.tags %}
+                            <span class="tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </a>
                 </li>
             {% endfor %}

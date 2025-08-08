@@ -9,6 +9,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use tera::Context;
 use pathdiff::diff_paths;
+use serde_json::json;
 
 /// Generate HTML pages for all documents
 pub fn generate_pages(
@@ -202,15 +203,28 @@ pub fn generate_page(
 }
 
 /// Create post object for index page template with relative paths
-fn create_post_object(document: &Document, current_file_path: &str) -> HashMap<String, String> {
-    let mut post = HashMap::new();
+fn create_post_object(
+    document: &Document,
+    current_file_path: &str,
+) -> HashMap<String, serde_json::Value> {
+    let mut post: HashMap<String, serde_json::Value> = HashMap::new();
     let target_path = format!("/{}", document.file_path.replace(".md", ".html"));
     let relative_url = calculate_relative_path(current_file_path, &target_path);
-    
-    post.insert("title".to_string(), document.front_matter.title.as_deref().unwrap_or("Untitled").to_string());
-    post.insert("url".to_string(), relative_url);
+
+    post.insert(
+        "title".to_string(),
+        json!(document
+            .front_matter
+            .title
+            .as_deref()
+            .unwrap_or("Untitled")),
+    );
+    post.insert("url".to_string(), json!(relative_url));
     if let Some(date) = document.front_matter.date {
-        post.insert("date".to_string(), date.to_rfc3339());
+        post.insert("date".to_string(), json!(date.to_rfc3339()));
+    }
+    if let Some(tags) = &document.front_matter.tags {
+        post.insert("tags".to_string(), json!(tags));
     }
     post
 }
@@ -241,8 +255,9 @@ pub fn generate_index(
             .cmp(&a.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC))
     });
 
-    // Create post objects with URL and other template fields
-    let posts: Vec<HashMap<String, String>> = post_docs.iter()
+    // Create post objects with URL, date, and tags for template
+    let posts: Vec<HashMap<String, serde_json::Value>> = post_docs
+        .iter()
         .map(|doc| create_post_object(doc, "index.html"))
         .collect();
 
