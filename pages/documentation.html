@@ -98,7 +98,7 @@
   <li><a href="#internationalization-i18n">Internationalization (i18n)</a></li>
     <li><a href="#creating-translations">Creating Translations</a></li>
     <li><a href="#supported-languages">Supported Languages</a></li>
-    <li><a href="#language-navigation">Language Navigation</a></li>
+    <li><a href="#language-navigation-amp-index-selection">Language Navigation &amp; Index Selection</a></li>
   <li><a href="#advanced-features">Advanced Features</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#footnotes">Footnotes</a></li>
@@ -120,6 +120,10 @@
     <li><a href="#configuration">Configuration</a></li>
     <li><a href="#development-workflow">Development Workflow</a></li>
     <li><a href="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#error-handling">⚠️ Error Handling</a></li>
+    <li><a href="#error-types">Error Types</a></li>
+    <li><a href="#exit-codes">Exit Codes</a></li>
+    <li><a href="#tips">Tips</a></li>
   <li><a href="#theme-system">Theme System</a></li>
     <li><a href="#lightdark-mode">Light/Dark Mode</a></li>
     <li><a href="#customization">Customization</a></li>
@@ -304,21 +308,16 @@ available), scroll-to-top</li>
 <li><code>hello.fr.md</code> - French translation</li>
 </ul>
 <h3 id="supported-languages">Supported Languages</h3>
-<table><thead><tr><th>Code</th><th>Language</th><th>Native Name</th></tr></thead><tbody>
-<tr><td><code>en</code></td><td>English</td><td>English</td></tr>
-<tr><td><code>it</code></td><td>Italian</td><td>Italiano</td></tr>
-<tr><td><code>es</code></td><td>Spanish</td><td>Español</td></tr>
-<tr><td><code>fr</code></td><td>French</td><td>Français</td></tr>
-<tr><td><code>de</code></td><td>German</td><td>Deutsch</td></tr>
-<tr><td><code>pt</code></td><td>Portuguese</td><td>Português</td></tr>
-<tr><td><code>ja</code></td><td>Japanese</td><td>日本語</td></tr>
-<tr><td><code>zh</code></td><td>Chinese</td><td>中文</td></tr>
-<tr><td><code>ru</code></td><td>Russian</td><td>Русский</td></tr>
-<tr><td><code>ar</code></td><td>Arabic</td><td>العربية</td></tr>
-</tbody></table>
-<h3 id="language-navigation">Language Navigation</h3>
-<p>Pages with translations automatically show a language selector dropdown in the
-navigation bar.</p>
+<p>Krik maintains an internal language map used for validation and display names.
+Out of the box it supports: <code>en</code>, <code>it</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>pt</code>, <code>ja</code>, <code>zh</code>, <code>ru</code>, <code>ar</code>.
+Language names in the UI are resolved from this map.</p>
+<h3 id="language-navigation-amp-index-selection">Language Navigation &amp; Index Selection</h3>
+<ul>
+<li>Pages with translations automatically show a language selector dropdown.</li>
+<li>The posts index shows one entry per post base name. If multiple language
+versions exist, the index prefers the default language. If only a non-default
+language exists (e.g., only <code>foo.it.md</code>), that translation is included.</li>
+</ul>
 <h2 id="advanced-features">Advanced Features</h2>
 <h3 id="table-of-contents">Table of Contents</h3>
 <p>Enable TOC generation with <code>toc: true</code> in front matter:</p>
@@ -329,7 +328,7 @@ toc: true
 </code></pre>
 <p><strong>Features:</strong></p>
 <ul>
-<li>Automatic ID generation for headings</li>
+<li>Automatic ID generation for headings (AST-based)</li>
 <li>Hierarchical structure preservation</li>
 <li>Clickable navigation links</li>
 <li>Smooth scrolling to sections</li>
@@ -501,6 +500,30 @@ ls _site/posts/
 <li>Ensure image paths are relative to the content source directory</li>
 <li>Use forward slashes in paths even on Windows</li>
 <li>Verify image files exist at the specified paths</li>
+</ul>
+<h2 id="error-handling">⚠️ Error Handling</h2>
+<p>Krik uses typed errors for clear diagnostics and actionable messages.</p>
+<h3 id="error-types">Error Types</h3>
+<ul>
+<li><code>ConfigError</code>: configuration files and parsing</li>
+<li><code>IoError</code>: file and directory operations</li>
+<li><code>MarkdownError</code>: front matter and markdown parsing</li>
+<li><code>TemplateError</code>: template compilation and rendering (includes template name)</li>
+<li><code>ThemeError</code>: theme loading and asset handling</li>
+<li><code>ServerError</code>: development server issues</li>
+<li><code>ContentError</code>: content creation and validation failures</li>
+<li><code>GenerationError</code>: site generation pipeline failures</li>
+</ul>
+<h3 id="exit-codes">Exit Codes</h3>
+<p>The CLI maps error types to exit codes:</p>
+<ul>
+<li>Config (2), I/O (3), Markdown (4), Template (5), Theme (6), Server (7),
+Content (8), Generation (9)</li>
+</ul>
+<h3 id="tips">Tips</h3>
+<ul>
+<li>Use <code>-v/--verbose</code> for detailed logs</li>
+<li>Error messages include paths/template names for faster troubleshooting</li>
 </ul>
 <h2 id="theme-system">Theme System</h2>
 <h3 id="lightdark-mode">Light/Dark Mode</h3>
