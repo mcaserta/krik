@@ -3,59 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Basic SEO Meta Tags -->
     <title>About Krik - Krik Demo Site</title>
     <meta name="description" content="About Krik Krik is a fast, modern static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with built-in deve...">
-    <meta name="author" content="Krik Demo Site">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://mirkocaserta.com/krik/pages/about.html">
+
     
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="About Krik">
-    <meta property="og:description" content="About Krik Krik is a fast, modern static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with built-in deve...">
-    <meta property="og:url" content="https://mirkocaserta.com/krik/pages/about.html">
-    <meta property="og:site_name" content="Krik Demo Site">
-    <meta property="og:locale" content="en">
-    
-    <!-- Additional Meta Tags -->
-    <meta name="generator" content="Krik Static Site Generator">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="../assets/css/main.css">
-    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
-<body>
+<body class="">
     <div class="layout-container">
         <nav class="top-nav">
             <a href="../index.html" class="site-title">Krik Demo Site</a>
             <div class="nav-controls">
+                
+
+<div class="language-selector">
+    <select onchange="switchLanguage(this.value)">
+        
+        <option value="en" selected>
+            English
+        </option>
+        
+        <option value="it" >
+            Italiano
+        </option>
+        
+    </select>
+    </div>
+
+
+<a href="about.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
+    <span class="pdf-icon">📄</span>
+</a>
+
+
                 <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
-                
-                <div class="language-selector">
-                    <select onchange="switchLanguage(this.value)">
-                        
-                        <option value="en" selected>
-                            English
-                        </option>
-                        
-                        <option value="it" >
-                            Italiano
-                        </option>
-                        
-                    </select>
-                </div>
-                
-                
-                <a href="about.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
-                    <span class="pdf-icon">📄</span>
-                </a>
-                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -89,12 +76,13 @@
 
         
 
-        <main class="main-content">
-            <header>
-                <h1>About Krik</h1>
-                <div class="meta">August 09, 2025</div>
-            </header>
-            <article>
+        <main class="main-content ">
+            
+<header>
+    <h1>About Krik</h1>
+    <div class="meta">August 09, 2025</div>
+</header>
+<article>
 <p><img src="../images/krik.png" alt="Krik logo" /></p>
 <p><strong>Krik</strong> is a fast, modern static site generator written in Rust that transforms
 Markdown files into beautiful, responsive websites with built-in development
@@ -233,19 +221,18 @@ existing discussions</li>
 tutorial, or explore the <a href="documentation.html">Documentation</a> for detailed
 feature references!</p>
 </article>
+
         </main>
     </div>
 
-    <!-- Scroll to top button -->
     <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
         <span>↑</span>
     </button>
 
-    <script>
-        window.krikBaseName = 'about';
-    </script>
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/prism-init.js"></script>
     
 </body>
 </html>
+
+
