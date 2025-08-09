@@ -202,34 +202,4 @@ Replace this placeholder content with your own information.
 "#)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_generate_filename_from_title() {
-        assert_eq!(generate_filename_from_title("Hello World"), "hello-world.md");
-        assert_eq!(generate_filename_from_title("My Great Blog Post!"), "my-great-blog-post.md");
-        assert_eq!(generate_filename_from_title("Special-Characters@#$"), "special-characters.md");
-        assert_eq!(generate_filename_from_title("   Trimmed   Spaces   "), "trimmed-spaces.md");
-    }
-
-    #[test]
-    fn test_generate_post_content() {
-        let content = generate_post_content("Test Post");
-        assert!(content.contains("title: \"Test Post\""));
-        assert!(content.contains("layout: post"));
-        assert!(content.contains("# Test Post"));
-        assert!(content.contains("tags: []"));
-        assert!(content.contains("draft: false"));
-    }
-
-    #[test]
-    fn test_generate_page_content() {
-        let content = generate_page_content("Test Page");
-        assert!(content.contains("title: \"Test Page\""));
-        assert!(content.contains("layout: page"));
-        assert!(content.contains("# Test Page"));
-        assert!(content.contains("draft: false"));
-    }
-}
+// tests moved to tests/ directory

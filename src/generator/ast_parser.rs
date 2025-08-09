@@ -249,45 +249,4 @@ pub fn process_footnotes_ast(footnotes: &HashMap<String, Footnote>) -> HashMap<S
     processed_footnotes
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parse_markdown_ast() {
-        let markdown = "# Title\n\n## Section 1\n\nThis has a footnote[^1].\n\n[^1]: This is the footnote.";
-        let result = parse_markdown_ast(markdown);
-        
-        assert_eq!(result.headings.len(), 2);
-        assert_eq!(result.headings[0].text, "Title");
-        assert_eq!(result.headings[1].text, "Section 1");
-        assert_eq!(result.footnotes.len(), 1);
-        assert!(result.html_content.contains("id=\"title\""));
-        assert!(result.html_content.contains("id=\"section-1\""));
-    }
-
-    #[test]
-    fn test_generate_toc_from_headings() {
-        let headings = vec![
-            Heading { level: HeadingLevel::H1, text: "Title".to_string(), id: "title".to_string(), line_number: 1 },
-            Heading { level: HeadingLevel::H2, text: "Section 1".to_string(), id: "section-1".to_string(), line_number: 3 },
-            Heading { level: HeadingLevel::H3, text: "Subsection".to_string(), id: "subsection".to_string(), line_number: 5 },
-        ];
-        
-        let toc = generate_toc_from_headings(&headings, Some("Title"));
-        assert!(toc.contains("Section 1"));
-        assert!(toc.contains("Subsection"));
-        assert!(!toc.contains("Title")); // Should be excluded
-    }
-
-    #[test]
-    fn test_heading_id_generation() {
-        let markdown = "# My Heading\n\n## Another Heading\n\n# My Heading";
-        let result = parse_markdown_ast(markdown);
-        
-        assert_eq!(result.headings.len(), 3);
-        assert_eq!(result.headings[0].id, "my-heading");
-        assert_eq!(result.headings[1].id, "another-heading");
-        assert_eq!(result.headings[2].id, "my-heading-1"); // Should be unique
-    }
-}
+// tests moved to tests/ directory
