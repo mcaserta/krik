@@ -29,8 +29,9 @@
 - [ ] Batch template context creation to minimize allocs for large sites; evaluate small-object reuse where safe
 - [ ] Explore streaming copy for large assets; avoid redundant stat calls in asset copying
 
-### 🧼 Code quality & API
+- ### 🧼 Code quality & API
 - [x] Introduce `Theme::builder()` to encapsulate defaults, auto-escape, reload behavior, and error handling
+- [x] Normalize public functions to return `KrikResult<T>`; removed silent fallbacks in `theme`, `assets`, `server/live_reload`
 - [ ] Normalize and document all public functions returning `KrikResult<T>`; ensure no silent fallbacks except where explicitly intended
 - [ ] Remove any remaining duplicated logic now covered by `i18n::I18nManager` and `templates::paths`
 

@@ -1,5 +1,6 @@
 use crate::theme::Theme;
 use std::fs;
+use crate::error::{KrikError, KrikResult, IoError, IoErrorKind};
 use std::path::Path;
 use walkdir::WalkDir;
 
@@ -37,7 +38,7 @@ fn is_ignored_asset(path: &Path) -> bool {
 }
 
 /// Copy non-markdown files from source to output directory
-pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> KrikResult<()> {
     for entry in WalkDir::new(source_dir)
         .follow_links(true)
         .into_iter()
@@ -62,30 +63,30 @@ pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> Result<(
 
         // Calculate relative path and destination
         let relative_path = path.strip_prefix(source_dir)
-            .map_err(|_| format!("Failed to get relative path for: {}", path.display()))?;
+            .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: path.to_path_buf(), context: format!("Computing relative path from {} to {}", source_dir.display(), path.display()) }))?;
         let dest_path = output_dir.join(relative_path);
 
         // Create parent directories if they don't exist
         if let Some(parent) = dest_path.parent() {
-            fs::create_dir_all(parent)?;
+            fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for asset copy".to_string() }))?;
         }
 
         // Copy the file
-        fs::copy(path, &dest_path)?;
+        fs::copy(path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying asset from {}", path.display()) }))?;
     }
 
     Ok(())
 }
 
 /// Copy theme assets to the output directory
-pub fn copy_theme_assets(theme: &Theme, output_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+pub fn copy_theme_assets(theme: &Theme, output_dir: &Path) -> KrikResult<()> {
     let asset_dir = theme.theme_path.join("assets");
     if asset_dir.exists() {
         let dest_assets_dir = output_dir.join("assets");
         
         // Create assets directory if it doesn't exist
         if !dest_assets_dir.exists() {
-            fs::create_dir_all(&dest_assets_dir)?;
+            fs::create_dir_all(&dest_assets_dir).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_assets_dir.clone(), context: "Creating destination assets directory".to_string() }))?;
         }
 
         // Copy all files from theme assets
@@ -96,7 +97,7 @@ pub fn copy_theme_assets(theme: &Theme, output_dir: &Path) -> Result<(), Box<dyn
 }
 
 /// Recursively copy directory contents
-fn copy_directory_contents(src: &Path, dest: &Path) -> Result<(), Box<dyn std::error::Error>> {
+fn copy_directory_contents(src: &Path, dest: &Path) -> KrikResult<()> {
     for entry in WalkDir::new(src)
         .follow_links(true)
         .into_iter()
@@ -111,16 +112,16 @@ fn copy_directory_contents(src: &Path, dest: &Path) -> Result<(), Box<dyn std::e
             }
 
             let relative_path = path.strip_prefix(src)
-                .map_err(|_| format!("Failed to get relative path for: {}", path.display()))?;
+                .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: path.to_path_buf(), context: format!("Computing relative path from {} to {}", src.display(), path.display()) }))?;
             let dest_path = dest.join(relative_path);
 
             // Create parent directories if they don't exist
             if let Some(parent) = dest_path.parent() {
-                fs::create_dir_all(parent)?;
+                fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for theme asset copy".to_string() }))?;
             }
 
             // Copy the file
-            fs::copy(path, &dest_path)?;
+            fs::copy(path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying theme asset from {}", path.display()) }))?;
         }
     }
 
@@ -133,7 +134,7 @@ pub fn copy_single_asset(
     source_dir: &Path,
     output_dir: &Path,
     file_path: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> KrikResult<()> {
     if !file_path.exists() || file_path.is_dir() {
         return Ok(());
     }
@@ -149,13 +150,13 @@ pub fn copy_single_asset(
     }
 
     let relative_path = file_path.strip_prefix(source_dir)
-        .map_err(|_| format!("Failed to get relative path for: {}", file_path.display()))?;
+        .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: file_path.to_path_buf(), context: format!("Computing relative path from {} to {}", source_dir.display(), file_path.display()) }))?;
     let dest_path = output_dir.join(relative_path);
 
     if let Some(parent) = dest_path.parent() {
-        fs::create_dir_all(parent)?;
+        fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for single asset copy".to_string() }))?;
     }
-    fs::copy(file_path, &dest_path)?;
+    fs::copy(file_path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying single asset from {}", file_path.display()) }))?;
     Ok(())
 }
 
@@ -165,7 +166,7 @@ pub fn remove_single_asset(
     source_dir: &Path,
     output_dir: &Path,
     file_path: &Path,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> KrikResult<()> {
     let relative_path = match file_path.strip_prefix(source_dir) {
         Ok(rel) => rel,
         Err(_) => return Ok(()),

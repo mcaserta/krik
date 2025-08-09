@@ -26,30 +26,15 @@ impl Theme {
         ThemeBuilder::new()
     }
 
-    pub fn load_from_path<P: AsRef<Path>>(theme_path: P) -> Result<Self, Box<dyn std::error::Error>> {
-        let theme_path = theme_path.as_ref().to_path_buf();
-        let config_path = theme_path.join("theme.toml");
-        
-        let config_content = std::fs::read_to_string(&config_path)
-            .unwrap_or_else(|_| Self::default_config());
-        
-        let config: ThemeConfig = toml::from_str(&config_content)?;
-        
-        let templates_path = theme_path.join("templates");
-        let mut templates = if templates_path.exists() {
-            Tera::new(&format!("{}/**/*.html", templates_path.display()))?
-        } else {
-            Self::default_templates()
-        };
-        
-        // Disable auto-escaping for HTML templates
-        templates.autoescape_on(vec![]);
-
-        Ok(Theme {
-            config,
-            templates,
-            theme_path,
-        })
+    /// Load a theme from a directory using the same behavior as the builder.
+    ///
+    /// Intentionally falls back to a default config when `theme.toml` is missing.
+    pub fn load_from_path<P: AsRef<Path>>(theme_path: P) -> KrikResult<Self> {
+        Theme::builder()
+            .theme_path(theme_path)
+            .autoescape_html(false)
+            .enable_reload(false)
+            .build()
     }
 
     fn default_config() -> String {
@@ -87,15 +72,22 @@ index = "index"
         tera
     }
 
-    pub fn render_page(&self, template_name: &str, context: &Context) -> Result<String, Box<dyn std::error::Error>> {
+    /// Render a template by name, trying `<name>.html` first, then `<name>`.
+    pub fn render_page(&self, template_name: &str, context: &Context) -> KrikResult<String> {
         // Try with .html extension first
         let template_with_ext = format!("{template_name}.html");
         if let Ok(rendered) = self.templates.render(&template_with_ext, context) {
             return Ok(rendered);
         }
-        
+
         // Fall back to original name
-        Ok(self.templates.render(template_name, context)?)
+        self.templates
+            .render(template_name, context)
+            .map_err(|e| KrikError::Template(crate::error::TemplateError {
+                kind: crate::error::TemplateErrorKind::RenderError(e),
+                template: template_name.to_string(),
+                context: "Rendering template via Theme::render_page".to_string(),
+            }))
     }
 
     /// Attempt to reload templates from disk. Safe to call in dev when templates change.

@@ -1,8 +1,9 @@
 use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
+use crate::error::{KrikError, KrikResult, IoError, IoErrorKind};
 
-pub fn inject_live_reload_script(output_dir: &Path, port: u16) -> Result<(), Box<dyn std::error::Error>> {
+pub fn inject_live_reload_script(output_dir: &Path, port: u16) -> KrikResult<()> {
     let live_reload_script = format!(r#"
 <script>
 (function() {{
@@ -41,16 +42,16 @@ pub fn inject_live_reload_script(output_dir: &Path, port: u16) -> Result<(), Box
 
     // Find all HTML files and inject the script
     for entry in WalkDir::new(output_dir) {
-        let entry = entry?;
+        let entry = entry.map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::ReadFailed(e.into_io_error().unwrap_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "walkdir error"))), path: output_dir.to_path_buf(), context: "Walking output directory for live-reload injection".to_string() }))?;
         let path = entry.path();
         
         if path.extension().and_then(|s| s.to_str()) == Some("html") {
-            let content = fs::read_to_string(path)?;
+            let content = fs::read_to_string(path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::ReadFailed(e), path: path.to_path_buf(), context: "Reading generated HTML for live-reload injection".to_string() }))?;
             
             // Only inject if not already present
             if !content.contains("Krik Live Reload") {
                 let modified_content = content.replace("</body>", &live_reload_script);
-                fs::write(path, modified_content)?;
+                fs::write(path, modified_content).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: path.to_path_buf(), context: "Writing HTML with live-reload script".to_string() }))?;
             }
         }
     }
