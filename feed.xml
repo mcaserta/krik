@@ -4,31 +4,14 @@
   <link href="https://mirkocaserta.com/krik/feed.xml" rel="self" />
   <link href="https://mirkocaserta.com/krik" />
   <id>https://mirkocaserta.com/krik</id>
-  <updated>2025-08-09T16:22:26.576497059+00:00</updated>
+  <updated>2025-08-09T16:27:27.294722920+00:00</updated>
   <generator uri="https://github.com/mcaserta/krik">Krik</generator>
-  <entry>
-    <title>Nested Guide</title>
-    <link href="https://mirkocaserta.com/krik/posts/nested/guide.html" />
-    <id>https://mirkocaserta.com/krik/posts/nested/guide.html</id>
-    <updated>2025-08-09T16:22:26.576497059+00:00</updated>
-    <published>2025-08-09T16:22:26.576497059+00:00</published>
-    <content type="html"><![CDATA[
-<h1 id="nested-guide">Nested Guide</h1>
-<h2 id="introduction">Introduction</h2>
-<p>This is a nested post used to validate nested content handling.</p>
-<h2 id="details">Details</h2>
-<p>More details in a nested structure.</p>
-<h3 id="deep-section">Deep Section</h3>
-<p>Even deeper content.</p>
-
-    ]]></content>
-  </entry>
   <entry>
     <title>TOC Edge Cases</title>
     <link href="https://mirkocaserta.com/krik/posts/toc-edge-cases.html" />
     <id>https://mirkocaserta.com/krik/posts/toc-edge-cases.html</id>
-    <updated>2025-08-09T16:22:26.576497059+00:00</updated>
-    <published>2025-08-09T16:22:26.576497059+00:00</published>
+    <updated>2025-08-09T16:27:27.294722920+00:00</updated>
+    <published>2025-08-09T16:27:27.294722920+00:00</published>
     <content type="html"><![CDATA[
 <h1 id="toc-edge-cases">TOC Edge Cases</h1>
 <h2 id="heading-with-punctuation">Heading with Punctuation!?</h2>
@@ -43,11 +26,28 @@
     ]]></content>
   </entry>
   <entry>
+    <title>Nested Guide</title>
+    <link href="https://mirkocaserta.com/krik/posts/nested/guide.html" />
+    <id>https://mirkocaserta.com/krik/posts/nested/guide.html</id>
+    <updated>2025-08-09T16:27:27.293722909+00:00</updated>
+    <published>2025-08-09T16:27:27.293722909+00:00</published>
+    <content type="html"><![CDATA[
+<h1 id="nested-guide">Nested Guide</h1>
+<h2 id="introduction">Introduction</h2>
+<p>This is a nested post used to validate nested content handling.</p>
+<h2 id="details">Details</h2>
+<p>More details in a nested structure.</p>
+<h3 id="deep-section">Deep Section</h3>
+<p>Even deeper content.</p>
+
+    ]]></content>
+  </entry>
+  <entry>
     <title>PDF Toggle</title>
     <link href="https://mirkocaserta.com/krik/posts/pdf-toggle.html" />
     <id>https://mirkocaserta.com/krik/posts/pdf-toggle.html</id>
-    <updated>2025-08-09T16:22:26.576497059+00:00</updated>
-    <published>2025-08-09T16:22:26.576497059+00:00</published>
+    <updated>2025-08-09T16:27:27.293722909+00:00</updated>
+    <published>2025-08-09T16:27:27.293722909+00:00</published>
     <content type="html"><![CDATA[
 <h1>PDF Toggle Post</h1>
 <p>This post enables PDF generation to validate that PDFs are produced only when <code>pdf: true</code> is set.</p>
