@@ -213,8 +213,8 @@ Add language codes to filenames:
 ### Supported Languages
 
 Krik maintains an internal language map used for validation and display names.
-Out of the box it supports: `en`, `it`, `es`, `fr`, `de`, `pt`, `ja`, `zh`, `ru`, `ar`.
-Language names in the UI are resolved from this map.
+Out of the box it supports: `en`, `it`, `es`, `fr`, `de`, `pt`, `ja`, `zh`,
+`ru`, `ar`. Language names in the UI are resolved from this map.
 
 ### Language Navigation & Index Selection
 

@@ -8,15 +8,40 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.16] - 2025-08-09
+
 ### Changed
 
-- deps: bump `warp` to `0.4.1` with `server` and `websocket` features enabled
-- deps: bump `notify` to `8.2.0`
-- deps: bump `serde` to `1.0.219`
+- 📦 **Dependencies**: Updated to latest versions for improved security and
+  performance
+  - Bumped `warp` to `0.4.1` with `server` and `websocket` features enabled for
+    better development server functionality
+  - Bumped `notify` to `8.2.0` for enhanced file watching capabilities
+  - Bumped `serde` to `1.0.219` for improved serialization performance
+- 🏗️ **Templates**: Modularized default theme with base.html template
+  - Refactored page/index/post templates to extend base template
+  - Improved header/sidebar/TOC reusability across templates
+  - Enhanced template organization and maintainability
+- 🚀 **Development**: Improved server binding and incremental build system
+  - Fixed `warp::serve().run()` to ensure server binds correctly
+  - Persistent generator cache for incremental builds
+  - Incremental PDF generation with toggle add/remove functionality
+  - Removed live-reload JS from templates, now relies on Rust-side injection
 
 ### Fixed
 
-- Verified all dependency bumps with `cargo test` and `cargo run --` (exit 0)
+- ✅ **Build System**: Verified all dependency updates with comprehensive
+  testing
+- 🔧 **Server**: Fixed development server binding issues for more reliable local
+  development
+- 📄 **Templates**: Improved template inheritance and code reusability
+
+### Performance
+
+- ⚡ **Incremental Builds**: Added persistent cache system for faster rebuild
+  cycles
+- 📊 **Asset Handling**: Reduced redundant stat calls during asset processing
+- 🔄 **PDF Generation**: Optimized PDF generation with incremental updates
 
 ## [0.1.15] - 2025-01-27
 
