@@ -22,7 +22,7 @@
 - [x] Add integration test: index selection when both default and non-default language variants exist (ensure default wins)
 - [ ] Add tests for template render error mapping → `KrikError::Template`
 - [ ] Add (feature-gated) tests for dev server watcher failure paths and network listing fallbacks
-- [ ] Expand content fixtures to cover nested posts, TOC edge-cases, and PDF toggles
+- [x] Expand content fixtures to cover nested posts, TOC edge-cases, and PDF toggles
 
 ### ⚙️ Performance & concurrency
 - [ ] Consider bounding rayon parallelism (e.g., via `RAYON_NUM_THREADS`) to avoid oversubscription when running under the tokio server
