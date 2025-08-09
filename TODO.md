@@ -30,7 +30,7 @@
 - [ ] Explore streaming copy for large assets; avoid redundant stat calls in asset copying
 
 ### 🧼 Code quality & API
-- [ ] Introduce `Theme::builder()` to encapsulate defaults, auto-escape, reload behavior, and error handling
+- [x] Introduce `Theme::builder()` to encapsulate defaults, auto-escape, reload behavior, and error handling
 - [ ] Normalize and document all public functions returning `KrikResult<T>`; ensure no silent fallbacks except where explicitly intended
 - [ ] Remove any remaining duplicated logic now covered by `i18n::I18nManager` and `templates::paths`
 

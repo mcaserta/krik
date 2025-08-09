@@ -91,7 +91,11 @@ impl SiteGenerator {
         let theme = if let Some(theme_path) = theme_dir {
             let mut path = theme_path.as_ref().to_path_buf();
             if let Ok(abs) = std::fs::canonicalize(&path) { path = abs; }
-            Theme::load_from_path(&path)
+            Theme::builder()
+                .theme_path(&path)
+                .autoescape_html(false)
+                .enable_reload(false)
+                .build()
                 .map_err(|_| KrikError::Theme(ThemeError {
                     kind: ThemeErrorKind::NotFound,
                     theme_path: path.clone(),
@@ -100,19 +104,24 @@ impl SiteGenerator {
         } else {
             let default_path = PathBuf::from("themes/default");
             let default_path = if let Ok(abs) = std::fs::canonicalize(&default_path) { abs } else { default_path };
-            Theme::load_from_path(&default_path).unwrap_or_else(|_| {
-                Theme {
-                    config: crate::theme::ThemeConfig {
-                        name: "default".to_string(),
-                        version: "1.0.0".to_string(),
-                        author: None,
-                        description: None,
-                        templates: HashMap::new(),
-                    },
-                    templates: tera::Tera::new("themes/default/templates/**/*").unwrap_or_default(),
-                    theme_path: default_path,
-                }
-            })
+            Theme::builder()
+                .theme_path(&default_path)
+                .autoescape_html(false)
+                .enable_reload(false)
+                .build()
+                .unwrap_or_else(|_| {
+                    Theme {
+                        config: crate::theme::ThemeConfig {
+                            name: "default".to_string(),
+                            version: "1.0.0".to_string(),
+                            author: None,
+                            description: None,
+                            templates: HashMap::new(),
+                        },
+                        templates: tera::Tera::new("themes/default/templates/**/*").unwrap_or_default(),
+                        theme_path: default_path,
+                    }
+                })
         };
 
         let i18n = I18nManager::new("en".to_string());
