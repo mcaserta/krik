@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Basic SEO Meta Tags -->
-    <title>Contact - Krik Demo Site</title>
-    <meta name="description" content="Contact This page demonstrates that files in the root of the content directory automatically use the page template. Get in Touch This is an example contact p...">
+    <title>TOC Edge Page - Krik Demo Site</title>
+    <meta name="description" content="TOC Edge Page Intro A page with TOC enabled to ensure pages also include a sidebar TOC. Repeated Some content. Repeated More content with the same heading text.">
     <meta name="author" content="Krik Demo Site">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://mirkocaserta.com/krik/pages/contact.html">
+    <link rel="canonical" href="https://mirkocaserta.com/krik/pages/toc-edge-page.html">
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Contact">
-    <meta property="og:description" content="Contact This page demonstrates that files in the root of the content directory automatically use the page template. Get in Touch This is an example contact p...">
-    <meta property="og:url" content="https://mirkocaserta.com/krik/pages/contact.html">
+    <meta property="og:title" content="TOC Edge Page">
+    <meta property="og:description" content="TOC Edge Page Intro A page with TOC enabled to ensure pages also include a sidebar TOC. Repeated Some content. Repeated More content with the same heading text.">
+    <meta property="og:url" content="https://mirkocaserta.com/krik/pages/toc-edge-page.html">
     <meta property="og:site_name" content="Krik Demo Site">
     <meta property="og:locale" content="en">
     
@@ -29,7 +29,7 @@
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
 <body>
-    <div class="layout-container">
+    <div class="layout-container has-toc">
         <nav class="top-nav">
             <a href="../index.html" class="site-title">Krik Demo Site</a>
             <div class="nav-controls">
@@ -74,49 +74,30 @@
         </aside>
 
         
+        <aside class="toc-sidebar">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul class="toc">
+  <li><a href="#intro">Intro</a></li>
+  <li><a href="#repeated">Repeated</a></li>
+  <li><a href="#repeated">Repeated</a></li>
+</ul>
+            </div>
+        </aside>
+        
 
         <main class="main-content">
             <header>
-                <h1>Contact</h1>
+                <h1>TOC Edge Page</h1>
                 <div class="meta">August 09, 2025</div>
             </header>
             <article>
-<p>This page demonstrates that files in the root of the content directory
-automatically use the <code>page</code> template.</p>
-<h2>Get in Touch</h2>
-<p>This is an example contact page showing how root-level content is handled by
-Krik.</p>
-<h3>Template Detection</h3>
-<p>Since this file is located at <code>content/contact.md</code> (not in a <code>posts/</code> or
-<code>pages/</code> subdirectory), it automatically uses the <code>page</code> template, giving it:</p>
-<ul>
-<li>Clean, focused layout</li>
-<li>Language selector (if translations exist)</li>
-<li>Scroll-to-top button</li>
-<li>Consistent styling with other pages</li>
-</ul>
-<h3>Organization Flexibility</h3>
-<p>You can organize your content flexibly:</p>
-<ul>
-<li><strong>Posts</strong>: <code>content/posts/</code> for blog entries</li>
-<li><strong>Pages</strong>: <code>content/pages/</code> for static pages</li>
-<li><strong>Root Content</strong>: Direct in <code>content/</code> for top-level pages like this one</li>
-</ul>
-<p>All content types support:</p>
-<ul>
-<li>Full markdown formatting</li>
-<li>Front matter metadata</li>
-<li>Internationalization</li>
-<li>Custom templates (via <code>layout</code> field)</li>
-</ul>
-<hr />
-<p><strong>Example Contact Information:</strong></p>
-<ul>
-<li><strong>Email</strong>: hello@example.com</li>
-<li><strong>Website</strong>: https://example.com</li>
-<li><strong>GitHub</strong>: https://github.com/example</li>
-</ul>
-<p><em>Note: This is just example content for demonstration purposes.</em></p>
+<h2 id="intro">Intro</h2>
+<p>A page with TOC enabled to ensure pages also include a sidebar TOC.</p>
+<h2 id="repeated">Repeated</h2>
+<p>Some content.</p>
+<h2 id="repeated">Repeated</h2>
+<p>More content with the same heading text.</p>
 </article>
         </main>
     </div>
@@ -127,7 +108,7 @@ Krik.</p>
     </button>
 
     <script>
-        window.krikBaseName = 'contact';
+        window.krikBaseName = 'toc-edge-page';
     </script>
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/prism-init.js"></script>
