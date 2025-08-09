@@ -45,9 +45,9 @@ pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> KrikResu
         .filter_map(|e| e.ok())
     {
         let path = entry.path();
-        
-        // Skip directories and markdown files
-        if path.is_dir() || path.extension().is_some_and(|ext| ext == "md") {
+
+        // Skip directories (use DirEntry metadata to avoid extra stat) and markdown files
+        if entry.file_type().is_dir() || path.extension().is_some_and(|ext| ext == "md") {
             continue;
         }
 
@@ -68,6 +68,7 @@ pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> KrikResu
 
         // Create parent directories if they don't exist
         if let Some(parent) = dest_path.parent() {
+            // Always attempt to create; avoids existence checks (extra stats)
             fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for asset copy".to_string() }))?;
         }
 
@@ -83,11 +84,9 @@ pub fn copy_theme_assets(theme: &Theme, output_dir: &Path) -> KrikResult<()> {
     let asset_dir = theme.theme_path.join("assets");
     if asset_dir.exists() {
         let dest_assets_dir = output_dir.join("assets");
-        
-        // Create assets directory if it doesn't exist
-        if !dest_assets_dir.exists() {
-            fs::create_dir_all(&dest_assets_dir).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_assets_dir.clone(), context: "Creating destination assets directory".to_string() }))?;
-        }
+
+        // Always attempt to create destination directory (idempotent)
+        fs::create_dir_all(&dest_assets_dir).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_assets_dir.clone(), context: "Creating destination assets directory".to_string() }))?;
 
         // Copy all files from theme assets
         copy_directory_contents(&asset_dir, &dest_assets_dir)?;
@@ -103,26 +102,29 @@ fn copy_directory_contents(src: &Path, dest: &Path) -> KrikResult<()> {
         .into_iter()
         .filter_map(|e| e.ok())
     {
-        let path = entry.path();
-        
-        if path.is_file() {
-            // Skip ignored assets (dotfiles, editor temp files, backups)
-            if is_ignored_asset(path) {
-                continue;
-            }
-
-            let relative_path = path.strip_prefix(src)
-                .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: path.to_path_buf(), context: format!("Computing relative path from {} to {}", src.display(), path.display()) }))?;
-            let dest_path = dest.join(relative_path);
-
-            // Create parent directories if they don't exist
-            if let Some(parent) = dest_path.parent() {
-                fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for theme asset copy".to_string() }))?;
-            }
-
-            // Copy the file
-            fs::copy(path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying theme asset from {}", path.display()) }))?;
+        // Skip non-files using DirEntry to avoid extra stat
+        if !entry.file_type().is_file() {
+            continue;
         }
+
+        let path = entry.path();
+
+        // Skip ignored assets (dotfiles, editor temp files, backups)
+        if is_ignored_asset(path) {
+            continue;
+        }
+
+        let relative_path = path.strip_prefix(src)
+            .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: path.to_path_buf(), context: format!("Computing relative path from {} to {}", src.display(), path.display()) }))?;
+        let dest_path = dest.join(relative_path);
+
+        // Always attempt to create parent directories
+        if let Some(parent) = dest_path.parent() {
+            fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for theme asset copy".to_string() }))?;
+        }
+
+        // Copy the file
+        fs::copy(path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying theme asset from {}", path.display()) }))?;
     }
 
     Ok(())
