@@ -22,7 +22,7 @@ create beautiful, fast static websites with minimal setup.</p>
 <p>The fastest way to get started is installing Krik from crates.io:</p>
 <pre><code class="language-bash">cargo install krik
 </code></pre>
-<p>That's it! No additional setup required - themes and sample content are embedded
+<p>That’s it! No additional setup required - themes and sample content are embedded
 directly in the executable.</p>
 <h3 id="verify-installation">Verify Installation</h3>
 <p>Check that Krik is installed correctly:</p>
@@ -47,7 +47,7 @@ cd my-awesome-blog
 <p>Launch the development server with live reload:</p>
 <pre><code class="language-bash">kk server
 </code></pre>
-<p>Open your browser to <code>http://localhost:3000</code> and you'll see your new site! The
+<p>Open your browser to <code>http://localhost:3000</code> and you’ll see your new site! The
 server automatically watches for changes and refreshes your browser when you
 edit files.</p>
 <h2 id="creating-content">Creating Content</h2>
@@ -227,7 +227,7 @@ including image handling, complex markdown, and feed generation.</p>
 <li>Consider using relative paths from your post location</li>
 </ul>
 <h2 id="complex-tables">Complex Tables</h2>
-<p>Here's a more complex table showing Krik's architecture:</p>
+<p>Here’s a more complex table showing Krik’s architecture:</p>
 <table><thead><tr><th>Component</th><th>Language</th><th>Purpose</th><th>Dependencies</th></tr></thead><tbody>
 <tr><td><strong>Parser</strong></td><td>Rust</td><td>Markdown → AST</td><td>pulldown-cmark, serde</td></tr>
 <tr><td><strong>Generator</strong></td><td>Rust</td><td>AST → HTML</td><td>tera, chrono</td></tr>
@@ -283,7 +283,7 @@ including image handling, complex markdown, and feed generation.</p>
 </code></pre>
 </blockquote>
 <h4 id="code-with-explanation">Code with Explanation</h4>
-<p>Here's how the theme toggle works:</p>
+<p>Here’s how the theme toggle works:</p>
 <pre><code class="language-javascript">function toggleTheme() {
   // Get current theme or default to light
   const currentTheme =
@@ -393,7 +393,7 @@ Crawl-delay: 1
 <p>The generated sites are optimized for performance:</p>
 <ul>
 <li><strong>Minimal CSS</strong>: No framework bloat, only necessary styles</li>
-<li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn't required</li>
+<li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn’t required</li>
 <li><strong>Responsive Images</strong>: Proper sizing and format recommendations</li>
 <li><strong>Static Assets</strong>: Everything is static, no server-side processing</li>
 </ul>
@@ -418,7 +418,7 @@ Crawl-delay: 1
 <li>High contrast color schemes</li>
 </ul>
 <hr />
-<p>This demonstrates many of Krik's advanced capabilities. The combination of
+<p>This demonstrates many of Krik’s advanced capabilities. The combination of
 performance, features, and accessibility makes it an excellent choice for modern
 static sites.</p>
 
@@ -448,7 +448,7 @@ some advanced formatting options.</p>
 </ul>
 <h2 id="headings">Headings</h2>
 <p>Krik supports all heading levels from H1 to H6. Since this post has TOC enabled,
-you can see how they're organized in the table of contents.</p>
+you can see how they’re organized in the table of contents.</p>
 <h3 id="this-is-h3">This is H3</h3>
 <h4 id="this-is-h4">This is H4</h4>
 <h5 id="this-is-h5">This is H5</h5>
@@ -537,7 +537,7 @@ Nested incomplete task</li>
 </li>
 </ul>
 <h2 id="tables">Tables</h2>
-<p>Here's a comprehensive table showing Krik's features:</p>
+<p>Here’s a comprehensive table showing Krik’s features:</p>
 <table><thead><tr><th>Feature Category</th><th>Feature</th><th>Status</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong>Core</strong></td><td>Markdown Processing</td><td>✅</td><td>Full GFM support</td></tr>
 <tr><td><strong>Core</strong></td><td>Front Matter</td><td>✅</td><td>YAML metadata</td></tr>
@@ -585,7 +585,7 @@ other markdown elements.</p>
 <h3 id="reference-links">Reference Links</h3>
 <p>This is a paragraph with <a href="https://www.rust-lang.org/" title="Rust Programming Language">reference link</a> and another <a href="https://github.com/" title="GitHub">link</a>.</p>
 <h2 id="images">Images</h2>
-<p>Here's how images work:</p>
+<p>Here’s how images work:</p>
 <p><img src="../images/krik.png" alt="Alt text for image" title="Optional title" /></p>
 <h2 id="footnotes-in-detail">Footnotes in Detail</h2>
 <p>Footnotes are particularly powerful in Krik<sup class="footnote-reference"><a href="#footnote1">1</a></sup>. They create
@@ -765,19 +765,19 @@ function toggleTheme() {
 <h3 id="footnotes">Footnotes</h3>
 <p>This is a paragraph with a footnote<sup class="footnote-reference"><a href="#1">1</a></sup>. You can click on it to jump to the
 definition, and then click the return arrow to come back.</p>
-<p>Here's another footnote<sup class="footnote-reference"><a href="#second">2</a></sup> with different content.</p>
+<p>Here’s another footnote<sup class="footnote-reference"><a href="#second">2</a></sup> with different content.</p>
 <h2 id="advanced-features">Advanced Features</h2>
 <h3 id="theme-system">Theme System</h3>
 <p>The site automatically detects your OS theme preference and switches between
 light and dark modes. Try toggling your system theme or use the theme button in
 the top navigation!</p>
 <h3 id="scroll-to-top">Scroll to Top</h3>
-<p>On longer pages like this one, you'll see a scroll-to-top button appear in the
+<p>On longer pages like this one, you’ll see a scroll-to-top button appear in the
 bottom-right corner when you scroll down. It provides smooth scrolling back to
 the top.</p>
 <h3 id="navigation">Navigation</h3>
 <p>The sidebar shows all pages on your site, and posts like this one include a
-"Back to Home" link for easy navigation. On mobile devices, the sidebar
+“Back to Home” link for easy navigation. On mobile devices, the sidebar
 transforms into a convenient hamburger menu.</p>
 <h3 id="development-server">Development Server</h3>
 <p>Krik includes a powerful development server with live reload functionality:</p>

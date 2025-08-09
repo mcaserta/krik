@@ -89,7 +89,7 @@
   <li><a href="#internationalization-i18n">Internationalization (i18n)</a></li>
     <li><a href="#creating-translations">Creating Translations</a></li>
     <li><a href="#supported-languages">Supported Languages</a></li>
-    <li><a href="#language-navigation-amp-index-selection">Language Navigation &amp; Index Selection</a></li>
+    <li><a href="#language-navigation-index-selection">Language Navigation & Index Selection</a></li>
   <li><a href="#advanced-features">Advanced Features</a></li>
     <li><a href="#table-of-contents">Table of Contents</a></li>
     <li><a href="#footnotes">Footnotes</a></li>
@@ -127,8 +127,8 @@
   <li><a href="#generated-output">Generated Output</a></li>
     <li><a href="#example-output-structure">Example Output Structure</a></li>
   <li><a href="#best-practices">Best Practices</a></li>
-    <li><a href="#content-organization">Content Organization</a></li>
-    <li><a href="#front-matter">Front Matter</a></li>
+    <li><a href="#content-organization-1">Content Organization</a></li>
+    <li><a href="#front-matter-1">Front Matter</a></li>
     <li><a href="#performance">Performance</a></li>
     <li><a href="#accessibility">Accessibility</a></li>
   <li><a href="#deployment">Deployment</a></li>
@@ -285,7 +285,7 @@ layout: custom
 </code></pre>
 <h3 id="template-features">Template Features</h3>
 <ul>
-<li><strong>Post Template</strong>: Tags, "Back to Home" link, language selector, scroll-to-top</li>
+<li><strong>Post Template</strong>: Tags, “Back to Home” link, language selector, scroll-to-top</li>
 <li><strong>Page Template</strong>: Clean layout, language selector (if translations
 available), scroll-to-top</li>
 <li><strong>Index Template</strong>: Post listing, theme toggle, scroll-to-top</li>
@@ -301,9 +301,9 @@ available), scroll-to-top</li>
 </ul>
 <h3 id="supported-languages">Supported Languages</h3>
 <p>Krik maintains an internal language map used for validation and display names.
-Out of the box it supports: <code>en</code>, <code>it</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>pt</code>, <code>ja</code>, <code>zh</code>, <code>ru</code>, <code>ar</code>.
-Language names in the UI are resolved from this map.</p>
-<h3 id="language-navigation-amp-index-selection">Language Navigation &amp; Index Selection</h3>
+Out of the box it supports: <code>en</code>, <code>it</code>, <code>es</code>, <code>fr</code>, <code>de</code>, <code>pt</code>, <code>ja</code>, <code>zh</code>,
+<code>ru</code>, <code>ar</code>. Language names in the UI are resolved from this map.</p>
+<h3>Language Navigation &amp; Index Selection</h3>
 <ul>
 <li>Pages with translations automatically show a language selector dropdown.</li>
 <li>The posts index shows one entry per post base name. If multiple language
@@ -471,19 +471,19 @@ ls _site/posts/
 # Output: my-post.html, my-post.pdf
 </code></pre>
 <h3 id="troubleshooting">Troubleshooting</h3>
-<p><strong>Error: "pandoc not found"</strong></p>
+<p><strong>Error: “pandoc not found”</strong></p>
 <ul>
 <li>Install pandoc using the instructions above</li>
 <li>Ensure pandoc is in your system PATH</li>
 </ul>
-<p><strong>Error: "typst not found"</strong></p>
+<p><strong>Error: “typst not found”</strong></p>
 <ul>
 <li>Install typst-cli: <code>cargo install typst-cli</code></li>
 <li>Verify installation: <code>typst --version</code></li>
 </ul>
 <p><strong>PDF links not appearing in HTML</strong></p>
 <ul>
-<li>Ensure <code>pdf: true</code> is set in the document's front matter</li>
+<li>Ensure <code>pdf: true</code> is set in the document’s front matter</li>
 <li>Rebuild your site with <code>kk</code></li>
 <li>Check that the PDF file was generated in the output directory</li>
 </ul>
@@ -569,7 +569,7 @@ kk server [OPTIONS]       # Start development server
 kk page [TITLE] [OPTIONS]
 </code></pre>
 <table><thead><tr><th>Option</th><th>Description</th><th>Default</th></tr></thead><tbody>
-<tr><td><code>[TITLE]</code></td><td>Content title</td><td>"New post" / "New page"</td></tr>
+<tr><td><code>[TITLE]</code></td><td>Content title</td><td>“New post” / “New page”</td></tr>
 <tr><td><code>-f, --filename &lt;NAME&gt;</code></td><td>Custom filename (without .md)</td><td>Generated from title</td></tr>
 <tr><td><code>--content-dir &lt;DIR&gt;</code></td><td>Content directory path</td><td><code>content</code></td></tr>
 </tbody></table>
@@ -657,11 +657,11 @@ to your repository.</p>
 <p><strong>Enable GitHub Pages</strong>:</p>
 <ul>
 <li>Go to your repository settings</li>
-<li>Navigate to "Pages" section</li>
-<li>Under "Source", select "Deploy from a branch"</li>
+<li>Navigate to “Pages” section</li>
+<li>Under “Source”, select “Deploy from a branch”</li>
 <li>Choose the <code>gh-pages</code> branch</li>
-<li>Select "/ (root)" as the folder</li>
-<li>Click "Save"</li>
+<li>Select “/ (root)” as the folder</li>
+<li>Click “Save”</li>
 </ul>
 </li>
 <li>
@@ -678,7 +678,7 @@ with proper structure</p>
 <li><strong>Installs dependencies</strong>: Sets up Rust toolchain and installs Krik from
 crates.io</li>
 <li><strong>Generates the site</strong>: Runs <code>kk</code> to build your static site</li>
-<li><strong>Creates gh-pages branch</strong>: Sets up the deployment branch if it doesn't exist</li>
+<li><strong>Creates gh-pages branch</strong>: Sets up the deployment branch if it doesn’t exist</li>
 <li><strong>Deploys files</strong>: Copies generated files to the gh-pages branch</li>
 <li><strong>Adds .nojekyll</strong>: Prevents GitHub from processing files with Jekyll</li>
 <li><strong>Pushes changes</strong>: Commits and pushes the generated site</li>
