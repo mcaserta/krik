@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use crate::error::{KrikResult, KrikError, MarkdownError, MarkdownErrorKind};
-use crate::i18n::SUPPORTED_LANGUAGES;
+use crate::i18n::I18nManager;
 use std::path::Path;
 
 /// Front matter metadata extracted from the YAML header of Markdown files.
@@ -140,7 +140,8 @@ pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, Str
         let potential_lang = &filename[dot_pos + 1..];
         if potential_lang.len() == 2 {
             // Validate language code via i18n map
-            if !SUPPORTED_LANGUAGES.contains_key(potential_lang) {
+            let i18n = I18nManager::new("en".to_string());
+            if !i18n.is_supported_language(potential_lang) {
                 return Err(KrikError::Markdown(MarkdownError {
                     kind: MarkdownErrorKind::InvalidLanguage(potential_lang.to_string()),
                     file: Path::new(filename).to_path_buf(),
