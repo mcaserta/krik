@@ -19,7 +19,7 @@
 - [ ] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans
 
 ### 🧪 Testing
-- [ ] Add integration test: index selection when both default and non-default language variants exist (ensure default wins)
+- [x] Add integration test: index selection when both default and non-default language variants exist (ensure default wins)
 - [ ] Add tests for template render error mapping → `KrikError::Template`
 - [ ] Add (feature-gated) tests for dev server watcher failure paths and network listing fallbacks
 - [ ] Expand content fixtures to cover nested posts, TOC edge-cases, and PDF toggles
