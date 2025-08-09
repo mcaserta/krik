@@ -16,7 +16,7 @@
 - [x] Dependencies: upgraded `warp` to 0.4.1 (enabled `server` + `websocket` features), `notify` to 8.2.0, and `serde` to 1.0.219; verified via `cargo test` and `cargo run --`
 
 ### 🔺 High-priority next steps
-- [ ] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans
+- [x] Incremental build cache: maintain a path → `Document` cache in `SiteGenerator` and update on change to avoid full rescans
 
 ### 🧪 Testing
 - [x] Add integration test: index selection when both default and non-default language variants exist (ensure default wins)
@@ -35,8 +35,6 @@
 - [x] Remove remaining duplicated logic covered by `i18n::I18nManager` and `templates::paths` (parser uses `I18nManager` for language validation)
 
 ### 📚 Docs & DX
-- [ ] Document the new parallel build behavior (env vars, expected CPU usage)
-- [ ] Update README and `content/pages/documentation.md` for i18n map, index selection rules, and error handling guidance
 - [ ] Add CONTRIBUTING.md with coding standards, testing strategy, and release steps
 
 ### 🚀 Release readiness

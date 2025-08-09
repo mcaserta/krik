@@ -201,7 +201,7 @@ impl DevServer {
                 info!("📝 {} changed path(s), running incremental build...", batched.len());
 
                 // Run incremental for the batched unique paths
-                if let Ok(generator) = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
+                    if let Ok(mut generator) = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
                     let mut did_anything = false;
                     for (path, is_remove) in batched.into_iter() {
                         // Only handle changes under input_dir or theme_dir

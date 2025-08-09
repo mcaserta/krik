@@ -46,6 +46,8 @@ pub struct SiteGenerator {
     pub site_config: SiteConfig,
     /// Parsed documents ready for processing
     pub documents: Vec<Document>,
+    /// Incremental cache: map from relative file path to Document
+    pub document_cache: HashMap<String, Document>,
 }
 
 impl SiteGenerator {
@@ -142,12 +144,16 @@ impl SiteGenerator {
             i18n,
             site_config,
             documents: Vec::new(),
+            document_cache: HashMap::new(),
         })
     }
 
     /// Scan files in the source directory and parse markdown documents
     pub fn scan_files(&mut self) -> KrikResult<()> {
         info!("Scanning for markdown files in: {}", self.source_dir.display());
+        // Full scan rebuilds the cache
+        self.document_cache.clear();
+        self.documents.clear();
         let result = super::markdown::scan_files(&self.source_dir, &mut self.documents)
             .map_err(|e| match e {
                 KrikError::Generation(gen_err) => KrikError::Generation(gen_err),
@@ -155,7 +161,13 @@ impl SiteGenerator {
             });
         
         match &result {
-            Ok(_) => info!("Successfully scanned {} documents", self.documents.len()),
+            Ok(_) => {
+                // Populate cache from documents
+                for doc in &self.documents {
+                    self.document_cache.insert(doc.file_path.clone(), doc.clone());
+                }
+                info!("Successfully scanned {} documents", self.documents.len())
+            }
             Err(e) => error!("Failed to scan files: {}", e),
         }
         
@@ -244,7 +256,7 @@ impl SiteGenerator {
     /// - If a content file was removed: remove the mirrored output file and refresh index/feed/sitemap.
     /// - If a theme file changed (templates/assets), fall back to full regeneration as templates affect many pages.
     pub fn generate_incremental_for_path<P: AsRef<Path>>(
-        &self,
+        &mut self,
         changed_path: P,
         is_removed: bool,
     ) -> KrikResult<()> {
@@ -307,16 +319,38 @@ impl SiteGenerator {
                     }
                 };
 
-                // Re-scan all to keep global artifacts correct
-                let mut documents = Vec::new();
-                super::markdown::scan_files(&self.source_dir, &mut documents)?;
+                // Update cache for this single file
+                let mut documents = self.documents.clone();
+                match super::markdown::parse_single_file(&self.source_dir, &canonical_changed) {
+                    Ok(doc) => {
+                        // Replace or insert into cache and working set
+                        self.document_cache.insert(doc.file_path.clone(), doc.clone());
+                        if let Some(slot) = documents.iter_mut().find(|d| d.file_path == doc.file_path) {
+                            *slot = doc;
+                        } else {
+                            documents.push(doc);
+                        }
+                    }
+                    Err(e) => {
+                        warn!("Failed to parse changed file {}: {}. Falling back to full rescan.", changed_path.display(), e);
+                        documents.clear();
+                        super::markdown::scan_files(&self.source_dir, &mut documents)?;
+                        // rebuild cache from full scan
+                        self.document_cache.clear();
+                        for d in &documents { self.document_cache.insert(d.file_path.clone(), d.clone()); }
+                    }
+                }
 
                 // Transform documents for correct dates before rendering
                 transform.transform(&mut documents, &self.source_dir);
 
                 if is_removed {
                     debug!("removing generated page for {}", relative_path);
-                    // Remove the mirrored HTML file
+                    // Remove from cache and the mirrored HTML file
+                    if let Some(rel_removed) = self.document_cache.remove(&relative_path) {
+                        // Also remove from current documents vector copy
+                        documents.retain(|d| d.file_path != rel_removed.file_path);
+                    }
                     let mut output_path = std::path::PathBuf::from(&relative_path);
                     output_path.set_extension("html");
                     let output_path = self.output_dir.join(output_path);
@@ -352,11 +386,14 @@ impl SiteGenerator {
                     }
                 }
 
+                // Persist updated working set back into generator state
+                self.documents = documents.clone();
+
                 // Update global artifacts that depend on full document set
                 debug!("updating global artifacts (index/feed/sitemap/robots) after single-page change");
-                render.render_index(&documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
-                emit.emit_feed(&documents, &self.site_config, &self.output_dir)?;
-                emit.emit_sitemap(&documents, &self.site_config, &self.output_dir)?;
+                render.render_index(&self.documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
+                emit.emit_feed(&self.documents, &self.site_config, &self.output_dir)?;
+                emit.emit_sitemap(&self.documents, &self.site_config, &self.output_dir)?;
                 emit.emit_robots(&self.site_config, &self.output_dir)?;
                 return Ok(());
             } else {

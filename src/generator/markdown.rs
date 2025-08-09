@@ -140,6 +140,61 @@ pub fn markdown_to_html_with_toc(markdown: &str, title: Option<&str>) -> (String
     (result.html_content, toc_html)
 }
 
+/// Parse a single markdown file given the site `source_dir` and the file's absolute path
+pub fn parse_single_file(source_dir: &Path, path: &Path) -> KrikResult<Document> {
+    let rel_path = path
+        .strip_prefix(source_dir)
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|_| path.to_string_lossy().to_string());
+
+    let content = std::fs::read_to_string(path).map_err(|e| KrikError::Io(IoError {
+        kind: IoErrorKind::ReadFailed(e),
+        path: path.to_path_buf(),
+        context: "Reading markdown file".to_string(),
+    }))?;
+
+    let (frontmatter, markdown_content) = parse_markdown_with_frontmatter_for_file(&content, path)?;
+    if frontmatter.draft.unwrap_or(false) {
+        return Err(KrikError::Markdown(MarkdownError {
+            kind: MarkdownErrorKind::ParseError("Draft skipped".to_string()),
+            file: path.to_path_buf(),
+            line: None,
+            column: None,
+            context: "Skipping draft file".to_string(),
+        }));
+    }
+
+    let filename_without_ext = path
+        .file_stem()
+        .ok_or_else(|| KrikError::Io(IoError {
+            kind: IoErrorKind::InvalidPath,
+            path: path.to_path_buf(),
+            context: "Extracting filename stem".to_string(),
+        }))?
+        .to_string_lossy();
+    let (base_name, language) = extract_language_from_filename(&filename_without_ext)?;
+
+    let (html_content, toc_html) = if frontmatter
+        .extra
+        .get("toc")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
+    {
+        markdown_to_html_with_toc(&markdown_content, frontmatter.title.as_deref())
+    } else {
+        (markdown_to_html(&markdown_content), String::new())
+    };
+
+    Ok(Document {
+        front_matter: frontmatter,
+        content: html_content,
+        file_path: rel_path,
+        language,
+        base_name,
+        toc: if toc_html.is_empty() { None } else { Some(toc_html) },
+    })
+}
+
 /// Generate table of contents and process content for TOC-enabled documents
 pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, String) {
     // Generate a TOC directly from HTML using a lightweight regex, to preserve existing behavior.
