@@ -92,7 +92,7 @@ impl DevServer {
 
             // Start server with live reload
             warp::serve(routes)
-                .bind(([0, 0, 0, 0], self.port))
+                .run(([0, 0, 0, 0], self.port))
                 .await;
         } else {
             // Setup without WebSocket for static serving only
@@ -116,7 +116,7 @@ impl DevServer {
 
             // Start server without live reload
             warp::serve(static_route)
-                .bind(([0, 0, 0, 0], self.port))
+                .run(([0, 0, 0, 0], self.port))
                 .await;
         }
 
@@ -150,6 +150,19 @@ impl DevServer {
             // Canonicalize watched roots to compare against canonical event paths
             let canonical_input_dir = std::fs::canonicalize(&input_dir).unwrap_or(input_dir.clone());
             let canonical_theme_dir = theme_dir.as_ref().and_then(|t| std::fs::canonicalize(t).ok());
+
+            // Persistent generator to preserve document cache across changes
+            let mut generator = match SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
+                Ok(g) => g,
+                Err(e) => {
+                    error!("failed to initialize generator for watcher: {}", e);
+                    return;
+                }
+            };
+            if let Err(e) = generator.scan_files() {
+                error!("initial scan failed in watcher: {}", e);
+                // continue anyway; incremental may rescan as needed
+            }
 
             loop {
                 // Wait for one event
@@ -200,46 +213,44 @@ impl DevServer {
                 }
                 info!("📝 {} changed path(s), running incremental build...", batched.len());
 
-                // Run incremental for the batched unique paths
-                    if let Ok(mut generator) = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
-                    let mut did_anything = false;
-                    for (path, is_remove) in batched.into_iter() {
-                        // Only handle changes under input_dir or theme_dir
-                        let relevant = path.starts_with(&canonical_input_dir) || canonical_theme_dir.as_ref().map(|t| path.starts_with(t)).unwrap_or(false);
-                        if !relevant {
-                            debug!("skipping unrelated change: {}", path.display());
-                            continue;
-                        }
-                        debug!("incremental build for {} (remove={})", path.display(), is_remove);
-                        match generator.generate_incremental_for_path(&path, is_remove) {
-                            Ok(()) => { did_anything = true; }
-                            Err(e) => {
-                                error!("❌ Incremental generation failed for {}: {}", path.display(), e);
-                                if let Err(full_err) = generator.generate_site() {
-                                    error!("❌ Full regeneration after failure also failed: {}", full_err);
-                                } else {
-                                    debug!("fallback full regeneration completed after incremental failure");
-                                    did_anything = true;
-                                }
+                // Run incremental for the batched unique paths using persistent generator/cache
+                let mut did_anything = false;
+                for (path, is_remove) in batched.into_iter() {
+                    // Only handle changes under input_dir or theme_dir
+                    let relevant = path.starts_with(&canonical_input_dir)
+                        || canonical_theme_dir.as_ref().map(|t| path.starts_with(t)).unwrap_or(false);
+                    if !relevant {
+                        debug!("skipping unrelated change: {}", path.display());
+                        continue;
+                    }
+                    debug!("incremental build for {} (remove={})", path.display(), is_remove);
+                    match generator.generate_incremental_for_path(&path, is_remove) {
+                        Ok(()) => { did_anything = true; }
+                        Err(e) => {
+                            error!("❌ Incremental generation failed for {}: {}", path.display(), e);
+                            if let Err(full_err) = generator.generate_site() {
+                                error!("❌ Full regeneration after failure also failed: {}", full_err);
+                            } else {
+                                debug!("fallback full regeneration completed after incremental failure");
+                                did_anything = true;
                             }
                         }
                     }
-
-                    if !did_anything {
-                        let _ = generator.generate_site();
-                    }
-
-                    // Conditionally inject live reload script
-                    if live_reload {
-                        if let Err(e) = inject_live_reload_script(&output_dir, port) {
-                            error!("❌ Error injecting live reload script: {}", e);
-                            continue;
-                        }
-                    }
-
-                    info!("✅ Incremental build complete");
-                    let _ = reload_tx.send(());
                 }
+
+                if !did_anything {
+                    let _ = generator.generate_site();
+                }
+
+                // Conditionally inject live reload script
+                if live_reload {
+                    if let Err(e) = inject_live_reload_script(&output_dir, port) {
+                        error!("❌ Error injecting live reload script: {}", e);
+                    }
+                }
+
+                info!("✅ Incremental build complete");
+                let _ = reload_tx.send(());
             }
         });
 

@@ -1,6 +1,7 @@
 ---
 title: "Documentation"
 toc: true
+pdf: true
 ---
 
 # Krik Documentation

@@ -323,12 +323,55 @@ impl SiteGenerator {
                 let mut documents = self.documents.clone();
                 match super::markdown::parse_single_file(&self.source_dir, &canonical_changed) {
                     Ok(doc) => {
+                        // Track previous pdf flag before updating cache
+                        let prev_pdf = self
+                            .document_cache
+                            .get(&doc.file_path)
+                            .and_then(|d| d.front_matter.pdf)
+                            .unwrap_or(false);
                         // Replace or insert into cache and working set
                         self.document_cache.insert(doc.file_path.clone(), doc.clone());
                         if let Some(slot) = documents.iter_mut().find(|d| d.file_path == doc.file_path) {
                             *slot = doc;
                         } else {
                             documents.push(doc);
+                        }
+                        // After updating, check current pdf flag and (re)generate/remove PDF as needed
+                        if let Some(current_doc) = documents.iter().find(|d| d.file_path == relative_path) {
+                            let current_pdf = current_doc.front_matter.pdf.unwrap_or(false);
+                            // Determine output PDF path
+                            let mut pdf_rel_path = std::path::PathBuf::from(&current_doc.file_path);
+                            pdf_rel_path.set_extension("pdf");
+                            let pdf_output_path = self.output_dir.join(pdf_rel_path);
+
+                            if current_pdf {
+                                // Generate or regenerate PDF
+                                if super::pdf::PdfGenerator::is_available() {
+                                    match super::pdf::PdfGenerator::new() {
+                                        Ok(pdf_gen) => {
+                                            let input_path = self.source_dir.join(&current_doc.file_path);
+                                            let _ = pdf_gen.generate_pdf_from_file(
+                                                &input_path,
+                                                &pdf_output_path,
+                                                &self.source_dir,
+                                                &self.site_config,
+                                                &current_doc.language,
+                                            );
+                                        }
+                                        Err(e) => {
+                                            warn!("PDF generator init failed during incremental: {}", e);
+                                        }
+                                    }
+                                } else if prev_pdf && pdf_output_path.exists() {
+                                    // Tools no longer available; remove stale PDF to reflect state
+                                    let _ = std::fs::remove_file(&pdf_output_path);
+                                }
+                            } else if prev_pdf {
+                                // PDF flag was removed; delete existing PDF if present
+                                if pdf_output_path.exists() {
+                                    let _ = std::fs::remove_file(&pdf_output_path);
+                                }
+                            }
                         }
                     }
                     Err(e) => {
@@ -350,6 +393,15 @@ impl SiteGenerator {
                     if let Some(rel_removed) = self.document_cache.remove(&relative_path) {
                         // Also remove from current documents vector copy
                         documents.retain(|d| d.file_path != rel_removed.file_path);
+                        // If removed document had a PDF generated, remove corresponding PDF file
+                        if rel_removed.front_matter.pdf.unwrap_or(false) {
+                            let mut pdf_rel_path = std::path::PathBuf::from(&relative_path);
+                            pdf_rel_path.set_extension("pdf");
+                            let pdf_output_path = self.output_dir.join(pdf_rel_path);
+                            if pdf_output_path.exists() {
+                                let _ = std::fs::remove_file(pdf_output_path);
+                            }
+                        }
                     }
                     let mut output_path = std::path::PathBuf::from(&relative_path);
                     output_path.set_extension("html");
