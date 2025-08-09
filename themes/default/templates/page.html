@@ -1,117 +1,33 @@
-<!DOCTYPE html>
-<html lang="{{ lang | default(value="en") }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Basic SEO Meta Tags -->
-    <title>{{ title | default(value="Untitled") }}{% if site_title %} - {{ site_title }}{% endif %}</title>
-    <meta name="description" content="{{ description }}">
-    <meta name="author" content="{% if author %}{{ author }}{% else %}{{ site_title | default(value="Blog") }}{% endif %}">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="{{ title | default(value="Untitled") }}">
-    <meta property="og:description" content="{{ description }}">
-    <meta property="og:url" content="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
-    <meta property="og:site_name" content="{{ site_title | default(value="Blog") }}">
-    <meta property="og:locale" content="{{ lang | default(value="en") | replace(from="-", to="_") }}">
-    
-    <!-- Additional Meta Tags -->
-    <meta name="generator" content="Krik Static Site Generator">
+{% extends "base.html" %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="{{ assets_path }}/css/main.css">
-    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
-    <link rel="alternate" type="application/atom+xml" title="{{ site_title | default(value="Blog") }} - Feed" href="{{ feed_path }}">
-</head>
-<body>
-    <div class="layout-container{% if toc %} has-toc{% endif %}">
-        <nav class="top-nav">
-            <a href="{{ home_path }}" class="site-title">{{ site_title | default(value="Blog") }}</a>
-            <div class="nav-controls">
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                    <span class="hamburger-icon">☰</span>
-                </button>
-                {% if available_translations and available_translations | length > 1 %}
-                <div class="language-selector">
-                    <select onchange="switchLanguage(this.value)">
-                        {% for translation in available_translations %}
-                        <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>
-                            {{ translation.lang_name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% endif %}
-                {% if pdf %}
-                <a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
-                    <span class="pdf-icon">📄</span>
-                </a>
-                {% endif %}
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <span class="theme-icon">🌓</span>
-                </button>
-            </div>
-        </nav>
+{% block title %}{{ title | default(value="Untitled") }} - {{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ description }}{% endblock description %}
 
-        <!-- Mobile dropdown menu -->
-        <div class="mobile-menu" id="mobile-menu">
-            <ul class="mobile-page-links">
-                {% for page in page_links %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <aside class="sidebar">
-            <ul class="page-links">
-                {% for page in page_links %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </aside>
-
-        {% if toc %}
-        <aside class="toc-sidebar">
-            <div class="toc">
-                <h2>Table of Contents</h2>
-                {{ toc | safe }}
-            </div>
-        </aside>
-        {% endif %}
-
-        <main class="main-content">
-            <header>
-                <h1>{{ title | default(value="Untitled") }}</h1>
-                {% if date %}<div class="meta">{{ date | date(format="%B %d, %Y") }}</div>{% endif %}
-            </header>
-            <article>{{ content | safe }}</article>
-        </main>
+{% block header_controls %}
+{% if available_translations and available_translations | length > 1 %}
+<div class="language-selector">
+    <select onchange="switchLanguage(this.value)">
+        {% for translation in available_translations %}
+        <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>
+            {{ translation.lang_name }}
+        </option>
+        {% endfor %}
+    </select>
     </div>
+{% endif %}
+{% if pdf %}
+<a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
+    <span class="pdf-icon">📄</span>
+</a>
+{% endif %}
+{% endblock header_controls %}
 
-    <!-- Scroll to top button -->
-    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
-        <span>↑</span>
-    </button>
+{% block main %}
+<header>
+    <h1>{{ title | default(value="Untitled") }}</h1>
+    {% if date %}<div class="meta">{{ date | date(format="%B %d, %Y") }}</div>{% endif %}
+</header>
+<article>{{ content | safe }}</article>
+{% endblock main %}
 
-    <script>
-        window.krikBaseName = '{{ base_name }}';
-    </script>
-    <script src="{{ assets_path }}/js/main.js"></script>
-    <script src="{{ assets_path }}/js/prism-init.js"></script>
-    {% if live_reload %}
-    <script>
-    (function() {
-        if (typeof window !== 'undefined') {
-            const ws = new WebSocket('ws://localhost:{{ live_reload_port }}/__krik_reload');
-            ws.onmessage = function(event) { if (event.data === 'reload') { window.location.reload(); } };
-        }
-    })();
-    </script>
-    {% endif %}
-</body>
-</html>
+{% block scripts %}{% endblock scripts %}

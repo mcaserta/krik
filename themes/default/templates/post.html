@@ -1,121 +1,39 @@
-<!DOCTYPE html>
-<html lang="{{ lang | default(value="en") }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Basic SEO Meta Tags -->
-    <title>{{ title | default(value="Untitled") }}{% if site_title %} - {{ site_title }}{% endif %}</title>
-    <meta name="description" content="{{ description }}">
-    <meta name="author" content="{% if author %}{{ author }}{% else %}{{ site_title | default(value="Blog") }}{% endif %}">
-    {% if tags %}<meta name="keywords" content="{{ tags | join(sep=", ") }}">{% endif %}
-    {% if date %}<meta name="article:published_time" content="{{ date | date(format="%Y-%m-%d") }}">{% endif %}
-    {% if date %}<meta name="article:modified_time" content="{{ date | date(format="%Y-%m-%d") }}">{% endif %}
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="{{ title | default(value="Untitled") }}">
-    <meta property="og:description" content="{{ description }}">
-    <meta property="og:url" content="{% if base_url %}{{ base_url }}/{{ file_path | replace(from=".md", to=".html") }}{% else %}/{{ file_path | replace(from=".md", to=".html") }}{% endif %}">
-    <meta property="og:site_name" content="{{ site_title | default(value="Blog") }}">
-    {% if date %}<meta property="article:published_time" content="{{ date | date(format="%Y-%m-%dT%H:%M:%S+00:00") }}">{% endif %}
-    {% if date %}<meta property="article:modified_time" content="{{ date | date(format="%Y-%m-%dT%H:%M:%S+00:00") }}">{% endif %}
-    {% if tags %}{% for tag in tags %}<meta property="article:tag" content="{{ tag }}">{% endfor %}{% endif %}
-    <meta property="og:locale" content="{{ lang | default(value="en") | replace(from="-", to="_") }}">
-    
-    <!-- Additional Meta Tags -->
-    <meta name="generator" content="Krik Static Site Generator">
+{% extends "base.html" %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="{{ assets_path }}/css/main.css">
-    <!-- Prism.js theme placeholder - will be loaded dynamically based on theme -->
-    <link rel="alternate" type="application/atom+xml" title="{{ site_title | default(value="Blog") }} - Feed" href="{{ feed_path }}">
-</head>
-<body>
-    <div class="layout-container{% if toc %} has-toc{% endif %}">
-        <nav class="top-nav">
-            <a href="{{ home_path }}" class="site-title">{{ site_title | default(value="Blog") }}</a>
-            <div class="nav-controls">
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                    <span class="hamburger-icon">☰</span>
-                </button>
-                {% if available_translations and available_translations | length > 1 %}
-                <div class="language-selector">
-                    <select onchange="switchLanguage(this.value)">
-                        {% for translation in available_translations %}
-                        <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>
-                            {{ translation.lang_name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% endif %}
-                {% if pdf %}
-                <a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
-                    <span class="pdf-icon">📄</span>
-                </a>
-                {% endif %}
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <span class="theme-icon">🌓</span>
-                </button>
-            </div>
-        </nav>
+{% block title %}{{ title | default(value="Untitled") }} - {{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ description }}{% endblock description %}
 
-        <!-- Mobile dropdown menu -->
-        <div class="mobile-menu" id="mobile-menu">
-            <ul class="mobile-page-links">
-                {% for page in page_links %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
+{% block header_controls %}
+{% if available_translations and available_translations | length > 1 %}
+<div class="language-selector">
+    <select onchange="switchLanguage(this.value)">
+        {% for translation in available_translations %}
+        <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>
+            {{ translation.lang_name }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+{% if pdf %}
+<a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
+    <span class="pdf-icon">📄</span>
+</a>
+{% endif %}
+{% endblock header_controls %}
 
-        <aside class="sidebar">
-            <ul class="page-links">
-                {% for page in page_links %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </aside>
-
-        {% if toc %}
-        <aside class="toc-sidebar">
-            <div class="toc">
-                <h2>Table of Contents</h2>
-                {{ toc | safe }}
-            </div>
-        </aside>
-        {% endif %}
-
-        <main class="main-content">
-            <div class="back-link">
-                <a href="{{ home_path }}">← Back to Home</a>
-            </div>
-            <header>
-                <h1>{{ title | default(value="Untitled") }}</h1>
-                {% if date %}<div class="meta">{{ date | date(format="%B %d, %Y") }}</div>{% endif %}
-            </header>
-            <article>{{ content | safe }}</article>
-            {% if tags %}
-            <div class="tags">
-                {% for tag in tags %}<span class="tag">{{ tag }}</span>{% endfor %}
-            </div>
-            {% endif %}
-        </main>
-    </div>
-
-    <!-- Scroll to top button -->
-    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
-        <span>↑</span>
-    </button>
-
-    <script>
-        window.krikBaseName = '{{ base_name }}';
-    </script>
-    <script src="{{ assets_path }}/js/main.js"></script>
-    <script src="{{ assets_path }}/js/prism-init.js"></script>
-</body>
-</html>
+{% block main %}
+<div class="back-link">
+    <a href="{{ home_path }}">← Back to Home</a>
+</div>
+<header>
+    <h1>{{ title | default(value="Untitled") }}</h1>
+    {% if date %}<div class="meta">{{ date | date(format="%B %d, %Y") }}</div>{% endif %}
+</header>
+<article>{{ content | safe }}</article>
+{% if tags %}
+<div class="tags">
+    {% for tag in tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+</div>
+{% endif %}
+{% endblock main %}

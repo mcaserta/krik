@@ -242,7 +242,7 @@ impl DevServer {
                     let _ = generator.generate_site();
                 }
 
-                // Conditionally inject live reload script
+                // Conditionally inject live reload script into generated HTML
                 if live_reload {
                     if let Err(e) = inject_live_reload_script(&output_dir, port) {
                         error!("❌ Error injecting live reload script: {}", e);
