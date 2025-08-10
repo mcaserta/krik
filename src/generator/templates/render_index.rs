@@ -22,7 +22,7 @@ pub fn generate_index(
     let mut context = Context::new();
     add_site_context(&mut context, site_config, i18n.default_language(), "index.html");
 
-    let site_description = format!("{} - Latest posts and articles", site_config.get_site_title());
+    let site_description = "Latest posts and articles".to_string();
     context.insert("site_description", &site_description);
 
     // Choose one document per post base path, prefer default language if available
