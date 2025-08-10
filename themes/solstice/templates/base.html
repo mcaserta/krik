@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="{{ lang | default(value="en") }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ site_title | default(value="Blog") }}{% endblock title %}</title>
+  <meta name="description" content="{% block description %}{{ site_description | default(value="") }}{% endblock description %}">
+
+  {% block head_extra %}{% endblock head_extra %}
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1f2937">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ assets_path }}/css/main.css">
+  <link rel="alternate" type="application/atom+xml" title="{{ site_title | default(value="Blog") }} - Feed" href="{{ feed_path }}">
+
+  <script>
+    // Initialize theme ASAP to avoid FOUC
+    (function() {
+      try {
+        var saved = localStorage.getItem('solstice-theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="{% block body_class %}{% endblock body_class %}">
+  <!-- Subtle gradient background -->
+  <div class="solstice-bg" aria-hidden="true"></div>
+
+  <div class="layout-container{% if toc %} has-toc{% endif %}">
+    <header class="topbar">
+      <a href="{{ home_path }}" class="brand">{{ site_title | default(value="Blog") }}</a>
+      <div class="controls">
+        {% block header_controls %}{% endblock header_controls %}
+        <button class="icon-btn hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon" aria-hidden="true">●</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">
+      <ul class="mobile-page-links">
+        {% for page in page_links %}
+        <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <aside class="sidebar" aria-label="Pages">
+      <ul class="page-links">
+        {% for page in page_links %}
+        <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    {% if toc %}
+    <aside class="toc-sidebar" aria-label="Table of contents">
+      <div class="toc">
+        <h2>Table of Contents</h2>
+        {{ toc | safe }}
+      </div>
+    </aside>
+    {% endif %}
+
+    <main class="main-content {% block main_class %}{% endblock main_class %}{% if toc %} with-toc{% endif %}" role="main">
+      {% block main %}{% endblock main %}
+    </main>
+  </div>
+
+  <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top" title="Back to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+    {% if available_translations %}
+    <script>
+        window.krikTranslations = {{ available_translations | json_encode() | safe }};
+    </script>
+    {% endif %}
+  <script src="{{ assets_path }}/js/main.js"></script>
+  <script src="{{ assets_path }}/js/prism-init.js"></script>
+  {% block scripts %}{% endblock scripts %}
+</body>
+</html>
+
+

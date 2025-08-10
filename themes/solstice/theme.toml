@@ -1,0 +1,15 @@
+name = "solstice"
+version = "1.0.0"
+description = "Solstice — a refined, impactful, responsive Krik theme with light/dark modes"
+author = "AI Assistant"
+
+[templates]
+page = "page"
+post = "post"
+index = "index"
+
+[features]
+dark_mode = true
+responsive = true
+animations = true
+

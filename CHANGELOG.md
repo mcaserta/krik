@@ -8,6 +8,25 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.20] - 2025-01-29
+
+### Added
+
+- 🎨 **Solstice Theme**: Added new modern dark theme with gradient backgrounds
+  and enhanced typography
+  - Beautiful dark-first design with light mode support
+  - Enhanced code syntax highlighting with JetBrains Mono font
+  - Smooth gradients and modern UI elements
+  - Responsive design with mobile-optimized navigation
+
+### Fixed
+
+- 🔧 **Footnote Return Links**: Fixed footnote return links functionality in
+  solstice theme
+  - Return links (↩) now properly navigate back to footnote references
+  - Smooth scrolling behavior matches default theme
+  - JavaScript properly creates reference IDs for bidirectional navigation
+
 ## [0.1.19] - 2025-01-29
 
 ### Fixed
