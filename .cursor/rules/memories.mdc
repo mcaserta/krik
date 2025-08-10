@@ -1,0 +1,15 @@
+---
+alwaysApply: false
+---
+
+### Workspace Memories
+
+- Theme switching: Prefer using the CLI flag `--theme` (or `-t`) to select a
+  theme instead of editing `content/site.toml`.
+- Git actions: Do not run `git add`/`git commit` automatically unless explicitly
+  instructed.
+- Site description: Avoid repeating the site title in the site description.
+- Use `cargo run --` to run krik instead of relying on `kk` on the system PATH
+- In order to use prittier on `.cursor/**/*.mdc` files, you need to pass the
+  `--parser markdown` option so the files are propertly recognized as markdown
+  files
