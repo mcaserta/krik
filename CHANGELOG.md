@@ -8,6 +8,35 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.17] - 2025-08-10
+
+### Added
+
+- 🎨 **Theme Configuration**: Added support for `theme` field in `site.toml`
+  - Configure themes directly in your site configuration file
+  - Example: `theme = "themes/custom"` in your `site.toml`
+
+### Fixed
+
+- 🔧 **Theme Resolution**: Fixed theme loading priority system with proper
+  override logic
+  - **Priority 1**: Command line `--theme` option (highest priority)
+  - **Priority 2**: `theme` field in `site.toml` configuration
+  - **Priority 3**: Default theme (`themes/default`) fallback
+  - Previously, themes specified in `site.toml` were completely ignored
+- 📝 **Logging**: Enhanced theme selection logging for better debugging
+  - Clear messages indicate which theme source is being used
+  - Verbose mode (`-v/--verbose`) shows theme resolution decisions
+
+### Changed
+
+- 🏗️ **Site Configuration**: Extended `SiteConfig` struct to include optional
+  `theme` field
+- 🎯 **CLI Commands**: Updated both `generate` and `server` commands to use
+  unified theme resolution
+- 🔍 **Error Handling**: Improved theme validation with context-specific error
+  messages
+
 ## [0.1.16] - 2025-08-09
 
 ### Changed

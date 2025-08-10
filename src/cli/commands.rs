@@ -4,11 +4,33 @@ use crate::server::DevServer;
 use crate::init::init_site;
 use crate::content::{create_post, create_page};
 use crate::lint::lint_content;
+use crate::site::SiteConfig;
 use crate::error::{KrikResult, KrikError, ServerError, ServerErrorKind, GenerationError, GenerationErrorKind};
 use crate::logging;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tracing::{info, warn, error, debug};
 use super::validate::{validate_directory, ensure_directory, normalize_path, validate_theme_dir, parse_port};
+
+/// Resolve theme path with priority: command line > site.toml > default
+fn resolve_theme_path(cli_theme: Option<&str>, source_dir: &Path) -> KrikResult<Option<PathBuf>> {
+    // Priority 1: Command line theme (if provided)
+    if let Some(theme_path) = cli_theme {
+        info!("Using command line theme: {}", theme_path);
+        return validate_theme_dir(Some(theme_path), "Validating --theme directory from command line");
+    }
+    
+    // Priority 2: site.toml theme (if provided)
+    if let Ok(site_config) = SiteConfig::load_from_path(source_dir) {
+        if let Some(theme_path) = &site_config.theme {
+            info!("Using theme from site.toml: {}", theme_path);
+            return validate_theme_dir(Some(theme_path.as_str()), "Validating theme directory from site.toml");
+        }
+    }
+    
+    // Priority 3: Default theme
+    info!("Using default theme: themes/default");
+    Ok(Some(PathBuf::from("themes/default")))
+}
 
 /// Handle the server subcommand
 pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
@@ -23,10 +45,13 @@ pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
         server_matches.get_one::<String>("output").map(|s| s.as_str()).unwrap_or("_site"),
         "Ensuring --output directory for server",
     )?;
-    let theme_dir = validate_theme_dir(
+    
+    // Resolve theme with priority: command line > site.toml > default
+    let theme_dir = resolve_theme_path(
         server_matches.get_one::<String>("theme").map(|s| s.as_str()),
-        "Validating --theme directory for server",
-    )?.or_else(|| Some(PathBuf::from("themes/default")));
+        &input_dir,
+    )?;
+    
     let port = parse_port(
         server_matches.get_one::<String>("port").map(|s| s.as_str()).unwrap_or("3000"),
         "Parsing --port value for server",
@@ -182,9 +207,11 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
         matches.get_one::<String>("output").map(|s| s.as_str()).unwrap_or("_site"),
         "Ensuring --output directory for generate",
     )?;
-    let theme_dir = super::validate::validate_theme_dir(
+    
+    // Resolve theme with priority: command line > site.toml > default
+    let theme_dir = resolve_theme_path(
         matches.get_one::<String>("theme").map(|s| s.as_str()),
-        "Validating --theme directory for generate",
+        &input_dir,
     )?;
 
     info!("Scanning files in: {}", input_dir.display());

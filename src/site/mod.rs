@@ -7,6 +7,7 @@ use crate::error::{KrikResult, KrikError, ConfigError, ConfigErrorKind};
 pub struct SiteConfig {
     pub title: Option<String>,
     pub base_url: Option<String>,
+    pub theme: Option<String>,
 }
 
 impl SiteConfig {
