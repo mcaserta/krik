@@ -1,6 +1,6 @@
 [package]
 name = "krik"
-version = "0.1.17"
+version = "0.1.19"
 edition = "2021"
 rust-version = "1.70"
 authors = ["Mirko Caserta", "Krik Contributors"]

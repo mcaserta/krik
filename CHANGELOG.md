@@ -8,6 +8,51 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.19] - 2025-01-29
+
+### Fixed
+
+- 🔧 **Language Switching**: Fixed regression in language switching
+  functionality
+  - Restored proper language switching behavior that was broken in recent
+    updates
+  - Improved stability and reliability of language navigation
+
+## [0.1.18] - 2025-08-10
+
+### Added
+
+- 🌐 **Language Selector Fix**: Fixed language selector to correctly navigate
+  between language variants of the same page
+  - Language selector now points to correct same-page variants (e.g., `cv.html`
+    ↔ `cv.it.html`)
+  - Previously always pointed to `index.*.html` files regardless of current page
+  - Works for both posts and pages with language variants
+  - Files without language variants correctly hide the language selector
+
+### Fixed
+
+- 🔄 **Development Server Language Variants**: Fixed incremental generation in
+  dev mode for language variant files
+  - When editing `welcome.it.md`, both `welcome.html` and `welcome.it.html` are
+    now properly regenerated
+  - Incremental builds now detect and regenerate all related language variants
+    automatically
+  - Added language variant detection logic to identify files sharing the same
+    base name
+  - Development server now maintains consistency across all language versions
+    during editing
+
+### Technical Improvements
+
+- Enhanced `generate_incremental_for_path()` with language variant awareness
+- Added `find_language_variants()` helper function for detecting related
+  language files
+- Improved template context to pass translation data to JavaScript via
+  `window.krikTranslations`
+- Updated `switchLanguage()` JavaScript function to use template-provided paths
+  instead of manual construction
+
 ## [0.1.17] - 2025-08-10
 
 ### Added
