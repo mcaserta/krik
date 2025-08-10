@@ -8,6 +8,18 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.21] - 2025-01-29
+
+### Added
+
+- 🎨 **Aurora Theme**: Added new elegant editorial theme with crisp typography
+  - Clean, editorial design focused on readability and content presentation
+  - Enhanced typography with improved spacing and font hierarchy
+  - Responsive design with mobile-optimized navigation
+  - Dark mode support with theme-aware color scheme
+  - Sidebar table of contents support
+  - Professional, blog-friendly aesthetic
+
 ## [0.1.20] - 2025-01-29
 
 ### Added
