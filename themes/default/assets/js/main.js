@@ -90,6 +90,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function switchLanguage(lang) {
+    // Use the translations data passed from the template if available
+    if (window.krikTranslations && window.krikTranslations.length > 0) {
+        const translation = window.krikTranslations.find(t => t.lang === lang);
+        if (translation && translation.path) {
+            window.location.href = translation.path;
+            return;
+        }
+    }
+    
+    // Fallback to the old behavior for compatibility
     const currentPath = window.location.pathname;
     const baseName = window.krikBaseName || 'index'; // Will be set by template
     const extension = '.html';

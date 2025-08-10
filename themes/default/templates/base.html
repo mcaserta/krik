@@ -63,6 +63,11 @@
         <span>↑</span>
     </button>
 
+    {% if available_translations %}
+    <script>
+        window.krikTranslations = {{ available_translations | json_encode() | safe }};
+    </script>
+    {% endif %}
     <script src="{{ assets_path }}/js/main.js"></script>
     <script src="{{ assets_path }}/js/prism-init.js"></script>
     {% block scripts %}{% endblock scripts %}

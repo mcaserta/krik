@@ -410,27 +410,37 @@ impl SiteGenerator {
                         let _ = std::fs::remove_file(output_path);
                     }
                 } else {
-                    // Render only the changed page
-                    if let Some(doc) = documents.iter().find(|d| d.file_path == relative_path) {
-                        debug!("re-rendering single page {}", relative_path);
-                        super::templates::generate_page(
-                            doc,
-                            &documents,
-                            &self.theme,
-                            &self.i18n,
-                            &self.site_config,
-                            &self.output_dir,
-                        )
-                        .map_err(|e| KrikError::Generation(crate::error::GenerationError {
-                            kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
-                                std::io::ErrorKind::Other,
-                                format!("Page generation failed: {e}"),
-                            )),
-                            context: "Incremental page generation".to_string(),
-                        }))?;
-                    } else {
+                    // Find all language variants for this document
+                    let variant_paths = self.find_language_variants(&relative_path);
+                    debug!("found {} language variants for {}: {:?}", variant_paths.len(), relative_path, variant_paths);
+                    
+                    // Render all language variants (including the changed one)
+                    let mut rendered_any = false;
+                    for variant_path in &variant_paths {
+                        if let Some(doc) = documents.iter().find(|d| d.file_path == *variant_path) {
+                            debug!("re-rendering language variant page {}", variant_path);
+                            super::templates::generate_page(
+                                doc,
+                                &documents,
+                                &self.theme,
+                                &self.i18n,
+                                &self.site_config,
+                                &self.output_dir,
+                            )
+                            .map_err(|e| KrikError::Generation(crate::error::GenerationError {
+                                kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
+                                    std::io::ErrorKind::Other,
+                                    format!("Page generation failed for {}: {e}", variant_path),
+                                )),
+                                context: "Incremental language variant page generation".to_string(),
+                            }))?;
+                            rendered_any = true;
+                        }
+                    }
+                    
+                    if !rendered_any {
                         debug!(
-                            "changed page {} not present in scanned documents; triggering full regeneration",
+                            "changed page {} and its variants not present in scanned documents; triggering full regeneration",
                             relative_path
                         );
                         // If not found, fall back to full regeneration
@@ -483,5 +493,69 @@ impl SiteGenerator {
         );
         // Default: fall back to full regeneration
         self.generate_site()
+    }
+
+    /// Find all documents that are language variants of the given document.
+    /// Language variants share the same base name but have different language extensions.
+    /// For example: "welcome.md", "welcome.it.md", "welcome.fr.md" are all variants.
+    fn find_language_variants(&self, target_path: &str) -> Vec<String> {
+        let mut variants = Vec::new();
+        
+        // Extract base name by removing language and extension
+        // Example: "pages/welcome.it.md" -> "pages/welcome"
+        let path_buf = std::path::PathBuf::from(target_path);
+        let parent = path_buf.parent().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
+        
+        if let Some(_filename) = path_buf.file_name().and_then(|n| n.to_str()) {
+            let base_name = if let Some(stem) = path_buf.file_stem().and_then(|s| s.to_str()) {
+                // Check if stem contains a language code (e.g., "welcome.it")
+                if let Some(dot_pos) = stem.rfind('.') {
+                    let potential_lang = &stem[dot_pos + 1..];
+                    // Check if it's a known language code
+                    if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"].contains(&potential_lang) {
+                        &stem[..dot_pos] // Remove language part
+                    } else {
+                        stem // No language code found
+                    }
+                } else {
+                    stem // No dots in stem
+                }
+            } else {
+                return variants;
+            };
+
+            // Find all documents with the same base name
+            for doc in &self.documents {
+                let doc_path_buf = std::path::PathBuf::from(&doc.file_path);
+                let doc_parent = doc_path_buf.parent().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
+                
+                // Must be in same directory
+                if doc_parent != parent {
+                    continue;
+                }
+                
+                if let Some(_doc_filename) = doc_path_buf.file_name().and_then(|n| n.to_str()) {
+                    if let Some(doc_stem) = doc_path_buf.file_stem().and_then(|s| s.to_str()) {
+                        let doc_base_name = if let Some(dot_pos) = doc_stem.rfind('.') {
+                            let potential_lang = &doc_stem[dot_pos + 1..];
+                            if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"].contains(&potential_lang) {
+                                &doc_stem[..dot_pos]
+                            } else {
+                                doc_stem
+                            }
+                        } else {
+                            doc_stem
+                        };
+                        
+                        // If base names match, this is a language variant
+                        if doc_base_name == base_name {
+                            variants.push(doc.file_path.clone());
+                        }
+                    }
+                }
+            }
+        }
+        
+        variants
     }
 }
