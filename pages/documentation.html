@@ -1,70 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation - Krik Demo Site</title>
-    <meta name="description" content="Krik Documentation This page provides comprehensive documentation for using Krik, the static site generator. Quick Start Installation From Crates.io (Recomme...">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation - Krik Demo Site</title>
+  <meta name="description" content="Krik Documentation This page provides comprehensive documentation for using Krik, the static site generator. Quick Start Installation From Crates.io (Recomme...">
 
-    
+  
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1f2937">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+
+  <script>
+    // Initialize theme ASAP to avoid FOUC
+    (function() {
+      try {
+        var saved = localStorage.getItem('solstice-theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body class="">
-    <div class="layout-container has-toc">
-        <nav class="top-nav">
-            <a href="../index.html" class="site-title">Krik Demo Site</a>
-            <div class="nav-controls">
-                
+  <!-- Subtle gradient background -->
+  <div class="solstice-bg" aria-hidden="true"></div>
 
-
-<a href="documentation.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
-    <span class="pdf-icon">📄</span>
-</a>
-
-
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                    <span class="hamburger-icon">☰</span>
-                </button>
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <span class="theme-icon">🌓</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Mobile dropdown menu -->
-        <div class="mobile-menu" id="mobile-menu">
-            <ul class="mobile-page-links">
-                
-                <li><a href="about.html">About Krik</a></li>
-                
-                <li><a href="contact.html">Contact</a></li>
-                
-                <li><a href="documentation.html">Documentation</a></li>
-                
-            </ul>
-        </div>
-
-        <aside class="sidebar">
-            <ul class="page-links">
-                
-                <li><a href="about.html">About Krik</a></li>
-                
-                <li><a href="contact.html">Contact</a></li>
-                
-                <li><a href="documentation.html">Documentation</a></li>
-                
-            </ul>
-        </aside>
-
+  <div class="layout-container has-toc">
+    <header class="topbar">
+      <a href="../index.html" class="brand">Krik Demo Site</a>
+      <div class="controls">
         
-        <aside class="toc-sidebar">
-            <div class="toc">
-                <h2>Table of Contents</h2>
-                <ul class="toc">
+
+
+  <a href="documentation.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">📄</a>
+
+
+        <button class="icon-btn hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon" aria-hidden="true">●</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">
+      <ul class="mobile-page-links">
+        
+        <li><a href="about.html">About Krik</a></li>
+        
+        <li><a href="contact.html">Contact</a></li>
+        
+        <li><a href="documentation.html">Documentation</a></li>
+        
+      </ul>
+    </nav>
+
+    <aside class="sidebar" aria-label="Pages">
+      <ul class="page-links">
+        
+        <li><a href="about.html">About Krik</a></li>
+        
+        <li><a href="contact.html">Contact</a></li>
+        
+        <li><a href="documentation.html">Documentation</a></li>
+        
+      </ul>
+    </aside>
+
+    
+    <aside class="toc-sidebar" aria-label="Table of contents">
+      <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul class="toc">
 <li><a href="#krik-documentation">Krik Documentation</a></li>
   <li><a href="#quick-start">Quick Start</a></li>
     <li><a href="#installation">Installation</a></li>
@@ -138,17 +155,23 @@
       <li><a href="#workflow-features">Workflow Features</a></li>
       <li><a href="#repository-structure">Repository Structure</a></li>
 </ul>
-            </div>
-        </aside>
-        
+      </div>
+    </aside>
+    
 
-        <main class="main-content ">
-            
-<header>
+    <main class="main-content  with-toc" role="main">
+      
+<article class="page">
+  <header class="page-header">
     <h1>Documentation</h1>
-    <div class="meta">August 10, 2025</div>
-</header>
-<article><h1 id="krik-documentation">Krik Documentation</h1>
+    
+    <div class="meta">
+      <span class="meta-item">August 10, 2025</span>
+      
+    </div>
+    
+  </header>
+  <div class="page-content"><h1 id="krik-documentation">Krik Documentation</h1>
 <p>This page provides comprehensive documentation for using Krik, the static site
 generator.</p>
 <h2 id="quick-start">Quick Start</h2>
@@ -710,19 +733,27 @@ crates.io</li>
 <hr />
 <p>This documentation covers all major features of Krik. For more examples, check
 out the other posts and pages in this demo site!</p>
+</div>
 </article>
 
-        </main>
-    </div>
+    </main>
+  </div>
 
-    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
-        <span>↑</span>
-    </button>
+  <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top" title="Back to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
 
     
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/prism-init.js"></script>
-    
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/prism-init.js"></script>
+  
+<script>
+  // Used by switchLanguage in theme JS
+  window.krikBaseName = "documentation";
+</script>
+
 </body>
 </html>
 

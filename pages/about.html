@@ -1,88 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Krik - Krik Demo Site</title>
-    <meta name="description" content="About Krik Krik is a fast, modern static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with built-in deve...">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Krik - Krik Demo Site</title>
+  <meta name="description" content="About Krik Krik is a fast, modern static site generator written in Rust that transforms Markdown files into beautiful, responsive websites with built-in deve...">
+
+  
+
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1f2937">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+
+  <script>
+    // Initialize theme ASAP to avoid FOUC
+    (function() {
+      try {
+        var saved = localStorage.getItem('solstice-theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="">
+  <!-- Subtle gradient background -->
+  <div class="solstice-bg" aria-hidden="true"></div>
+
+  <div class="layout-container">
+    <header class="topbar">
+      <a href="../index.html" class="brand">Krik Demo Site</a>
+      <div class="controls">
+        
+
+  <div class="language-selector">
+    <select onchange="switchLanguage(this.value)" aria-label="Change language">
+      
+      <option value="en" selected>English</option>
+      
+      <option value="it" >Italiano</option>
+      
+    </select>
+  </div>
+
+
+  <a href="about.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">📄</a>
+
+
+        <button class="icon-btn hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon" aria-hidden="true">●</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">
+      <ul class="mobile-page-links">
+        
+        <li><a href="about.html">About Krik</a></li>
+        
+        <li><a href="contact.html">Contact</a></li>
+        
+        <li><a href="documentation.html">Documentation</a></li>
+        
+      </ul>
+    </nav>
+
+    <aside class="sidebar" aria-label="Pages">
+      <ul class="page-links">
+        
+        <li><a href="about.html">About Krik</a></li>
+        
+        <li><a href="contact.html">Contact</a></li>
+        
+        <li><a href="documentation.html">Documentation</a></li>
+        
+      </ul>
+    </aside>
 
     
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
-</head>
-<body class="">
-    <div class="layout-container">
-        <nav class="top-nav">
-            <a href="../index.html" class="site-title">Krik Demo Site</a>
-            <div class="nav-controls">
-                
-
-<div class="language-selector">
-    <select onchange="switchLanguage(this.value)">
-        
-        <option value="en" selected>
-            English
-        </option>
-        
-        <option value="it" >
-            Italiano
-        </option>
-        
-    </select>
-    </div>
-
-
-<a href="about.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
-    <span class="pdf-icon">📄</span>
-</a>
-
-
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                    <span class="hamburger-icon">☰</span>
-                </button>
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <span class="theme-icon">🌓</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Mobile dropdown menu -->
-        <div class="mobile-menu" id="mobile-menu">
-            <ul class="mobile-page-links">
-                
-                <li><a href="about.html">About Krik</a></li>
-                
-                <li><a href="contact.html">Contact</a></li>
-                
-                <li><a href="documentation.html">Documentation</a></li>
-                
-            </ul>
-        </div>
-
-        <aside class="sidebar">
-            <ul class="page-links">
-                
-                <li><a href="about.html">About Krik</a></li>
-                
-                <li><a href="contact.html">Contact</a></li>
-                
-                <li><a href="documentation.html">Documentation</a></li>
-                
-            </ul>
-        </aside>
-
-        
-
-        <main class="main-content ">
-            
-<header>
+    <main class="main-content " role="main">
+      
+<article class="page">
+  <header class="page-header">
     <h1>About Krik</h1>
-    <div class="meta">August 10, 2025</div>
-</header>
-<article>
+    
+    <div class="meta">
+      <span class="meta-item">August 10, 2025</span>
+      
+    </div>
+    
+  </header>
+  <div class="page-content">
 <p><img src="../images/krik.png" alt="Krik logo" /></p>
 <p><strong>Krik</strong> is a fast, modern static site generator written in Rust that transforms
 Markdown files into beautiful, responsive websites with built-in development
@@ -220,23 +239,31 @@ existing discussions</li>
 <a href="../posts/getting-started-guide.html">Getting Started Guide</a> for a complete
 tutorial, or explore the <a href="documentation.html">Documentation</a> for detailed
 feature references!</p>
+</div>
 </article>
 
-        </main>
-    </div>
+    </main>
+  </div>
 
-    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
-        <span>↑</span>
-    </button>
+  <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top" title="Back to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
 
     
     <script>
         window.krikTranslations = [{"is_current":"true","lang":"en","lang_name":"English","path":"about.html"},{"is_current":"false","lang":"it","lang_name":"Italiano","path":"about.it.html"}];
     </script>
     
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/prism-init.js"></script>
-    
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/prism-init.js"></script>
+  
+<script>
+  // Used by switchLanguage in theme JS
+  window.krikBaseName = "about";
+</script>
+
 </body>
 </html>
 
