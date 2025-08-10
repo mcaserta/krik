@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title | default(value="Untitled") }} - {{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ description | default(value="") }}{% endblock description %}
+
+{% block header_controls %}
+  {% if available_translations and available_translations | length > 1 %}
+  <div class="language-selector">
+    <select onchange="switchLanguage(this.value)" aria-label="Change language">
+      {% for translation in available_translations %}
+      <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>{{ translation.lang_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  {% if pdf %}
+  <a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">📄</a>
+  {% endif %}
+{% endblock header_controls %}
+
+{% block main %}
+  <article class="page">
+    <header class="page-header">
+      <h1>{{ title | default(value="Untitled") }}</h1>
+      {% if date or author %}
+      <div class="meta">
+        {% if date %}<span class="meta-item">{{ date | date(format="%B %d, %Y") }}</span>{% endif %}
+        {% if author %}<span class="meta-item">{{ author }}</span>{% endif %}
+      </div>
+      {% endif %}
+    </header>
+    <div class="page-content">{{ content | safe }}</div>
+  </article>
+{% endblock main %}
+
+{% block scripts %}
+<script>
+  window.krikBaseName = "{{ file_path
+    | split(pat="/")
+    | last
+    | replace(from=".md", to="")
+    | replace(from=".it", to="")
+    | replace(from=".es", to="")
+  }}";
+  </script>
+{% endblock scripts %}
+
+

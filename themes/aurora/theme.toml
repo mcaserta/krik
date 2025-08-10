@@ -1,0 +1,16 @@
+name = "aurora"
+version = "1.0.0"
+description = "Aurora — a crisp, editorial, responsive Krik theme with elegant typography"
+author = "AI Assistant"
+
+[templates]
+page = "page"
+post = "post"
+index = "index"
+
+[features]
+dark_mode = true
+responsive = true
+toc_sidebar = true
+mobile_menu = true
+

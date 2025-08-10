@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title | default(value="Untitled") }} - {{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ description | default(value=excerpt) | default(value="") }}{% endblock description %}
+
+{% block header_controls %}
+  {% if available_translations and available_translations | length > 1 %}
+  <div class="language-selector">
+    <select onchange="switchLanguage(this.value)" aria-label="Change language">
+      {% for translation in available_translations %}
+      <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>{{ translation.lang_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  {% if pdf %}
+  <a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">📄</a>
+  {% endif %}
+{% endblock header_controls %}
+
+{% block main %}
+  <div class="back-link"><a href="{{ home_path }}">← Back to Home</a></div>
+  <article class="post">
+    <header class="post-header">
+      <h1>{{ title | default(value="Untitled") }}</h1>
+      <div class="post-meta">
+        {% if date %}<time datetime="{{ date | date(format="%Y-%m-%d") }}">{{ date | date(format="%B %d, %Y") }}</time>{% endif %}
+        {% if reading_time %}<span>{{ reading_time }} min read</span>{% endif %}
+        {% if author %}<span>{{ author }}</span>{% endif %}
+      </div>
+    </header>
+    <div class="post-content">{{ content | safe }}</div>
+    {% if tags %}
+    <footer class="post-footer">
+      <div class="post-tags">
+        {% for tag in tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+      </div>
+    </footer>
+    {% endif %}
+  </article>
+{% endblock main %}
+
+{% block scripts %}
+<script>
+  window.krikBaseName = "{{ file_path
+    | split(pat="/")
+    | last
+    | replace(from=".md", to="")
+    | replace(from=".it", to="")
+    | replace(from=".es", to="")
+  }}";
+  </script>
+{% endblock scripts %}
+
+
