@@ -573,7 +573,7 @@ p {
   backdrop-filter: blur(20px) saturate(180%);
   border: var(--border-brutal);
   border-radius: var(--border-radius-lg);
-  padding: var(--space-3xl);
+  padding: var(--space-2xl) var(--space-xl); /* reduce horizontal padding on desktop */
   box-shadow: var(--shadow-floating);
   position: relative;
 }
@@ -646,6 +646,37 @@ p {
   border: var(--border-brutal);
   box-shadow: var(--shadow-floating);
   margin: var(--space-2xl) 0;
+}
+
+/* Tables */
+.post-content table,
+.page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-lg) 0;
+  font-size: 0.95rem;
+}
+
+.post-content th,
+.post-content td,
+.page-content th,
+.page-content td {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+[data-theme="dark"] .post-content th,
+[data-theme="dark"] .post-content td,
+[data-theme="dark"] .page-content th,
+[data-theme="dark"] .page-content td {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.post-content th,
+.page-content th {
+  background: var(--color-bg-glass-strong);
+  font-weight: 800;
 }
 
 code {
@@ -734,17 +765,26 @@ blockquote::before {
 
 .post-content ol,
 .page-content ol {
-  counter-reset: list-counter;
+  list-style-type: decimal;
 }
 
-.post-content ol li,
-.page-content ol li {
-  counter-increment: list-counter;
+/* Explicitly reset ordered list counters at each level */
+.post-content ol,
+.page-content ol {
+  counter-reset: list-item;
 }
 
-.post-content ol li::before,
-.page-content ol li::before {
-  content: none;
+.post-content ol ol,
+.page-content ol ol {
+  counter-reset: list-item;
+}
+
+/* Fallback for lists rendered directly under article */
+.main-content article ol {
+  counter-reset: list-item;
+}
+.main-content article ol ol {
+  counter-reset: list-item;
 }
 
 /* Native markers styling */
