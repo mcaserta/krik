@@ -27,6 +27,11 @@
 </a>
 
 
+                
+                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
+                    <span class="toc-label">TOC</span>
+                </button>
+                
                 <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
@@ -62,7 +67,7 @@
         </aside>
 
         
-        <aside class="toc-sidebar">
+        <aside class="toc-sidebar" id="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">

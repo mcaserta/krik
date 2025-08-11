@@ -231,6 +231,9 @@ p {
   cursor: pointer;
   transition: all 0.2s var(--transition-bounce);
   position: relative;
+  color: var(--color-text-primary); /* ensure readable text in dark mode */
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .theme-toggle:hover, .hamburger-menu:hover {
@@ -247,6 +250,16 @@ p {
 /* Mobile menu should be hidden by default */
 .mobile-menu {
   display: none;
+  position: fixed;
+  top: calc(var(--navbar-height, 80px) + var(--space-sm));
+  left: 0;
+  right: 0;
+  background: var(--color-bg-glass-strong);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: var(--shadow-floating);
+  z-index: 1002; /* above sticky nav (1000) */
+  padding: max(env(safe-area-inset-top), var(--space-md)) var(--space-lg) var(--space-md);
 }
 
 .mobile-page-links {
@@ -257,10 +270,32 @@ p {
 
 .mobile-page-links li {
   list-style: none;
+  margin-bottom: var(--space-xs);
 }
 
-@media (max-width: 768px) {
+.mobile-page-links a {
+  display: block;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-text-primary);
+  border-radius: var(--border-radius);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 1200px) {
   .hamburger-menu {
+    display: block;
+  }
+  .toc-toggle {
+    display: block; /* match hamburger visibility */
+  }
+  /* Only show dropdown on mobile when toggled */
+  .mobile-menu.show {
     display: block;
   }
 }
@@ -1008,6 +1043,35 @@ blockquote::before {
   flex-wrap: wrap;
 }
 
+.toc-toggle {
+  display: none; /* hidden by default on wide screens */
+  background: var(--color-bg-primary);
+  border: var(--border-brutal);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s var(--transition-bounce);
+  color: var(--color-text-primary); /* ensure readable text in dark mode */
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.toc-toggle:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: var(--shadow-brutal);
+  background: var(--color-accent-secondary);
+  color: var(--color-bg-primary);
+}
+
+@media (max-width: 1200px) {
+  .toc-toggle {
+    display: inline-block; /* show TOC toggle on tablets/phones */
+  }
+}
+
 /* Language pills */
 .lang-switch {
   display: flex;
@@ -1104,13 +1168,26 @@ blockquote::before {
     margin-left: 0;
   }
   
+  /* Hide TOC panel by default on smaller screens; shown via toggle */
   .toc-sidebar {
-    display: none; /* Hide TOC on smaller screens */
+    display: none;
   }
-  
-  .has-toc .main-content {
-    margin-right: 0; /* Remove right margin on smaller screens */
+  .toc-sidebar.show {
+    display: block;
+    position: fixed;
+    top: calc(var(--navbar-height, 80px) + var(--space-sm));
+    right: 0;
+    left: auto;
+    bottom: 0;
+    width: min(90vw, 320px);
+    background: var(--color-bg-glass);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: var(--shadow-floating);
+    z-index: 1002;
+    padding: var(--space-lg);
   }
+  .has-toc .main-content { margin-right: 0; }
 }
 
 @media (max-width: 768px) {
