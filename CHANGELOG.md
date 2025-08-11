@@ -8,6 +8,22 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.22] - 2025-01-11
+
+### Added
+
+- 📖 **CONTRIBUTING.md**: Added comprehensive contribution guidelines
+  - Detailed coding standards and Rust style guidelines
+  - Complete testing strategy with unit, integration, and smoke tests
+  - Step-by-step release process documentation
+  - Development environment setup instructions
+  - Pull request and code review guidelines
+- 🎨 **Onyx Theme**: Enhanced mobile responsiveness and fixed content width
+  issues
+  - Improved mobile navigation and responsive design
+  - Fixed content width constraints for better readability
+  - Enhanced theme stability and cross-device compatibility
+
 ## [0.1.21] - 2025-01-29
 
 ### Added
