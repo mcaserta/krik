@@ -1,97 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Theme System Demo - Krik Demo Site</title>
-  <meta name="description" content="Theme System Demo This post showcases Krik's powerful theme system with automatic light/dark mode detection and smooth transitions. Automatic Theme Detection...">
-
-  
-
-  <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#1f2937">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="../assets/css/main.css">
-  <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
-
-  <script>
-    // Initialize theme ASAP to avoid FOUC
-    (function() {
-      try {
-        var saved = localStorage.getItem('solstice-theme');
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var theme = saved || (prefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (e) {}
-    })();
-  </script>
-</head>
-<body class="">
-  <!-- Subtle gradient background -->
-  <div class="solstice-bg" aria-hidden="true"></div>
-
-  <div class="layout-container">
-    <header class="topbar">
-      <a href="../index.html" class="brand">Krik Demo Site</a>
-      <div class="controls">
-        
-
-
-
-        <button class="icon-btn hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
-          <span class="theme-icon" aria-hidden="true">●</span>
-        </button>
-      </div>
-    </header>
-
-    <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">
-      <ul class="mobile-page-links">
-        
-        <li><a href="../pages/about.html">About Krik</a></li>
-        
-        <li><a href="../pages/contact.html">Contact</a></li>
-        
-        <li><a href="../pages/documentation.html">Documentation</a></li>
-        
-      </ul>
-    </nav>
-
-    <aside class="sidebar" aria-label="Pages">
-      <ul class="page-links">
-        
-        <li><a href="../pages/about.html">About Krik</a></li>
-        
-        <li><a href="../pages/contact.html">Contact</a></li>
-        
-        <li><a href="../pages/documentation.html">Documentation</a></li>
-        
-      </ul>
-    </aside>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme System Demo - Krik Demo Site</title>
+    <meta name="description" content="Theme System Demo This post showcases Krik's powerful theme system with automatic light/dark mode detection and smooth transitions. Automatic Theme Detection...">
 
     
 
-    <main class="main-content " role="main">
-      
-<div class="back-link"><a href="../index.html">← Back to Home</a></div>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
+</head>
+<body class="">
+    <div class="layout-container">
+        <nav class="top-nav">
+            <a href="../index.html" class="site-title">Krik Demo Site</a>
+            <div class="nav-controls">
+                
 
-<article class="post">
-  <header class="post-header">
-    <h1>Theme System Demo</h1>
-    <div class="post-meta">
-      <time datetime="2024-01-18">January 18, 2024</time>
-      
-      
+
+
+                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../pages/contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </div>
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                
+                <li><a href="../pages/about.html">About Krik</a></li>
+                
+                <li><a href="../pages/contact.html">Contact</a></li>
+                
+                <li><a href="../pages/documentation.html">Documentation</a></li>
+                
+            </ul>
+        </aside>
+
+        
+
+        <main class="main-content ">
+            
+<div class="back-link">
+    <a href="../index.html">← Back to Home</a>
     </div>
-  </header>
-
-  <div class="post-content">
+<article class="post-article">
+    <div class="post-header">
+        <h1 class="post-title">Theme System Demo</h1>
+        <div class="meta">January 18, 2024</div>
+    </div>
+    <div class="post-content">
 <p>This post showcases Krik's powerful theme system with automatic light/dark mode
 detection and smooth transitions.</p>
 <h2>Automatic Theme Detection</h2>
@@ -161,34 +139,24 @@ detection and smooth transitions.</p>
 <p>Try switching between light and dark modes to see the smooth transitions in
 action!</p>
 </div>
-
-  
-  <footer class="post-footer">
+    
     <div class="post-tags">
-      <span class="tag"># themes</span><span class="tag"># design</span><span class="tag"># css</span>
+        <span class="tag">themes</span><span class="tag">design</span><span class="tag">css</span>
     </div>
-  </footer>
-  
-</article>
+    
+    </article>
 
-    </main>
-  </div>
+        </main>
+    </div>
 
-  <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top" title="Back to top">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </button>
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
 
     
-  <script src="../assets/js/main.js"></script>
-  <script src="../assets/js/prism-init.js"></script>
-  
-<script>
-  // Used by switchLanguage in theme JS
-  window.krikBaseName = "theme-demo";
-</script>
-
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/prism-init.js"></script>
+    
 </body>
 </html>
 
