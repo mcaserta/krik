@@ -1,0 +1,9 @@
+name = "Onyx"
+description = "A professional, typography-focused theme with modern design, great readability, and comprehensive feature support for Krik static sites."
+version = "1.0.0"
+author = "Claude"
+
+[templates]
+page = "page"
+post = "post"
+index = "index"
