@@ -703,25 +703,7 @@ blockquote::before {
   list-style-position: inside; /* Marker aligned with content left edge */
 }
 
-/* Increase specificity to ensure rules apply within articles */
-.post-article .post-content ul,
-.post-article .post-content ol,
-.page-article .page-content ul,
-.page-article .page-content ol {
-  margin: var(--space-md) 0;
-  padding-left: 0;
-  list-style-position: inside;
-}
-
-/* Fallback if wrappers are missing: style lists directly under articles */
-.post-article ul,
-.post-article ol,
-.page-article ul,
-.page-article ol {
-  margin: var(--space-md) 0;
-  padding-left: 0;
-  list-style-position: inside;
-}
+/* Lists inside post/page content use native markers aligned to content edge */
 
 .post-content ul li,
 .post-content ol li,
@@ -733,17 +715,7 @@ blockquote::before {
   text-indent: calc(-1 * var(--space-lg)); /* keep marker at content left edge */
 }
 
-.post-article .post-content li,
-.page-article .page-content li {
-  padding-left: var(--space-lg);
-  text-indent: calc(-1 * var(--space-lg));
-}
-
-.post-article li,
-.page-article li {
-  padding-left: var(--space-lg);
-  text-indent: calc(-1 * var(--space-lg));
-}
+/* Indentation for list items */
 
 .post-content ul li::before,
 .page-content ul li::before {
@@ -777,9 +749,7 @@ blockquote::before {
 
 /* Native markers styling */
 .post-content li::marker,
-.page-content li::marker,
-.post-article .post-content li::marker,
-.page-article .page-content li::marker {
+.page-content li::marker {
   color: var(--color-accent-primary);
   font-weight: 900;
   font-family: var(--font-display);
@@ -793,18 +763,12 @@ blockquote::before {
 }
 
 .post-content ol li::marker,
-.page-content ol li::marker,
-.post-article .post-content ol li::marker,
-.page-article .page-content ol li::marker {
+.page-content ol li::marker {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
-.post-article ol li::marker,
-.page-article ol li::marker {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-}
+/* (Removed duplicate article marker rules) */
 
 /* Nested lists */
 .post-content ul ul,
