@@ -20,6 +20,11 @@
             <a href="{{ home_path }}" class="site-title">{{ site_title | default(value="Blog") }}</a>
             <div class="nav-controls">
                 {% block header_controls %}{% endblock header_controls %}
+                {% if toc %}
+                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
+                    <span class="toc-label">TOC</span>
+                </button>
+                {% endif %}
                 <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
@@ -47,7 +52,7 @@
         </aside>
 
         {% if toc %}
-        <aside class="toc-sidebar">
+        <aside class="toc-sidebar" id="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 {{ toc | safe }}

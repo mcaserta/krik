@@ -175,6 +175,14 @@ function toggleMobileMenu() {
     }
 }
 
+// TOC toggle for smaller screens
+function toggleToc() {
+    const tocSidebar = document.getElementById('toc-sidebar');
+    if (tocSidebar) {
+        tocSidebar.classList.toggle('show');
+    }
+}
+
 // Close mobile menu when clicking outside or on a link
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenu = document.getElementById('mobile-menu');
@@ -203,6 +211,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
+
+// Close TOC panel after selecting a link on mobile/tablet
+document.addEventListener('DOMContentLoaded', function() {
+    const tocSidebar = document.getElementById('toc-sidebar');
+    if (!tocSidebar) return;
+
+    const tocLinks = tocSidebar.querySelectorAll('a[href]');
+    tocLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            // Only auto-close at the same breakpoint as the hamburger visibility
+            if (window.matchMedia('(max-width: 1200px)').matches) {
+                tocSidebar.classList.remove('show');
+            }
+        });
+    });
 });
 
 // Scroll to top functionality
