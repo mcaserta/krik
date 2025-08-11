@@ -49,7 +49,7 @@
 
 - [ ] Batch template context creation to minimize allocs for large sites;
       evaluate small-object reuse where safe
-- [ ] avoid redundant stat calls in asset copying
+- [x] avoid redundant stat calls in asset copying
 
 - ### 🧼 Code quality & API
 - [x] Introduce `Theme::builder()` to encapsulate defaults, auto-escape, reload
@@ -61,7 +61,7 @@
 
 ### 📚 Docs & DX
 
-- [ ] Add CONTRIBUTING.md with coding standards, testing strategy, and release
+- [x] Add CONTRIBUTING.md with coding standards, testing strategy, and release
       steps
 
 ### 🚀 Release readiness
