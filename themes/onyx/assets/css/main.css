@@ -648,6 +648,37 @@ p {
   margin: var(--space-2xl) 0;
 }
 
+/* Tables */
+.post-content table,
+.page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-lg) 0;
+  font-size: 0.95rem;
+}
+
+.post-content th,
+.post-content td,
+.page-content th,
+.page-content td {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+[data-theme="dark"] .post-content th,
+[data-theme="dark"] .post-content td,
+[data-theme="dark"] .page-content th,
+[data-theme="dark"] .page-content td {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.post-content th,
+.page-content th {
+  background: var(--color-bg-glass-strong);
+  font-weight: 800;
+}
+
 code {
   font-family: var(--font-mono);
   background: var(--color-accent-primary);
