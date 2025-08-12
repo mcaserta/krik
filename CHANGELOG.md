@@ -8,6 +8,47 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.23] - 2025-08-12
+
+### Added
+
+- 🔗 **Link Rot Scanning**: New `--check-links` option for lint command
+  - Parallel HTTP link validation with up to 10 concurrent requests
+  - Smart browser header simulation to avoid bot detection (fixes 403 errors)
+  - Comprehensive logging with real-time progress tracking
+  - Support for both HTTP and HTTPS links with redirect following
+  - Detailed error reporting showing file paths and line numbers
+
+- 📄 **HTML Report Generation**: New `--create-report` option for lint command
+  - Professional HTML reports with responsive design
+  - ISO 8601 timestamp format in filenames
+    (`krik-report-YYYY-MM-DDTHH-MM-SSZ.html`)
+  - Beautiful gradient headers and color-coded status indicators
+  - Summary dashboard with files scanned, errors, warnings, and broken links
+  - Detailed sections for errors, warnings, and broken links with syntax
+    highlighting
+
+### Changed
+
+- 🏗️ **Modular Architecture**: Refactored lint module for better maintainability
+  - Split 866-line `src/lint.rs` into focused modules:
+    - `lint/core.rs` (345 lines) - Core linting functionality
+    - `lint/link_checker.rs` (217 lines) - HTTP link validation
+    - `lint/report_generator.rs` (347 lines) - HTML report generation
+  - Maintained full backward compatibility with existing APIs
+  - Improved code organization and separation of concerns
+
+- ⚡ **Performance Improvements**:
+  - Link checking now ~8x faster with parallel processing
+  - Reduced scan time from ~17 seconds to ~2 seconds for typical content
+
+### Fixed
+
+- 🛡️ **HTTP 403 Prevention**: Added realistic browser headers to avoid bot
+  detection
+- 📁 **Git Ignore**: Added `krik-report-*.html` to `.gitignore` to prevent
+  committing generated reports
+
 ## [0.1.22] - 2025-01-11
 
 ### Added
