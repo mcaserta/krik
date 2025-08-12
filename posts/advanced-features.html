@@ -89,6 +89,13 @@
   <li><a href="#performance-considerations">Performance Considerations</a></li>
     <li><a href="#build-performance">Build Performance</a></li>
     <li><a href="#runtime-performance">Runtime Performance</a></li>
+  <li><a href="#content-quality-assurance">Content Quality Assurance</a></li>
+    <li><a href="#link-rot-scanning">Link Rot Scanning</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#example-output">Example Output</a></li>
+    <li><a href="#html-report-generation">HTML Report Generation</a></li>
+      <li><a href="#report-features">Report Features</a></li>
+      <li><a href="#use-cases">Use Cases</a></li>
   <li><a href="#accessibility-features">Accessibility Features</a></li>
     <li><a href="#semantic-structure">Semantic Structure</a></li>
     <li><a href="#interactive-elements">Interactive Elements</a></li>
@@ -290,6 +297,53 @@ Crawl-delay: 1
 <li><strong>Progressive Enhancement</strong>: JavaScript enhances but isn’t required</li>
 <li><strong>Responsive Images</strong>: Proper sizing and format recommendations</li>
 <li><strong>Static Assets</strong>: Everything is static, no server-side processing</li>
+</ul>
+<h2 id="content-quality-assurance">Content Quality Assurance</h2>
+<p>Krik includes powerful built-in tools for maintaining content quality:</p>
+<h3 id="link-rot-scanning">Link Rot Scanning</h3>
+<p>Prevent broken links with the new link checking feature:</p>
+<pre><code class="language-bash">kk lint --check-links
+</code></pre>
+<h4 id="features">Features</h4>
+<ul>
+<li><strong>Parallel Processing</strong>: Checks up to 10 links simultaneously for fast
+scanning</li>
+<li><strong>Smart Detection</strong>: Bypasses bot detection with realistic browser headers</li>
+<li><strong>Comprehensive Reporting</strong>: Shows file paths, line numbers, and error details</li>
+<li><strong>Performance</strong>: ~8x faster than sequential checking (2 seconds vs 17 seconds)</li>
+</ul>
+<h4 id="example-output">Example Output</h4>
+<pre><code>🔗 Checking links for validity...
+Found 10 links to check across all files
+Starting parallel link validation (max 10 concurrent requests)...
+✅ Link OK: https://github.com/mcaserta/krik
+✅ Link OK: https://www.rust-lang.org/
+❌ BROKEN: https://example-broken.com from file.md:42 - HTTP 404: Not Found
+Link checking completed. 9 working, 1 broken, 10 total
+</code></pre>
+<h3 id="html-report-generation">HTML Report Generation</h3>
+<p>Generate professional reports for content auditing:</p>
+<pre><code class="language-bash">kk lint --create-report
+kk lint --check-links --create-report  # Include link validation
+</code></pre>
+<h4 id="report-features">Report Features</h4>
+<ul>
+<li><strong>Professional Design</strong>: Beautiful, responsive HTML with gradient headers</li>
+<li><strong>ISO 8601 Timestamps</strong>: Filenames like
+<code>krik-report-2025-08-12T19-22-28Z.html</code></li>
+<li><strong>Visual Indicators</strong>: Color-coded status badges (✅ SUCCESS, ⚠️ WARNING, ❌
+ERROR)</li>
+<li><strong>Summary Dashboard</strong>: Overview cards showing files scanned, errors, warnings,
+broken links</li>
+<li><strong>Detailed Sections</strong>: Organized display of all issues with syntax
+highlighting</li>
+</ul>
+<h4 id="use-cases">Use Cases</h4>
+<ul>
+<li><strong>CI/CD Integration</strong>: Automated quality checks in build pipelines</li>
+<li><strong>Content Audits</strong>: Regular reviews of site quality and link health</li>
+<li><strong>Team Reports</strong>: Share quality metrics with content teams</li>
+<li><strong>Historical Tracking</strong>: Archive reports for trend analysis</li>
 </ul>
 <h2 id="accessibility-features">Accessibility Features</h2>
 <p>Krik generates accessible HTML by default:</p>
