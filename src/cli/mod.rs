@@ -143,6 +143,18 @@ impl KrikCli {
                     .help("Treat warnings as errors (non-zero exit on warnings)")
                     .action(clap::ArgAction::SetTrue),
             )
+            .arg(
+                Arg::new("check-links")
+                    .long("check-links")
+                    .help("Check for broken links in markdown files")
+                    .action(clap::ArgAction::SetTrue),
+            )
+            .arg(
+                Arg::new("create-report")
+                    .long("create-report")
+                    .help("Generate HTML report file (krik-report-TIMESTAMP.html)")
+                    .action(clap::ArgAction::SetTrue),
+            )
     }
 
     /// Create the input directory argument
@@ -195,7 +207,7 @@ impl KrikCli {
             Some(("init", init_matches)) => commands::handle_init(init_matches),
             Some(("post", post_matches)) => commands::handle_post(post_matches),
             Some(("page", page_matches)) => commands::handle_page(page_matches),
-            Some(("lint", lint_matches)) => commands::handle_lint(lint_matches),
+            Some(("lint", lint_matches)) => commands::handle_lint(lint_matches).await,
             _ => commands::handle_generate(&self.matches),
         }
     }

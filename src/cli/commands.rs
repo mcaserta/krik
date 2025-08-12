@@ -3,7 +3,7 @@ use crate::generator::SiteGenerator;
 use crate::server::DevServer;
 use crate::init::init_site;
 use crate::content::{create_post, create_page};
-use crate::lint::lint_content;
+use crate::lint::{lint_content, lint_content_with_links, generate_html_report};
 use crate::site::SiteConfig;
 use crate::error::{KrikResult, KrikError, ServerError, ServerErrorKind, GenerationError, GenerationErrorKind};
 use crate::logging;
@@ -142,7 +142,7 @@ pub fn handle_page(page_matches: &ArgMatches) -> KrikResult<()> {
 }
 
 /// Handle the lint subcommand
-pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
+pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("lint");
     let _enter = _span.enter();
     
@@ -151,17 +151,38 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
         "Validating --input directory for lint",
     )?;
     let strict = lint_matches.get_flag("strict");
+    let check_links = lint_matches.get_flag("check-links");
+    let create_report = lint_matches.get_flag("create-report");
     let _verbose = lint_matches.get_flag("verbose");
 
     info!("🔎 Linting content in: {}", input_dir.display());
     debug!("Strict mode: {}", strict);
+    debug!("Check links: {}", check_links);
+    debug!("Create report: {}", create_report);
     debug!("Starting content validation...");
     debug!("Verbose logging enabled");
 
-    let report = lint_content(&input_dir)?;
+    let report = if check_links {
+        info!("🔗 Checking links for validity...");
+        lint_content_with_links(&input_dir).await?
+    } else {
+        lint_content(&input_dir)?
+    };
 
     info!("Scanned {} file(s)", report.files_scanned);
     debug!("Validation completed successfully");
+
+    // Generate HTML report if requested
+    if create_report {
+        match generate_html_report(&report, check_links) {
+            Ok(filename) => {
+                info!("📄 HTML report generated: {}", filename);
+            }
+            Err(e) => {
+                warn!("Failed to generate HTML report: {}", e);
+            }
+        }
+    }
 
     if !report.warnings.is_empty() {
         warn!("Found {} warning(s):", report.warnings.len());
@@ -170,10 +191,29 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
         }
     }
 
-    if !report.errors.is_empty() || (strict && !report.warnings.is_empty()) {
-        error!("Found {} error(s):", report.errors.len());
-        for e in &report.errors {
-            error!("  - {}", e);
+    // Display broken links if any were found
+    if !report.broken_links.is_empty() {
+        error!("Found {} broken link(s):", report.broken_links.len());
+        for broken_link in &report.broken_links {
+            error!("  - {}:{} - {} ({})", 
+                broken_link.file_path.display(), 
+                broken_link.line_number, 
+                broken_link.url, 
+                broken_link.error
+            );
+        }
+    }
+
+    let has_failures = !report.errors.is_empty() 
+        || !report.broken_links.is_empty() 
+        || (strict && !report.warnings.is_empty());
+
+    if has_failures {
+        if !report.errors.is_empty() {
+            error!("Found {} error(s):", report.errors.len());
+            for e in &report.errors {
+                error!("  - {}", e);
+            }
         }
         if strict && !report.warnings.is_empty() {
             error!("Strict mode: treating {} warning(s) as error(s)", report.warnings.len());
@@ -182,7 +222,18 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
         return Err(KrikError::Content(crate::error::ContentError {
             kind: crate::error::ContentErrorKind::ValidationFailed({
                 let mut msgs = report.errors.clone();
-                if strict { msgs.extend(report.warnings.clone()); }
+                if strict { 
+                    msgs.extend(report.warnings.clone()); 
+                }
+                // Add broken links to error messages
+                for broken_link in &report.broken_links {
+                    msgs.push(format!("{}:{} - Broken link: {} ({})", 
+                        broken_link.file_path.display(), 
+                        broken_link.line_number, 
+                        broken_link.url, 
+                        broken_link.error
+                    ));
+                }
                 msgs
             }),
             path: None,
@@ -190,7 +241,11 @@ pub fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
         }));
     }
 
-    info!("✅ No lint errors found");
+    if check_links {
+        info!("✅ No lint errors or broken links found");
+    } else {
+        info!("✅ No lint errors found");
+    }
     Ok(())
 }
 

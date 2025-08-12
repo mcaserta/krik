@@ -14,6 +14,8 @@ Fast Rust static site generator. Builds to `kk` executable.
 - Mobile-friendly hamburger menu for responsive navigation
 - Site initialization with embedded content and themes (`kk init`)
 - Content creation commands for posts and pages (`kk post`, `kk page`)
+- Link rot scanning with parallel HTTP validation (`kk lint --check-links`)
+- HTML report generation for lint results (`kk lint --create-report`)
 
 ## Usage
 

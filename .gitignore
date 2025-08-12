@@ -35,3 +35,7 @@ Desktop.ini
 # Backup files
 *.bak
 *.backup
+
+# Lint reports
+krik-report-*.html
+**/krik-report-*.html

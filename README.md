@@ -124,6 +124,9 @@ Features: Live reload, file watching, multi-interface binding, network discovery
 kk lint                        # Lint default content directory
 kk lint --input ./content      # Lint a specific directory
 kk lint --strict               # Treat warnings as errors
+kk lint --check-links          # Check for broken HTTP(S) links
+kk lint --create-report        # Generate HTML report
+kk lint --check-links --create-report --strict  # Full validation with report
 ```
 
 The linter validates:
@@ -137,6 +140,20 @@ The linter validates:
 - TOC: warns if `toc` is not a boolean
 - Duplicate slugs: within the same directory and language
 - Duplicate titles: warns within the same directory and language
+
+**Link Rot Scanning** (`--check-links`):
+
+- Parallel HTTP(S) link validation (up to 10 concurrent requests)
+- Smart browser header simulation to avoid bot detection
+- Real-time progress tracking with comprehensive logging
+- Supports redirects and provides detailed error reporting
+
+**HTML Report Generation** (`--create-report`):
+
+- Professional HTML reports with responsive design
+- ISO 8601 timestamp filenames (`krik-report-YYYY-MM-DDTHH-MM-SSZ.html`)
+- Summary dashboard with visual status indicators
+- Detailed sections for errors, warnings, and broken links
 
 Exits non-zero on errors. In `--strict` mode, warnings are also treated as
 errors.

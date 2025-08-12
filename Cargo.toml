@@ -1,6 +1,6 @@
 [package]
 name = "krik"
-version = "0.1.22"
+version = "0.1.23"
 edition = "2021"
 rust-version = "1.70"
 authors = ["Mirko Caserta", "Krik Contributors"]
@@ -54,3 +54,6 @@ atty = "0.2"
 rayon = "1.10"
 thiserror = "2.0.12"
 once_cell = "1"
+# HTTP client for link checking
+reqwest = { version = "0.12", features = ["json"] }
+url = "2.5"
