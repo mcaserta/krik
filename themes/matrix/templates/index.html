@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ site_description }}{% endblock description %}
+
+{% block main_class %}index{% endblock main_class %}
+{% block main %}
+<header class="matrix-header">
+    <h1>{{ site_title | default(value="Blog") }}</h1>
+    {% if site_description %}<p class="tagline">{{ site_description }}</p>{% endif %}
+</header>
+<ul class="post-list">
+{% for post in posts %}
+    <li class="post-item">
+        <a class="post-card" href="{{ post.url }}">
+            <div class="post-card-header">
+                <h2 class="post-title">{{ post.title | default(value="Untitled") }}</h2>
+                {% if post.date %}
+                <time class="post-date" datetime="{{ post.date | date(format="%Y-%m-%d") }}">{{ post.date | date(format="%b %d, %Y") }}</time>
+                {% endif %}
+            </div>
+            {% if post.tags %}
+            <div class="post-tags">
+                {% for tag in post.tags %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock main %}

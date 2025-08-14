@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title | default(value="Untitled") }} - {{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ description }}{% endblock description %}
+
+{% block header_controls %}
+{% if available_translations and available_translations | length > 1 %}
+<ul class="lang-switch" aria-label="Language">
+    {% for t in available_translations %}
+    <li>
+        <a
+          href="{{ t.path }}"
+          class="lang-pill{% if t.lang == lang %} is-active{% endif %}"
+          lang="{{ t.lang }}"
+          hreflang="{{ t.lang }}"
+          rel="alternate"
+          aria-current="{% if t.lang == lang %}page{% else %}false{% endif %}"
+        >
+          {{ t.lang | upper }}
+        </a>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% if pdf %}
+<a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
+    <span class="pdf-icon">📄</span>
+</a>
+{% endif %}
+{% endblock header_controls %}
+
+{% block main %}
+<article class="page-article">
+    <div class="page-header">
+        <h1 class="page-title">{{ title | default(value="Untitled") }}</h1>
+        {% if date %}<div class="meta">{{ date | date(format="%B %d, %Y") }}</div>{% endif %}
+    </div>
+    <div class="page-content">{{ content | safe }}</div>
+    </article>
+{% endblock main %}
+
+{% block scripts %}{% endblock scripts %}

@@ -1,0 +1,9 @@
+name = "Matrix"
+description = "A sleek retro theme inspired by The Matrix with digital rain, neon green highlights, and a cinematic hacker aesthetic."
+version = "1.0.0"
+author = "mirkocaserta + GPT-5"
+
+[templates]
+page = "page"
+post = "post"
+index = "index"
