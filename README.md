@@ -48,7 +48,7 @@ real-world usage:
 - **Live Website**: [https://mirkocaserta.com](https://mirkocaserta.com) - A
   complete blog built with Krik
 - **Feature Demo**:
-  [https://mirkocaserta.com/krik/](https://mirkocaserta.com/krik/) -
+  [https://krik.mirkocaserta.com/](https://krik.mirkocaserta.com/) -
   Comprehensive demo showcasing all Krik features including themes, i18n, TOC,
   footnotes, and more
 
