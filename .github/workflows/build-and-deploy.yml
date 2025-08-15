@@ -26,6 +26,9 @@ jobs:
           default: true
           override: true
 
+      - name: Cache Cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+
       - name: Install typst # also for pdf generation
         run: cargo install typst-cli
 

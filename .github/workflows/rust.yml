@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+    - name: Cache Cargo registry and build artifacts
+      uses: Swatinem/rust-cache@v2
     - name: Build
       run: cargo build --verbose
     - name: Run tests
