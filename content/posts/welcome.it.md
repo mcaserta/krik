@@ -90,6 +90,10 @@ Il sito rileva automaticamente la preferenza del tema del tuo sistema operativo
 e cambia tra modalità chiara e scura. Prova a cambiare il tema del sistema o usa
 il pulsante del tema nella navigazione in alto!
 
+Vuoi vedere più stili? Esplora la galleria completa dei temi disponibili:
+
+- **Themes Demo**: [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
+
 ### Scorri in Alto
 
 Su pagine più lunghe come questa, vedrai apparire un pulsante "scorri in alto"

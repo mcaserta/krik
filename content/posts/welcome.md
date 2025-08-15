@@ -88,6 +88,10 @@ The site automatically detects your OS theme preference and switches between
 light and dark modes. Try toggling your system theme or use the theme button in
 the top navigation!
 
+Want to see more looks? Browse the full gallery of available themes:
+
+- **Themes Demo**: [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
+
 ### Scroll to Top
 
 On longer pages like this one, you'll see a scroll-to-top button appear in the

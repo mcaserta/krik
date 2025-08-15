@@ -51,6 +51,9 @@ real-world usage:
   [https://krik.mirkocaserta.com/](https://krik.mirkocaserta.com/) -
   Comprehensive demo showcasing all Krik features including themes, i18n, TOC,
   footnotes, and more
+- **Themes Demo**:
+  [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com) -
+  Gallery showcasing all available Krik themes
 
 The demo site includes example posts demonstrating markdown features, theme
 switching, internationalization, and all the advanced capabilities that make

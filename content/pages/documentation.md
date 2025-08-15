@@ -521,6 +521,12 @@ The theme uses CSS custom properties for easy customization:
 }
 ```
 
+### Theme Gallery
+
+See all available themes showcased with live previews:
+
+- **Themes Demo**: [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
+
 ## Command Line Reference
 
 ### Main Commands
