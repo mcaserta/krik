@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -23,10 +22,10 @@
 
 
 
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -46,6 +45,9 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -62,12 +64,11 @@
 
         <main class="main-content ">
             
-<article class="page-article">
-    <div class="page-header">
-        <h1 class="page-title">Contact</h1>
-        <div class="meta">August 15, 2025</div>
-    </div>
-    <div class="page-content">
+<header>
+    <h1>Contact</h1>
+    <div class="meta">August 15, 2025</div>
+</header>
+<article>
 <p>This page demonstrates that files in the root of the content directory
 automatically use the <code>page</code> template.</p>
 <h2>Get in Touch</h2>
@@ -104,8 +105,7 @@ Krik.</p>
 <li><strong>GitHub</strong>: https://github.com/example</li>
 </ul>
 <p><em>Note: This is just example content for demonstration purposes.</em></p>
-</div>
-    </article>
+</article>
 
         </main>
     </div>

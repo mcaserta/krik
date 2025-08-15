@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -21,35 +20,19 @@
             <div class="nav-controls">
                 
 
-<ul class="lang-switch" aria-label="Language">
-    
-    <li>
-        <a
-          href="about.html"
-          class="lang-pill is-active"
-          lang="en"
-          hreflang="en"
-          rel="alternate"
-          aria-current="page"
-        >
-          EN
-        </a>
-    </li>
-    
-    <li>
-        <a
-          href="about.it.html"
-          class="lang-pill"
-          lang="it"
-          hreflang="it"
-          rel="alternate"
-          aria-current="false"
-        >
-          IT
-        </a>
-    </li>
-    
-  </ul>
+<div class="language-selector">
+    <select onchange="switchLanguage(this.value)">
+        
+        <option value="en" selected>
+            English
+        </option>
+        
+        <option value="it" >
+            Italiano
+        </option>
+        
+    </select>
+    </div>
 
 
 <a href="about.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
@@ -57,10 +40,10 @@
 </a>
 
 
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -80,6 +63,9 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -96,12 +82,11 @@
 
         <main class="main-content ">
             
-<article class="page-article">
-    <div class="page-header">
-        <h1 class="page-title">About Krik</h1>
-        <div class="meta">August 15, 2025</div>
-    </div>
-    <div class="page-content">
+<header>
+    <h1>About Krik</h1>
+    <div class="meta">August 15, 2025</div>
+</header>
+<article>
 <p><img src="../images/krik.png" alt="Krik logo" /></p>
 <p><strong>Krik</strong> is a fast, modern static site generator written in Rust that transforms
 Markdown files into beautiful, responsive websites with built-in development
@@ -239,8 +224,7 @@ existing discussions</li>
 <a href="../posts/getting-started-guide.html">Getting Started Guide</a> for a complete
 tutorial, or explore the <a href="documentation.html">Documentation</a> for detailed
 feature references!</p>
-</div>
-    </article>
+</article>
 
         </main>
     </div>

@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -23,14 +22,14 @@
 
 
 
-                
-                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
-                    <span class="toc-label">TOC</span>
-                </button>
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
+                <button class="toc-toggle" aria-label="Toggle table of contents">
+                    <span class="toc-icon">📖</span>
+                </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -50,6 +49,41 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+        <div class="mobile-toc" id="mobile-toc">
+            <div class="mobile-toc-content">
+                <h3>Table of Contents</h3>
+                <ul class="toc">
+  <li><a href="#installation">Installation</a></li>
+    <li><a href="#quick-install-recommended">Quick Install (Recommended)</a></li>
+    <li><a href="#verify-installation">Verify Installation</a></li>
+  <li><a href="#creating-your-first-site">Creating Your First Site</a></li>
+    <li><a href="#initialize-a-new-site">Initialize a New Site</a></li>
+    <li><a href="#start-the-development-server">Start the Development Server</a></li>
+  <li><a href="#creating-content">Creating Content</a></li>
+    <li><a href="#your-first-blog-post">Your First Blog Post</a></li>
+    <li><a href="#custom-filenames">Custom Filenames</a></li>
+    <li><a href="#creating-pages">Creating Pages</a></li>
+  <li><a href="#customizing-your-content">Customizing Your Content</a></li>
+    <li><a href="#front-matter-explained">Front Matter Explained</a></li>
+    <li><a href="#adding-your-content">Adding Your Content</a></li>
+    <li><a href="#development-vs-production">Development vs Production</a></li>
+  <li><a href="#advanced-features">Advanced Features</a></li>
+    <li><a href="#internationalization">Internationalization</a></li>
+    <li><a href="#table-of-contents">Table of Contents</a></li>
+    <li><a href="#theme-customization">Theme Customization</a></li>
+  <li><a href="#tips-for-success">Tips for Success</a></li>
+    <li><a href="#writing-great-content">Writing Great Content</a></li>
+    <li><a href="#workflow-optimization">Workflow Optimization</a></li>
+    <li><a href="#organization-best-practices">Organization Best Practices</a></li>
+  <li><a href="#next-steps">Next Steps</a></li>
+  <li><a href="#getting-help">Getting Help</a></li>
+</ul>
+            </div>
+        </div>
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -63,7 +97,7 @@
         </aside>
 
         
-        <aside class="toc-sidebar" id="toc-sidebar">
+        <aside class="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
@@ -98,12 +132,14 @@
 
         <main class="main-content ">
             
-<article class="post-article">
-    <div class="post-header">
-        <h1 class="post-title">Getting Started with Krik: From Installation to Your First Post</h1>
-        <div class="meta">January 15, 2025</div>
-    </div>
-    <div class="post-content">
+<div class="back-link">
+    <a href="../index.html">← Back to Home</a>
+</div>
+<header>
+    <h1>Getting Started with Krik: From Installation to Your First Post</h1>
+    <div class="meta">January 15, 2025</div>
+</header>
+<article>
 <p>Welcome to Krik! This comprehensive guide will take you from zero to publishing
 your first blog post in just a few minutes. Krik makes it incredibly easy to
 create beautiful, fast static websites with minimal setup.</p>
@@ -288,13 +324,12 @@ Perfect for long articles like this one!</p>
 websites with Krik. The combination of powerful features and simple commands
 makes it easy to focus on what matters most: your content.</p>
 <p>Happy blogging! 🚀</p>
+</article>
+
+<div class="tags">
+    <span class="tag">tutorial</span><span class="tag">getting-started</span><span class="tag">guide</span>
 </div>
-    
-    <div class="post-tags">
-        <span class="tag">tutorial</span><span class="tag">getting-started</span><span class="tag">guide</span>
-    </div>
-    
-    </article>
+
 
         </main>
     </div>

@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -27,14 +26,14 @@
 </a>
 
 
-                
-                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
-                    <span class="toc-label">TOC</span>
-                </button>
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
+                <button class="toc-toggle" aria-label="Toggle table of contents">
+                    <span class="toc-icon">📖</span>
+                </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -54,6 +53,89 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+        <div class="mobile-toc" id="mobile-toc">
+            <div class="mobile-toc-content">
+                <h3>Table of Contents</h3>
+                <ul class="toc">
+<li><a href="#krik-documentation">Krik Documentation</a></li>
+  <li><a href="#quick-start">Quick Start</a></li>
+    <li><a href="#installation">Installation</a></li>
+      <li><a href="#from-cratesio-recommended">From Crates.io (Recommended)</a></li>
+      <li><a href="#from-source">From Source</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+      <li><a href="#initialize-a-new-site">Initialize a New Site</a></li>
+      <li><a href="#create-content">Create Content</a></li>
+      <li><a href="#development-server">Development Server</a></li>
+      <li><a href="#generate-static-site">Generate Static Site</a></li>
+  <li><a href="#linting-content">Linting Content</a></li>
+    <li><a href="#what-it-checks">What it checks</a></li>
+  <li><a href="#content-organization">Content Organization</a></li>
+    <li><a href="#directory-structure">Directory Structure</a></li>
+    <li><a href="#site-configuration">Site Configuration</a></li>
+  <li><a href="#front-matter">Front Matter</a></li>
+    <li><a href="#front-matter-fields">Front Matter Fields</a></li>
+  <li><a href="#templates-and-layouts">Templates and Layouts</a></li>
+    <li><a href="#automatic-template-selection">Automatic Template Selection</a></li>
+    <li><a href="#manual-template-override">Manual Template Override</a></li>
+    <li><a href="#template-features">Template Features</a></li>
+  <li><a href="#internationalization-i18n">Internationalization (i18n)</a></li>
+    <li><a href="#creating-translations">Creating Translations</a></li>
+    <li><a href="#supported-languages">Supported Languages</a></li>
+    <li><a href="#language-navigation-index-selection">Language Navigation & Index Selection</a></li>
+  <li><a href="#advanced-features">Advanced Features</a></li>
+    <li><a href="#table-of-contents">Table of Contents</a></li>
+    <li><a href="#footnotes">Footnotes</a></li>
+    <li><a href="#scrolltotop-button">Scroll-to-Top Button</a></li>
+    <li><a href="#seo-and-discovery">SEO and Discovery</a></li>
+      <li><a href="#atom-feed-generation">Atom Feed Generation</a></li>
+      <li><a href="#xml-sitemap-generation">XML Sitemap Generation</a></li>
+      <li><a href="#robotstxt-generation">robots.txt Generation</a></li>
+  <li><a href="#pdf-generation">PDF Generation</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#install-pandoc">Install pandoc</a></li>
+      <li><a href="#install-typst">Install typst</a></li>
+    <li><a href="#enabling-pdf-generation">Enabling PDF Generation</a></li>
+    <li><a href="#features">Features</a></li>
+      <li><a href="#automatic-pdf-links">Automatic PDF Links</a></li>
+      <li><a href="#languageaware-filenames">Language-Aware Filenames</a></li>
+      <li><a href="#conditional-appendix">Conditional Appendix</a></li>
+      <li><a href="#image-path-resolution">Image Path Resolution</a></li>
+    <li><a href="#configuration">Configuration</a></li>
+    <li><a href="#development-workflow">Development Workflow</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#error-handling">⚠️ Error Handling</a></li>
+    <li><a href="#error-types">Error Types</a></li>
+    <li><a href="#exit-codes">Exit Codes</a></li>
+    <li><a href="#tips">Tips</a></li>
+  <li><a href="#theme-system">Theme System</a></li>
+    <li><a href="#lightdark-mode">Light/Dark Mode</a></li>
+    <li><a href="#customization">Customization</a></li>
+  <li><a href="#command-line-reference">Command Line Reference</a></li>
+    <li><a href="#main-commands">Main Commands</a></li>
+    <li><a href="#global-options">Global Options</a></li>
+    <li><a href="#init-command">Init Command</a></li>
+    <li><a href="#postpage-commands">Post/Page Commands</a></li>
+    <li><a href="#server-command">Server Command</a></li>
+  <li><a href="#generated-output">Generated Output</a></li>
+    <li><a href="#example-output-structure">Example Output Structure</a></li>
+  <li><a href="#best-practices">Best Practices</a></li>
+    <li><a href="#content-organization-1">Content Organization</a></li>
+    <li><a href="#front-matter-1">Front Matter</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#accessibility">Accessibility</a></li>
+  <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#github-pages">GitHub Pages</a></li>
+      <li><a href="#setup-steps">Setup Steps</a></li>
+      <li><a href="#what-the-workflow-does">What the Workflow Does</a></li>
+      <li><a href="#workflow-features">Workflow Features</a></li>
+      <li><a href="#repository-structure">Repository Structure</a></li>
+</ul>
+            </div>
+        </div>
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -67,7 +149,7 @@
         </aside>
 
         
-        <aside class="toc-sidebar" id="toc-sidebar">
+        <aside class="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
@@ -150,12 +232,11 @@
 
         <main class="main-content ">
             
-<article class="page-article">
-    <div class="page-header">
-        <h1 class="page-title">Documentation</h1>
-        <div class="meta">August 15, 2025</div>
-    </div>
-    <div class="page-content"><h1 id="krik-documentation">Krik Documentation</h1>
+<header>
+    <h1>Documentation</h1>
+    <div class="meta">August 15, 2025</div>
+</header>
+<article><h1 id="krik-documentation">Krik Documentation</h1>
 <p>This page provides comprehensive documentation for using Krik, the static site
 generator.</p>
 <h2 id="quick-start">Quick Start</h2>
@@ -717,8 +798,7 @@ crates.io</li>
 <hr />
 <p>This documentation covers all major features of Krik. For more examples, check
 out the other posts and pages in this demo site!</p>
-</div>
-    </article>
+</article>
 
         </main>
     </div>

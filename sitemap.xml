@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://mirkocaserta.com/krik</loc>
+    <loc>https://krik.mirkocaserta.com</loc>
     <lastmod>2025-08-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/pages/about.html</loc>
+    <loc>https://krik.mirkocaserta.com/pages/about.html</loc>
     <lastmod>2025-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="it" href="https://mirkocaserta.com/krik/pages/about.it.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mirkocaserta.com/krik/pages/about.html" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://krik.mirkocaserta.com/pages/about.it.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://krik.mirkocaserta.com/pages/about.html" />
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/pages/contact.html</loc>
-    <lastmod>2025-08-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mirkocaserta.com/krik/pages/documentation.html</loc>
+    <loc>https://krik.mirkocaserta.com/pages/contact.html</loc>
     <lastmod>2025-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/posts/advanced-features.html</loc>
+    <loc>https://krik.mirkocaserta.com/pages/documentation.html</loc>
+    <lastmod>2025-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://krik.mirkocaserta.com/posts/advanced-features.html</loc>
     <lastmod>2024-01-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/posts/getting-started-guide.html</loc>
+    <loc>https://krik.mirkocaserta.com/posts/getting-started-guide.html</loc>
     <lastmod>2025-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/posts/markdown-showcase.html</loc>
+    <loc>https://krik.mirkocaserta.com/posts/markdown-showcase.html</loc>
     <lastmod>2024-01-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/posts/theme-demo.html</loc>
+    <loc>https://krik.mirkocaserta.com/posts/theme-demo.html</loc>
     <lastmod>2024-01-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mirkocaserta.com/krik/posts/welcome.html</loc>
+    <loc>https://krik.mirkocaserta.com/posts/welcome.html</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="it" href="https://mirkocaserta.com/krik/posts/welcome.it.html" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://mirkocaserta.com/krik/posts/welcome.html" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://krik.mirkocaserta.com/posts/welcome.it.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://krik.mirkocaserta.com/posts/welcome.html" />
   </url>
 </urlset>

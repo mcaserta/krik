@@ -11,7 +11,7 @@ Disallow: /*.bak$
 Disallow: /*.log$
 
 # Sitemap location
-Sitemap: https://mirkocaserta.com/krik/sitemap.xml
+Sitemap: https://krik.mirkocaserta.com/sitemap.xml
 
 # Crawl delay (optional - be nice to servers)
 Crawl-delay: 1

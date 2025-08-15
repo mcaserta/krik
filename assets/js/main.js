@@ -90,9 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function switchLanguage(lang) {
-    // Update custom select display
-    updateCustomSelect(lang);
-    
     // Use the translations data passed from the template if available
     if (window.krikTranslations && window.krikTranslations.length > 0) {
         const translation = window.krikTranslations.find(t => t.lang === lang);
@@ -115,57 +112,6 @@ function switchLanguage(lang) {
     window.location.href = newPath;
 }
 
-// Custom select functionality
-function updateCustomSelect(selectedLang) {
-    const customSelect = document.getElementById('customSelect');
-    const languageSelect = document.getElementById('languageSelect');
-    
-    if (customSelect && languageSelect) {
-        const selectedOption = languageSelect.querySelector(`option[value="${selectedLang}"]`);
-        if (selectedOption) {
-            const selectedText = customSelect.querySelector('.selected-text');
-            if (selectedText) {
-                selectedText.textContent = selectedOption.textContent;
-            }
-        }
-    }
-}
-
-// Initialize custom select
-document.addEventListener('DOMContentLoaded', function() {
-    const languageSelector = document.querySelector('.language-selector');
-    const languageSelect = document.getElementById('languageSelect');
-    const customSelect = document.getElementById('customSelect');
-    
-    if (languageSelector && languageSelect && customSelect) {
-        // Sync custom select with actual select on change
-        languageSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const selectedText = customSelect.querySelector('.selected-text');
-            if (selectedText) {
-                selectedText.textContent = selectedOption.textContent;
-            }
-        });
-        
-        // Handle keyboard navigation
-        languageSelect.addEventListener('keydown', function(e) {
-            // Allow normal select behavior for keyboard users
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-        
-        // Update custom select on focus to ensure sync
-        languageSelect.addEventListener('focus', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const selectedText = customSelect.querySelector('.selected-text');
-            if (selectedText) {
-                selectedText.textContent = selectedOption.textContent;
-            }
-        });
-    }
-});
 
 // Mobile menu functionality
 function toggleMobileMenu() {
@@ -175,11 +121,11 @@ function toggleMobileMenu() {
     }
 }
 
-// TOC toggle for smaller screens
-function toggleToc() {
-    const tocSidebar = document.getElementById('toc-sidebar');
-    if (tocSidebar) {
-        tocSidebar.classList.toggle('show');
+// Mobile TOC functionality
+function toggleMobileTOC() {
+    const mobileTOC = document.getElementById('mobile-toc');
+    if (mobileTOC) {
+        mobileTOC.classList.toggle('show');
     }
 }
 
@@ -187,45 +133,95 @@ function toggleToc() {
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenu = document.getElementById('mobile-menu');
     const hamburgerBtn = document.querySelector('.hamburger-menu');
+    const mobileTOC = document.getElementById('mobile-toc');
+    const tocToggleBtn = document.querySelector('.toc-toggle');
     
+    // Mobile menu functionality
     if (mobileMenu && hamburgerBtn) {
+        // Add click event listener (works for both mouse and touch)
+        hamburgerBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Close TOC if open
+            if (mobileTOC) mobileTOC.classList.remove('show');
+            toggleMobileMenu();
+        });
+        
+        // Add touch event support for better mobile interaction
+        hamburgerBtn.addEventListener('touchend', function(e) {
+            e.preventDefault(); // Prevent double-tap zoom and ghost clicks
+            // Close TOC if open
+            if (mobileTOC) mobileTOC.classList.remove('show');
+            toggleMobileMenu();
+        });
+        
+        hamburgerBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Prevent double-tap zoom
+        });
+        
         // Close menu when clicking on a link
         const mobileLinks = mobileMenu.querySelectorAll('a');
         mobileLinks.forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', function(e) {
+                // Don't prevent default - let the link navigate
                 mobileMenu.classList.remove('show');
             });
         });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!mobileMenu.contains(event.target) && !hamburgerBtn.contains(event.target)) {
-                mobileMenu.classList.remove('show');
-            }
+    }
+    
+    // Mobile TOC functionality
+    if (mobileTOC && tocToggleBtn) {
+        // Add click event listener (works for both mouse and touch)
+        tocToggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Close menu if open
+            if (mobileMenu) mobileMenu.classList.remove('show');
+            toggleMobileTOC();
         });
         
-        // Close menu on escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                mobileMenu.classList.remove('show');
-            }
+        // Add touch event support for better mobile interaction
+        tocToggleBtn.addEventListener('touchend', function(e) {
+            e.preventDefault(); // Prevent double-tap zoom and ghost clicks
+            // Close menu if open
+            if (mobileMenu) mobileMenu.classList.remove('show');
+            toggleMobileTOC();
+        });
+        
+        tocToggleBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Prevent double-tap zoom
+        });
+        
+        // Close TOC when clicking on a link
+        const tocLinks = mobileTOC.querySelectorAll('a');
+        tocLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Don't prevent default - let the link navigate
+                mobileTOC.classList.remove('show');
+            });
         });
     }
-});
-
-// Close TOC panel after selecting a link on mobile/tablet
-document.addEventListener('DOMContentLoaded', function() {
-    const tocSidebar = document.getElementById('toc-sidebar');
-    if (!tocSidebar) return;
-
-    const tocLinks = tocSidebar.querySelectorAll('a[href]');
-    tocLinks.forEach(function(link) {
-        link.addEventListener('click', function() {
-            // Only auto-close at the same breakpoint as the hamburger visibility
-            if (window.matchMedia('(max-width: 1200px)').matches) {
-                tocSidebar.classList.remove('show');
-            }
-        });
+    
+    // Close both menus when clicking/touching outside
+    function closeMenusOnOutsideTouch(event) {
+        const isMenuClick = mobileMenu && mobileMenu.contains(event.target);
+        const isTOCClick = mobileTOC && mobileTOC.contains(event.target);
+        const isHamburgerClick = hamburgerBtn && hamburgerBtn.contains(event.target);
+        const isTOCToggleClick = tocToggleBtn && tocToggleBtn.contains(event.target);
+        
+        if (!isMenuClick && !isTOCClick && !isHamburgerClick && !isTOCToggleClick) {
+            if (mobileMenu) mobileMenu.classList.remove('show');
+            if (mobileTOC) mobileTOC.classList.remove('show');
+        }
+    }
+    
+    document.addEventListener('click', closeMenusOnOutsideTouch);
+    document.addEventListener('touchend', closeMenusOnOutsideTouch);
+    
+    // Close menus on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (mobileMenu) mobileMenu.classList.remove('show');
+            if (mobileTOC) mobileTOC.classList.remove('show');
+        }
     });
 });
 

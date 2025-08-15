@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -21,35 +20,19 @@
             <div class="nav-controls">
                 
 
-<ul class="lang-switch" aria-label="Language">
-    
-    <li>
-        <a
-          href="welcome.html"
-          class="lang-pill"
-          lang="en"
-          hreflang="en"
-          rel="alternate"
-          aria-current="false"
-        >
-          EN
-        </a>
-    </li>
-    
-    <li>
-        <a
-          href="welcome.it.html"
-          class="lang-pill is-active"
-          lang="it"
-          hreflang="it"
-          rel="alternate"
-          aria-current="page"
-        >
-          IT
-        </a>
-    </li>
-    
-  </ul>
+<div class="language-selector">
+    <select onchange="switchLanguage(this.value)">
+        
+        <option value="en" >
+            English
+        </option>
+        
+        <option value="it" selected>
+            Italiano
+        </option>
+        
+    </select>
+</div>
 
 
 <a href="welcome.it.pdf" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
@@ -57,14 +40,14 @@
 </a>
 
 
-                
-                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
-                    <span class="toc-label">TOC</span>
-                </button>
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
+                <button class="toc-toggle" aria-label="Toggle table of contents">
+                    <span class="toc-icon">📖</span>
+                </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -84,6 +67,28 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+        <div class="mobile-toc" id="mobile-toc">
+            <div class="mobile-toc-content">
+                <h3>Table of Contents</h3>
+                <ul class="toc">
+  <li><a href="#indice">Indice</a></li>
+  <li><a href="#funzionalità-markdown">Funzionalità Markdown</a></li>
+    <li><a href="#formattazione-del-testo">Formattazione del Testo</a></li>
+    <li><a href="#liste">Liste</a></li>
+    <li><a href="#blocchi-di-codice">Blocchi di Codice</a></li>
+    <li><a href="#tabelle">Tabelle</a></li>
+    <li><a href="#note-a-piè-di-pagina">Note a piè di pagina</a></li>
+  <li><a href="#funzionalità-avanzate">Funzionalità Avanzate</a></li>
+    <li><a href="#sistema-dei-temi">Sistema dei Temi</a></li>
+    <li><a href="#scorri-in-alto">Scorri in Alto</a></li>
+    <li><a href="#navigazione">Navigazione</a></li>
+</ul>
+            </div>
+        </div>
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -97,7 +102,7 @@
         </aside>
 
         
-        <aside class="toc-sidebar" id="toc-sidebar">
+        <aside class="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
@@ -119,12 +124,14 @@
 
         <main class="main-content ">
             
-<article class="post-article">
-    <div class="post-header">
-        <h1 class="post-title">Benvenuto in Krik</h1>
-        <div class="meta">January 15, 2024</div>
-    </div>
-    <div class="post-content">
+<div class="back-link">
+    <a href="../index.html">← Back to Home</a>
+</div>
+<header>
+    <h1>Benvenuto in Krik</h1>
+    <div class="meta">January 15, 2024</div>
+</header>
+<article>
 <p><img src="../images/krik.png" alt="Krik logo" /></p>
 <p>Benvenuto nel generatore di siti statici <strong>Krik</strong>! Questo post dimostra molte
 delle funzionalità disponibili in questo veloce generatore di siti statici
@@ -206,13 +213,12 @@ per tornare al testo.</p>
 <p>Questa è la seconda nota a piè di pagina con contenuto aggiuntivo per
 mostrare come funzionano più note a piè di pagina.</p>
 </div>
+</article>
+
+<div class="tags">
+    <span class="tag">benvenuto</span><span class="tag">sito-statico</span><span class="tag">rust</span>
 </div>
-    
-    <div class="post-tags">
-        <span class="tag">benvenuto</span><span class="tag">sito-statico</span><span class="tag">rust</span>
-    </div>
-    
-    </article>
+
 
         </main>
     </div>

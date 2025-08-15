@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -23,10 +22,10 @@
 
 
 
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -46,6 +45,9 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -62,12 +64,14 @@
 
         <main class="main-content ">
             
-<article class="post-article">
-    <div class="post-header">
-        <h1 class="post-title">Theme System Demo</h1>
-        <div class="meta">January 18, 2024</div>
-    </div>
-    <div class="post-content">
+<div class="back-link">
+    <a href="../index.html">← Back to Home</a>
+</div>
+<header>
+    <h1>Theme System Demo</h1>
+    <div class="meta">January 18, 2024</div>
+</header>
+<article>
 <p>This post showcases Krik's powerful theme system with automatic light/dark mode
 detection and smooth transitions.</p>
 <h2>Automatic Theme Detection</h2>
@@ -136,13 +140,12 @@ detection and smooth transitions.</p>
 </ul>
 <p>Try switching between light and dark modes to see the smooth transitions in
 action!</p>
+</article>
+
+<div class="tags">
+    <span class="tag">themes</span><span class="tag">design</span><span class="tag">css</span>
 </div>
-    
-    <div class="post-tags">
-        <span class="tag">themes</span><span class="tag">design</span><span class="tag">css</span>
-    </div>
-    
-    </article>
+
 
         </main>
     </div>

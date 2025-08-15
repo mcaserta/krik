@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -27,14 +26,14 @@
 </a>
 
 
-                
-                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
-                    <span class="toc-label">TOC</span>
-                </button>
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
+                <button class="toc-toggle" aria-label="Toggle table of contents">
+                    <span class="toc-icon">📖</span>
+                </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -54,6 +53,38 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+        <div class="mobile-toc" id="mobile-toc">
+            <div class="mobile-toc-content">
+                <h3>Table of Contents</h3>
+                <ul class="toc">
+  <li><a href="#basic-text-formatting">Basic Text Formatting</a></li>
+  <li><a href="#headings">Headings</a></li>
+    <li><a href="#this-is-h3">This is H3</a></li>
+      <li><a href="#this-is-h4">This is H4</a></li>
+        <li><a href="#this-is-h5">This is H5</a></li>
+          <li><a href="#this-is-h6">This is H6</a></li>
+  <li><a href="#code-blocks">Code Blocks</a></li>
+    <li><a href="#syntax-highlighting-ready">Syntax Highlighting Ready</a></li>
+  <li><a href="#lists-and-task-lists">Lists and Task Lists</a></li>
+    <li><a href="#unordered-lists">Unordered Lists</a></li>
+    <li><a href="#ordered-lists">Ordered Lists</a></li>
+    <li><a href="#task-lists">Task Lists</a></li>
+  <li><a href="#tables">Tables</a></li>
+  <li><a href="#blockquotes">Blockquotes</a></li>
+    <li><a href="#blockquotes-with-headings">Blockquotes with headings</a></li>
+  <li><a href="#horizontal-rules">Horizontal Rules</a></li>
+  <li><a href="#links">Links</a></li>
+    <li><a href="#reference-links">Reference Links</a></li>
+  <li><a href="#images">Images</a></li>
+  <li><a href="#footnotes-in-detail">Footnotes in Detail</a></li>
+  <li><a href="#escaping-characters">Escaping Characters</a></li>
+</ul>
+            </div>
+        </div>
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -67,7 +98,7 @@
         </aside>
 
         
-        <aside class="toc-sidebar" id="toc-sidebar">
+        <aside class="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
@@ -99,12 +130,14 @@
 
         <main class="main-content ">
             
-<article class="post-article">
-    <div class="post-header">
-        <h1 class="post-title">Markdown Feature Showcase</h1>
-        <div class="meta">January 20, 2024</div>
-    </div>
-    <div class="post-content">
+<div class="back-link">
+    <a href="../index.html">← Back to Home</a>
+</div>
+<header>
+    <h1>Markdown Feature Showcase</h1>
+    <div class="meta">January 20, 2024</div>
+</header>
+<article>
 <p>This post demonstrates all the markdown features supported by Krik, including
 some advanced formatting options.</p>
 <h2 id="basic-text-formatting">Basic Text Formatting</h2>
@@ -284,13 +317,12 @@ elements:</p>
 </code></pre>
 <p>Pretty neat, right?</p>
 </div>
+</article>
+
+<div class="tags">
+    <span class="tag">markdown</span><span class="tag">features</span><span class="tag">demo</span>
 </div>
-    
-    <div class="post-tags">
-        <span class="tag">markdown</span><span class="tag">features</span><span class="tag">demo</span>
-    </div>
-    
-    </article>
+
 
         </main>
     </div>

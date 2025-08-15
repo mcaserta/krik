@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://mirkocaserta.com/krik">
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://krik.mirkocaserta.com">
   <title>Krik Demo Site</title>
-  <link href="https://mirkocaserta.com/krik/feed.xml" rel="self" />
-  <link href="https://mirkocaserta.com/krik" />
-  <id>https://mirkocaserta.com/krik</id>
+  <link href="https://krik.mirkocaserta.com/feed.xml" rel="self" />
+  <link href="https://krik.mirkocaserta.com" />
+  <id>https://krik.mirkocaserta.com</id>
   <updated>2025-01-15T12:00:00+00:00</updated>
   <generator uri="https://github.com/mcaserta/krik">Krik</generator>
   <entry>
     <title>Getting Started with Krik: From Installation to Your First Post</title>
-    <link href="https://mirkocaserta.com/krik/posts/getting-started-guide.html" />
-    <id>https://mirkocaserta.com/krik/posts/getting-started-guide.html</id>
+    <link href="https://krik.mirkocaserta.com/posts/getting-started-guide.html" />
+    <id>https://krik.mirkocaserta.com/posts/getting-started-guide.html</id>
     <updated>2025-01-15T12:00:00+00:00</updated>
     <published>2025-01-15T12:00:00+00:00</published>
     <content type="html"><![CDATA[
@@ -206,8 +206,8 @@ makes it easy to focus on what matters most: your content.</p>
   </entry>
   <entry>
     <title>Advanced Features Demo</title>
-    <link href="https://mirkocaserta.com/krik/posts/advanced-features.html" />
-    <id>https://mirkocaserta.com/krik/posts/advanced-features.html</id>
+    <link href="https://krik.mirkocaserta.com/posts/advanced-features.html" />
+    <id>https://krik.mirkocaserta.com/posts/advanced-features.html</id>
     <updated>2024-01-22T11:45:00+00:00</updated>
     <published>2024-01-22T11:45:00+00:00</published>
     <content type="html"><![CDATA[
@@ -476,8 +476,8 @@ static sites.</p>
   </entry>
   <entry>
     <title>Markdown Feature Showcase</title>
-    <link href="https://mirkocaserta.com/krik/posts/markdown-showcase.html" />
-    <id>https://mirkocaserta.com/krik/posts/markdown-showcase.html</id>
+    <link href="https://krik.mirkocaserta.com/posts/markdown-showcase.html" />
+    <id>https://krik.mirkocaserta.com/posts/markdown-showcase.html</id>
     <updated>2024-01-20T14:30:00+00:00</updated>
     <published>2024-01-20T14:30:00+00:00</published>
     <content type="html"><![CDATA[
@@ -669,8 +669,8 @@ elements:</p>
   </entry>
   <entry>
     <title>Theme System Demo</title>
-    <link href="https://mirkocaserta.com/krik/posts/theme-demo.html" />
-    <id>https://mirkocaserta.com/krik/posts/theme-demo.html</id>
+    <link href="https://krik.mirkocaserta.com/posts/theme-demo.html" />
+    <id>https://krik.mirkocaserta.com/posts/theme-demo.html</id>
     <updated>2024-01-18T09:15:00+00:00</updated>
     <published>2024-01-18T09:15:00+00:00</published>
     <content type="html"><![CDATA[
@@ -751,8 +751,8 @@ action!</p>
   </entry>
   <entry>
     <title>Welcome to Krik</title>
-    <link href="https://mirkocaserta.com/krik/posts/welcome.html" />
-    <id>https://mirkocaserta.com/krik/posts/welcome.html</id>
+    <link href="https://krik.mirkocaserta.com/posts/welcome.html" />
+    <id>https://krik.mirkocaserta.com/posts/welcome.html</id>
     <updated>2024-01-15T10:00:00+00:00</updated>
     <published>2024-01-15T10:00:00+00:00</published>
     <content type="html"><![CDATA[

@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="alternate" type="application/atom+xml" title="Krik Demo Site - Feed" href="../feed.xml">
 </head>
@@ -23,14 +22,14 @@
 
 
 
-                
-                <button class="toc-toggle" onclick="toggleToc()" aria-label="Toggle table of contents" aria-controls="toc-sidebar">
-                    <span class="toc-label">TOC</span>
-                </button>
-                
-                <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <button class="hamburger-menu" aria-label="Toggle menu">
                     <span class="hamburger-icon">☰</span>
                 </button>
+                
+                <button class="toc-toggle" aria-label="Toggle table of contents">
+                    <span class="toc-icon">📖</span>
+                </button>
+                
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-icon">🌓</span>
                 </button>
@@ -50,6 +49,50 @@
             </ul>
         </div>
 
+        <!-- Mobile TOC menu -->
+        
+        <div class="mobile-toc" id="mobile-toc">
+            <div class="mobile-toc-content">
+                <h3>Table of Contents</h3>
+                <ul class="toc">
+  <li><a href="#image-support">Image Support</a></li>
+    <li><a href="#image-best-practices">Image Best Practices</a></li>
+  <li><a href="#complex-tables">Complex Tables</a></li>
+  <li><a href="#nested-lists-and-complex-formatting">Nested Lists and Complex Formatting</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#advanced-markdown-features">Advanced Markdown Features</a></li>
+      <li><a href="#mixed-content-types">Mixed Content Types</a></li>
+      <li><a href="#code-with-explanation">Code with Explanation</a></li>
+  <li><a href="#seo-and-discovery-features">SEO and Discovery Features</a></li>
+    <li><a href="#atom-feed-generation">Atom Feed Generation</a></li>
+      <li><a href="#feed-metadata">Feed Metadata</a></li>
+      <li><a href="#post-entries">Post Entries</a></li>
+      <li><a href="#link-resolution">Link Resolution</a></li>
+    <li><a href="#xml-sitemap-generation">XML Sitemap Generation</a></li>
+      <li><a href="#sitemap-features">Sitemap Features</a></li>
+      <li><a href="#example-sitemap-entry">Example Sitemap Entry</a></li>
+    <li><a href="#robotstxt-generation">robots.txt Generation</a></li>
+      <li><a href="#robotstxt-features">robots.txt Features</a></li>
+      <li><a href="#example-robotstxt">Example robots.txt</a></li>
+  <li><a href="#performance-considerations">Performance Considerations</a></li>
+    <li><a href="#build-performance">Build Performance</a></li>
+    <li><a href="#runtime-performance">Runtime Performance</a></li>
+  <li><a href="#content-quality-assurance">Content Quality Assurance</a></li>
+    <li><a href="#link-rot-scanning">Link Rot Scanning</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#example-output">Example Output</a></li>
+    <li><a href="#html-report-generation">HTML Report Generation</a></li>
+      <li><a href="#report-features">Report Features</a></li>
+      <li><a href="#use-cases">Use Cases</a></li>
+  <li><a href="#accessibility-features">Accessibility Features</a></li>
+    <li><a href="#semantic-structure">Semantic Structure</a></li>
+    <li><a href="#interactive-elements">Interactive Elements</a></li>
+    <li><a href="#content-accessibility">Content Accessibility</a></li>
+</ul>
+            </div>
+        </div>
+        
+
         <aside class="sidebar">
             <ul class="page-links">
                 
@@ -63,7 +106,7 @@
         </aside>
 
         
-        <aside class="toc-sidebar" id="toc-sidebar">
+        <aside class="toc-sidebar">
             <div class="toc">
                 <h2>Table of Contents</h2>
                 <ul class="toc">
@@ -107,12 +150,14 @@
 
         <main class="main-content ">
             
-<article class="post-article">
-    <div class="post-header">
-        <h1 class="post-title">Advanced Features Demo</h1>
-        <div class="meta">January 22, 2024</div>
-    </div>
-    <div class="post-content">
+<div class="back-link">
+    <a href="../index.html">← Back to Home</a>
+</div>
+<header>
+    <h1>Advanced Features Demo</h1>
+    <div class="meta">January 22, 2024</div>
+</header>
+<article>
 <p>This post demonstrates some of the more advanced features available in Krik,
 including image handling, complex markdown, and feed generation.</p>
 <h2 id="image-support">Image Support</h2>
@@ -369,13 +414,12 @@ highlighting</li>
 <p>This demonstrates many of Krik’s advanced capabilities. The combination of
 performance, features, and accessibility makes it an excellent choice for modern
 static sites.</p>
+</article>
+
+<div class="tags">
+    <span class="tag">advanced</span><span class="tag">images</span><span class="tag">feeds</span>
 </div>
-    
-    <div class="post-tags">
-        <span class="tag">advanced</span><span class="tag">images</span><span class="tag">feeds</span>
-    </div>
-    
-    </article>
+
 
         </main>
     </div>
