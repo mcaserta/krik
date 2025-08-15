@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title | default(value="Untitled") }} - {{ site_title | default(value="Blog") }}{% endblock title %}
+{% block description %}{{ description }}{% endblock description %}
+
+{% block header_controls %}
+{% if available_translations and available_translations | length > 1 %}
+<div class="language-selector">
+    <select onchange="switchLanguage(this.value)">
+        {% for translation in available_translations %}
+        <option value="{{ translation.lang }}" {% if translation.lang == lang %}selected{% endif %}>
+            {{ translation.lang_name }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+{% if pdf %}
+<a href="{{ file_path | replace(from=".md", to=".pdf") | split(pat="/") | last }}" class="pdf-download" aria-label="Download PDF" title="Download as PDF">
+    <span class="pdf-icon">📄</span>
+</a>
+{% endif %}
+{% endblock header_controls %}
+
+{% block main %}
+<div class="back-link">
+    <a href="{{ home_path }}">← Back to Home</a>
+</div>
+<header>
+    <h1>{{ title | default(value="Untitled") }}</h1>
+    {% if date %}<div class="meta">{{ date | date(format="%B %d, %Y") }}</div>{% endif %}
+</header>
+<article>{{ content | safe }}</article>
+{% if tags %}
+<div class="tags">
+    {% for tag in tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+</div>
+{% endif %}
+{% endblock main %}

@@ -8,6 +8,38 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- 🎨 **New Manzana Theme**: macOS Tahoe-inspired theme with glassy interface
+  - Beautiful glass morphism effects with backdrop blur and saturation
+  - Smooth CSS animations and transitions with Apple-like easing curves
+  - Custom Inter and JetBrains Mono fonts for modern typography
+  - Responsive design with mobile-first approach
+  - Touch-friendly interactions optimized for iPad and mobile devices
+
+- 📱 **Enhanced Mobile Navigation**
+  - Hamburger menu for page navigation on mobile devices (≤1200px)
+  - TOC toggle button for table of contents on mobile (📖 icon)
+  - Both menus feature smooth slide-down animations
+  - Touch event handling with proper preventDefault for iOS compatibility
+  - Smart menu behavior: opening one closes the other automatically
+
+- 🃏 **Glassy Post Cards on Index Page**
+  - Redesigned index page with beautiful glass morphism post cards
+  - Responsive auto-fitting grid layout (minimum 350px cards)
+  - Interactive hover animations with lift and scale effects
+  - Gradient top borders and animated tags
+  - Calendar emoji with styled date badges
+  - Mobile-optimized single column layout
+
+### Improved
+
+- 🎯 **Touch Interface Optimization**
+  - Fixed link clicking issues in mobile menus
+  - Enhanced touch event handling for better iPad compatibility
+  - Improved CSS positioning with fixed viewport positioning
+  - Better visual feedback for touch interactions
+
 ## [0.1.23] - 2025-08-12
 
 ### Added

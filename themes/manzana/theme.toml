@@ -1,0 +1,8 @@
+name = "manzana"
+version = "1.0.0"
+description = "macOS Tahoe-inspired theme with glassy interface and smooth animations"
+
+[templates]
+page = "page"
+post = "post"
+index = "index"

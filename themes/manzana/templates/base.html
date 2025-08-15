@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="{{ lang | default(value="en") }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_title | default(value="Blog") }}{% endblock title %}</title>
+    <meta name="description" content="{% block description %}{{ site_description | default(value="") }}{% endblock description %}">
+
+    {% block head_extra %}{% endblock head_extra %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ assets_path }}/css/main.css">
+    <link rel="alternate" type="application/atom+xml" title="{{ site_title | default(value="Blog") }} - Feed" href="{{ feed_path }}">
+</head>
+<body class="{% block body_class %}{% endblock body_class %}">
+    <div class="layout-container{% if toc %} has-toc{% endif %}">
+        <nav class="top-nav">
+            <a href="{{ home_path }}" class="site-title">{{ site_title | default(value="Blog") }}</a>
+            <div class="nav-controls">
+                {% block header_controls %}{% endblock header_controls %}
+                <button class="hamburger-menu" aria-label="Toggle menu">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+                {% if toc %}
+                <button class="toc-toggle" aria-label="Toggle table of contents">
+                    <span class="toc-icon">📖</span>
+                </button>
+                {% endif %}
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile dropdown menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-page-links">
+                {% for page in page_links %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Mobile TOC menu -->
+        {% if toc %}
+        <div class="mobile-toc" id="mobile-toc">
+            <div class="mobile-toc-content">
+                <h3>Table of Contents</h3>
+                {{ toc | safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        <aside class="sidebar">
+            <ul class="page-links">
+                {% for page in page_links %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </aside>
+
+        {% if toc %}
+        <aside class="toc-sidebar">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                {{ toc | safe }}
+            </div>
+        </aside>
+        {% endif %}
+
+        <main class="main-content {% block main_class %}{% endblock main_class %}">
+            {% block main %}{% endblock main %}
+        </main>
+    </div>
+
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+        <span>↑</span>
+    </button>
+
+    {% if available_translations %}
+    <script>
+        window.krikTranslations = {{ available_translations | json_encode() | safe }};
+    </script>
+    {% endif %}
+    <script src="{{ assets_path }}/js/main.js"></script>
+    <script src="{{ assets_path }}/js/prism-init.js"></script>
+    {% block scripts %}{% endblock scripts %}
+</body>
+</html>
+
+
