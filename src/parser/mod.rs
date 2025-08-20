@@ -1,8 +1,8 @@
+use crate::error::{KrikError, KrikResult, MarkdownError, MarkdownErrorKind};
+use crate::i18n::I18nManager;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::error::{KrikResult, KrikError, MarkdownError, MarkdownErrorKind};
-use crate::i18n::I18nManager;
 use std::path::Path;
 
 /// Front matter metadata extracted from the YAML header of Markdown files.
@@ -104,33 +104,40 @@ pub fn parse_markdown_with_frontmatter(content: &str) -> KrikResult<(FrontMatter
 ///
 /// Same as `parse_markdown_with_frontmatter` but provides better error context
 /// by including the file path in error messages.
-pub fn parse_markdown_with_frontmatter_for_file(content: &str, file_path: &Path) -> KrikResult<(FrontMatter, String)> {
+pub fn parse_markdown_with_frontmatter_for_file(
+    content: &str,
+    file_path: &Path,
+) -> KrikResult<(FrontMatter, String)> {
     if let Some(stripped) = content.strip_prefix("---\n") {
         if let Some(end_pos) = stripped.find("\n---\n") {
             let yaml_content = &stripped[..end_pos];
             let markdown_content = &stripped[end_pos + 5..];
-            
-            let front_matter: FrontMatter = serde_yaml::from_str(yaml_content)
-                .map_err(|e| KrikError::Markdown(MarkdownError {
+
+            let front_matter: FrontMatter = serde_yaml::from_str(yaml_content).map_err(|e| {
+                KrikError::Markdown(MarkdownError {
                     kind: MarkdownErrorKind::InvalidFrontMatter(e),
                     file: file_path.to_path_buf(),
                     line: None,
                     column: None,
                     context: "Parsing YAML front matter".to_string(),
-                }))?;
+                })
+            })?;
             return Ok((front_matter, markdown_content.to_string()));
         }
     }
-    
-    Ok((FrontMatter {
-        title: None,
-        date: None,
-        tags: None,
-        lang: None,
-        draft: None,
-        pdf: None,
-        extra: HashMap::new(),
-    }, content.to_string()))
+
+    Ok((
+        FrontMatter {
+            title: None,
+            date: None,
+            tags: None,
+            lang: None,
+            draft: None,
+            pdf: None,
+            extra: HashMap::new(),
+        },
+        content.to_string(),
+    ))
 }
 
 pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, String)> {

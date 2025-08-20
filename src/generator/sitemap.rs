@@ -26,12 +26,12 @@ pub fn generate_sitemap(
 
 /// Generate sitemap XML content
 fn generate_sitemap_xml(
-    documents: &[Document], 
-    document_groups: &HashMap<String, Vec<&Document>>, 
-    site_config: &SiteConfig
+    documents: &[Document],
+    document_groups: &HashMap<String, Vec<&Document>>,
+    site_config: &SiteConfig,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let mut sitemap = String::new();
-    
+
     // XML declaration and urlset opening with xhtml namespace and schema location
     sitemap.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     sitemap.push_str("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">\n");
@@ -40,15 +40,19 @@ fn generate_sitemap_xml(
     if let Some(ref base_url) = site_config.base_url {
         sitemap.push_str("  <url>\n");
         sitemap.push_str(&format!("    <loc>{}</loc>\n", escape_xml_url(base_url)));
-        
+
         // Use most recent post date or current time for home page
-        let most_recent_date = documents.iter()
+        let most_recent_date = documents
+            .iter()
             .filter(|doc| should_include_in_sitemap(doc))
             .filter_map(|doc| doc.front_matter.date)
             .max()
             .unwrap_or_else(Utc::now);
-        
-        sitemap.push_str(&format!("    <lastmod>{}</lastmod>\n", most_recent_date.format("%Y-%m-%d")));
+
+        sitemap.push_str(&format!(
+            "    <lastmod>{}</lastmod>\n",
+            most_recent_date.format("%Y-%m-%d")
+        ));
         sitemap.push_str("    <changefreq>weekly</changefreq>\n");
         sitemap.push_str("    <priority>1.0</priority>\n");
         sitemap.push_str("  </url>\n");
@@ -56,14 +60,19 @@ fn generate_sitemap_xml(
 
     // Add document entries (one per base name, not per language)
     let mut processed_base_names: HashSet<String> = HashSet::new();
-    
+
     for document in documents {
-        if should_include_in_sitemap(document) && !processed_base_names.contains(&document.base_name) {
+        if should_include_in_sitemap(document)
+            && !processed_base_names.contains(&document.base_name)
+        {
             processed_base_names.insert(document.base_name.clone());
-            
+
             // Get all language variants for this base name
             if let Some(language_variants) = document_groups.get(&document.base_name) {
-                sitemap.push_str(&generate_sitemap_entry_for_group(language_variants, site_config)?);
+                sitemap.push_str(&generate_sitemap_entry_for_group(
+                    language_variants,
+                    site_config,
+                )?);
             }
         }
     }
@@ -76,40 +85,48 @@ fn generate_sitemap_xml(
 /// Group documents by base name to find language variants
 fn group_documents_by_base_name(documents: &[Document]) -> HashMap<String, Vec<&Document>> {
     let mut groups: HashMap<String, Vec<&Document>> = HashMap::new();
-    
+
     for doc in documents {
         if should_include_in_sitemap(doc) {
             groups.entry(doc.base_name.clone()).or_default().push(doc);
         }
     }
-    
+
     groups
 }
 
 /// Generate a single sitemap entry for a group of language variants
 fn generate_sitemap_entry_for_group(
-    language_variants: &[&Document], 
-    site_config: &SiteConfig
+    language_variants: &[&Document],
+    site_config: &SiteConfig,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let mut entry = String::new();
-    
+
     entry.push_str("  <url>\n");
-    
+
     // Choose canonical document (prefer English, fall back to first available)
-    let canonical_doc = language_variants.iter()
+    let canonical_doc = language_variants
+        .iter()
         .find(|doc| doc.language == "en")
         .unwrap_or(&language_variants[0]);
-    
+
     // URL for canonical version
     let canonical_url = generate_document_url(canonical_doc, site_config);
-    entry.push_str(&format!("    <loc>{}</loc>\n", escape_xml_url(&canonical_url)));
+    entry.push_str(&format!(
+        "    <loc>{}</loc>\n",
+        escape_xml_url(&canonical_url)
+    ));
 
     // Last modification date (use most recent date across all variants)
-    let most_recent_date = language_variants.iter()
+    let most_recent_date = language_variants
+        .iter()
         .filter_map(|doc| doc.front_matter.date)
         .max();
     if let Some(date) = most_recent_date {
-        entry.push_str(&format!("    <lastmod>{}</lastmod>\n", date.format("%Y-%m-%d")));
+        entry.push_str(&format!(
+            "    <lastmod>{}</lastmod>\n",
+            date.format("%Y-%m-%d")
+        ));
     }
 
     // Change frequency and priority based on document type
@@ -144,9 +161,13 @@ fn generate_sitemap_entry_for_group(
 fn generate_document_url(document: &Document, site_config: &SiteConfig) -> String {
     let mut path = std::path::PathBuf::from(&document.file_path);
     path.set_extension("html");
-    
+
     if let Some(ref base_url) = site_config.base_url {
-        format!("{}/{}", base_url.trim_end_matches('/'), path.to_string_lossy())
+        format!(
+            "{}/{}",
+            base_url.trim_end_matches('/'),
+            path.to_string_lossy()
+        )
     } else {
         path.to_string_lossy().to_string()
     }
@@ -165,15 +186,20 @@ fn should_include_in_sitemap(document: &Document) -> bool {
 
 /// Check if document is a post (vs page)
 fn is_post(document: &Document) -> bool {
-    document.front_matter.extra.get("layout").and_then(|v| v.as_str()) == Some("post") || 
-    document.file_path.starts_with("posts/")
+    document
+        .front_matter
+        .extra
+        .get("layout")
+        .and_then(|v| v.as_str())
+        == Some("post")
+        || document.file_path.starts_with("posts/")
 }
 
 /// Map language codes to hreflang values
 fn map_language_to_hreflang(language: &str) -> &str {
     match language {
         "en" => "en",
-        "it" => "it", 
+        "it" => "it",
         "es" => "es",
         "fr" => "fr",
         "de" => "de",

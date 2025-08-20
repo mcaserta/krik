@@ -1,8 +1,10 @@
+use crate::error::{
+    ConfigError, ConfigErrorKind, KrikError, KrikResult, ThemeError, ThemeErrorKind,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use tera::{Context, Tera};
-use crate::error::{KrikError, KrikResult, ThemeError, ThemeErrorKind, ConfigError, ConfigErrorKind};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ThemeConfig {
@@ -47,7 +49,8 @@ description = "Default Krik theme"
 page = "page"
 post = "post"
 index = "index"
-        "#.to_string()
+        "#
+        .to_string()
     }
 
     pub fn default_templates() -> Tera {
@@ -59,7 +62,7 @@ index = "index"
                     // Disable auto-escaping for HTML templates
                     tera.autoescape_on(vec![]);
                     return tera;
-                },
+                }
                 Err(_) => {
                     // If loading fails, fall back to empty Tera (will use hardcoded fallback)
                 }
@@ -81,13 +84,13 @@ index = "index"
         }
 
         // Fall back to original name
-        self.templates
-            .render(template_name, context)
-            .map_err(|e| KrikError::Template(crate::error::TemplateError {
+        self.templates.render(template_name, context).map_err(|e| {
+            KrikError::Template(crate::error::TemplateError {
                 kind: crate::error::TemplateErrorKind::RenderError(e),
                 template: template_name.to_string(),
                 context: "Rendering template via Theme::render_page".to_string(),
-            }))
+            })
+        })
     }
 
     /// Attempt to reload templates from disk. Safe to call in dev when templates change.
@@ -114,7 +117,11 @@ pub struct ThemeBuilder {
 
 impl ThemeBuilder {
     fn new() -> Self {
-        Self { theme_path: None, autoescape_html: false, enable_reload: false }
+        Self {
+            theme_path: None,
+            autoescape_html: false,
+            enable_reload: false,
+        }
     }
 
     /// Set the theme directory path
@@ -193,7 +200,11 @@ impl ThemeBuilder {
             templates.autoescape_on(vec![]);
         }
 
-        let mut theme = Theme { config, templates, theme_path };
+        let mut theme = Theme {
+            config,
+            templates,
+            theme_path,
+        };
 
         // Optionally trigger an initial reload to ensure file-based templates are fresh
         if self.enable_reload {

@@ -1,11 +1,15 @@
+use crate::error::{CliError, CliErrorKind, KrikError, KrikResult};
 use std::fs;
 use std::path::{Path, PathBuf};
-use crate::error::{CliError, CliErrorKind, KrikError, KrikResult};
 
 /// Normalize a path to an absolute canonical path if possible.
 /// - If `must_exist` is true, returns an error if the path does not exist.
 /// - If `must_exist` is false, returns a best-effort absolute path (without canonicalizing missing path).
-pub fn normalize_path<P: AsRef<Path>>(path: P, must_exist: bool, context: &str) -> KrikResult<PathBuf> {
+pub fn normalize_path<P: AsRef<Path>>(
+    path: P,
+    must_exist: bool,
+    context: &str,
+) -> KrikResult<PathBuf> {
     let p = path.as_ref();
     if must_exist {
         if !p.exists() {
@@ -26,11 +30,13 @@ pub fn normalize_path<P: AsRef<Path>>(path: P, must_exist: bool, context: &str) 
     } else {
         // When the path may not exist yet, we canonicalize the parent if possible.
         if p.exists() {
-            return fs::canonicalize(p).map_err(|e| KrikError::Cli(CliError {
-                kind: CliErrorKind::CanonicalizeFailed(e),
-                path: Some(p.to_path_buf()),
-                context: context.to_string(),
-            }));
+            return fs::canonicalize(p).map_err(|e| {
+                KrikError::Cli(CliError {
+                    kind: CliErrorKind::CanonicalizeFailed(e),
+                    path: Some(p.to_path_buf()),
+                    context: context.to_string(),
+                })
+            });
         }
         if let Some(parent) = p.parent() {
             let base = if parent.exists() {
@@ -99,7 +105,10 @@ pub fn parse_port(value: &str, context: &str) -> KrikResult<u16> {
 }
 
 /// Validate an optional theme directory, falling back to default if None provided, and return absolute path.
-pub fn validate_theme_dir<P: AsRef<Path>>(opt_dir: Option<P>, context: &str) -> KrikResult<Option<PathBuf>> {
+pub fn validate_theme_dir<P: AsRef<Path>>(
+    opt_dir: Option<P>,
+    context: &str,
+) -> KrikResult<Option<PathBuf>> {
     match opt_dir {
         Some(dir) => {
             let p = dir.as_ref();
@@ -115,5 +124,3 @@ pub fn validate_theme_dir<P: AsRef<Path>>(opt_dir: Option<P>, context: &str) -> 
         None => Ok(None),
     }
 }
-
-

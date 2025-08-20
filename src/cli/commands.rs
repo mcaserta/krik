@@ -1,32 +1,42 @@
-use clap::ArgMatches;
+use super::validate::{
+    ensure_directory, normalize_path, parse_port, validate_directory, validate_theme_dir,
+};
+use crate::content::{create_page, create_post};
+use crate::error::{
+    GenerationError, GenerationErrorKind, KrikError, KrikResult, ServerError, ServerErrorKind,
+};
 use crate::generator::SiteGenerator;
-use crate::server::DevServer;
 use crate::init::init_site;
-use crate::content::{create_post, create_page};
-use crate::lint::{lint_content, lint_content_with_links, generate_html_report};
-use crate::site::SiteConfig;
-use crate::error::{KrikResult, KrikError, ServerError, ServerErrorKind, GenerationError, GenerationErrorKind};
+use crate::lint::{generate_html_report, lint_content, lint_content_with_links};
 use crate::logging;
+use crate::server::DevServer;
+use crate::site::SiteConfig;
+use clap::ArgMatches;
 use std::path::{Path, PathBuf};
-use tracing::{info, warn, error, debug};
-use super::validate::{validate_directory, ensure_directory, normalize_path, validate_theme_dir, parse_port};
+use tracing::{debug, error, info, warn};
 
 /// Resolve theme path with priority: command line > site.toml > default
 fn resolve_theme_path(cli_theme: Option<&str>, source_dir: &Path) -> KrikResult<Option<PathBuf>> {
     // Priority 1: Command line theme (if provided)
     if let Some(theme_path) = cli_theme {
         info!("Using command line theme: {}", theme_path);
-        return validate_theme_dir(Some(theme_path), "Validating --theme directory from command line");
+        return validate_theme_dir(
+            Some(theme_path),
+            "Validating --theme directory from command line",
+        );
     }
-    
+
     // Priority 2: site.toml theme (if provided)
     if let Ok(site_config) = SiteConfig::load_from_path(source_dir) {
         if let Some(theme_path) = &site_config.theme {
             info!("Using theme from site.toml: {}", theme_path);
-            return validate_theme_dir(Some(theme_path.as_str()), "Validating theme directory from site.toml");
+            return validate_theme_dir(
+                Some(theme_path.as_str()),
+                "Validating theme directory from site.toml",
+            );
         }
     }
-    
+
     // Priority 3: Default theme
     info!("Using default theme: themes/default");
     Ok(Some(PathBuf::from("themes/default")))
@@ -36,24 +46,35 @@ fn resolve_theme_path(cli_theme: Option<&str>, source_dir: &Path) -> KrikResult<
 pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("server");
     let _enter = _span.enter();
-    
+
     let input_dir = validate_directory(
-        server_matches.get_one::<String>("input").map(|s| s.as_str()).unwrap_or("content"),
+        server_matches
+            .get_one::<String>("input")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
         "Validating --input directory for server",
     )?;
     let output_dir = ensure_directory(
-        server_matches.get_one::<String>("output").map(|s| s.as_str()).unwrap_or("_site"),
+        server_matches
+            .get_one::<String>("output")
+            .map(|s| s.as_str())
+            .unwrap_or("_site"),
         "Ensuring --output directory for server",
     )?;
-    
+
     // Resolve theme with priority: command line > site.toml > default
     let theme_dir = resolve_theme_path(
-        server_matches.get_one::<String>("theme").map(|s| s.as_str()),
+        server_matches
+            .get_one::<String>("theme")
+            .map(|s| s.as_str()),
         &input_dir,
     )?;
-    
+
     let port = parse_port(
-        server_matches.get_one::<String>("port").map(|s| s.as_str()).unwrap_or("3000"),
+        server_matches
+            .get_one::<String>("port")
+            .map(|s| s.as_str())
+            .unwrap_or("3000"),
         "Parsing --port value for server",
     )?;
     let no_live_reload = server_matches.get_flag("no-live-reload");
@@ -61,14 +82,22 @@ pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
     info!("Starting development server on port {}", port);
     debug!("Input directory: {}", input_dir.display());
     debug!("Output directory: {}", output_dir.display());
-    debug!("Theme directory: {:?}", theme_dir.as_ref().map(|p| p.display()));
+    debug!(
+        "Theme directory: {:?}",
+        theme_dir.as_ref().map(|p| p.display())
+    );
     debug!("Live reload: {}", !no_live_reload);
 
     let server = DevServer::new(input_dir, output_dir, theme_dir, port, !no_live_reload);
-    server.start().await
+    server
+        .start()
+        .await
         .map_err(|e| match e.downcast::<std::io::Error>() {
             Ok(io_err) => KrikError::Server(ServerError {
-                kind: ServerErrorKind::BindError { port, source: *io_err },
+                kind: ServerErrorKind::BindError {
+                    port,
+                    source: *io_err,
+                },
                 context: format!("Starting development server on port {port}"),
             }),
             Err(other_err) => KrikError::Server(ServerError {
@@ -83,17 +112,20 @@ pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
 pub fn handle_init(init_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("init");
     let _enter = _span.enter();
-    
+
     let directory = normalize_path(
-        init_matches.get_one::<String>("directory").map(|s| s.as_str()).unwrap_or("."),
+        init_matches
+            .get_one::<String>("directory")
+            .map(|s| s.as_str())
+            .unwrap_or("."),
         false,
         "Normalizing target directory for init",
     )?;
     let force = init_matches.get_flag("force");
-    
+
     info!("Initializing new Krik site in: {}", directory.display());
     debug!("Force overwrite: {}", force);
-    
+
     init_site(&directory, force)
 }
 
@@ -101,21 +133,24 @@ pub fn handle_init(init_matches: &ArgMatches) -> KrikResult<()> {
 pub fn handle_post(post_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("post");
     let _enter = _span.enter();
-    
+
     let title = post_matches
         .get_one::<String>("title")
         .map(|s| s.as_str())
         .unwrap_or("New post");
     let filename = post_matches.get_one::<String>("filename");
     let content_dir = ensure_directory(
-        post_matches.get_one::<String>("content-dir").map(|s| s.as_str()).unwrap_or("content"),
+        post_matches
+            .get_one::<String>("content-dir")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
         "Ensuring content directory for post",
     )?;
-    
+
     info!("Creating new post: {}", title);
     debug!("Content directory: {}", content_dir.display());
     debug!("Custom filename: {:?}", filename);
-    
+
     create_post(&content_dir, title, filename)
 }
 
@@ -123,21 +158,24 @@ pub fn handle_post(post_matches: &ArgMatches) -> KrikResult<()> {
 pub fn handle_page(page_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("page");
     let _enter = _span.enter();
-    
+
     let title = page_matches
         .get_one::<String>("title")
         .map(|s| s.as_str())
         .unwrap_or("New page");
     let filename = page_matches.get_one::<String>("filename");
     let content_dir = ensure_directory(
-        page_matches.get_one::<String>("content-dir").map(|s| s.as_str()).unwrap_or("content"),
+        page_matches
+            .get_one::<String>("content-dir")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
         "Ensuring content directory for page",
     )?;
-    
+
     info!("Creating new page: {}", title);
     debug!("Content directory: {}", content_dir.display());
     debug!("Custom filename: {:?}", filename);
-    
+
     create_page(&content_dir, title, filename)
 }
 
@@ -145,9 +183,12 @@ pub fn handle_page(page_matches: &ArgMatches) -> KrikResult<()> {
 pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("lint");
     let _enter = _span.enter();
-    
+
     let input_dir = validate_directory(
-        lint_matches.get_one::<String>("input").map(|s| s.as_str()).unwrap_or("content"),
+        lint_matches
+            .get_one::<String>("input")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
         "Validating --input directory for lint",
     )?;
     let strict = lint_matches.get_flag("strict");
@@ -195,17 +236,18 @@ pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
     if !report.broken_links.is_empty() {
         error!("Found {} broken link(s):", report.broken_links.len());
         for broken_link in &report.broken_links {
-            error!("  - {}:{} - {} ({})", 
-                broken_link.file_path.display(), 
-                broken_link.line_number, 
-                broken_link.url, 
+            error!(
+                "  - {}:{} - {} ({})",
+                broken_link.file_path.display(),
+                broken_link.line_number,
+                broken_link.url,
                 broken_link.error
             );
         }
     }
 
-    let has_failures = !report.errors.is_empty() 
-        || !report.broken_links.is_empty() 
+    let has_failures = !report.errors.is_empty()
+        || !report.broken_links.is_empty()
         || (strict && !report.warnings.is_empty());
 
     if has_failures {
@@ -216,21 +258,25 @@ pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
             }
         }
         if strict && !report.warnings.is_empty() {
-            error!("Strict mode: treating {} warning(s) as error(s)", report.warnings.len());
+            error!(
+                "Strict mode: treating {} warning(s) as error(s)",
+                report.warnings.len()
+            );
         }
         // Return a content validation error
         return Err(KrikError::Content(crate::error::ContentError {
             kind: crate::error::ContentErrorKind::ValidationFailed({
                 let mut msgs = report.errors.clone();
-                if strict { 
-                    msgs.extend(report.warnings.clone()); 
+                if strict {
+                    msgs.extend(report.warnings.clone());
                 }
                 // Add broken links to error messages
                 for broken_link in &report.broken_links {
-                    msgs.push(format!("{}:{} - Broken link: {} ({})", 
-                        broken_link.file_path.display(), 
-                        broken_link.line_number, 
-                        broken_link.url, 
+                    msgs.push(format!(
+                        "{}:{} - Broken link: {} ({})",
+                        broken_link.file_path.display(),
+                        broken_link.line_number,
+                        broken_link.url,
                         broken_link.error
                     ));
                 }
@@ -253,16 +299,22 @@ pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
 pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
     let _span = logging::get_logger("generate");
     let _enter = _span.enter();
-    
+
     let input_dir = validate_directory(
-        matches.get_one::<String>("input").map(|s| s.as_str()).unwrap_or("content"),
+        matches
+            .get_one::<String>("input")
+            .map(|s| s.as_str())
+            .unwrap_or("content"),
         "Validating --input directory for generate",
     )?;
     let output_dir = ensure_directory(
-        matches.get_one::<String>("output").map(|s| s.as_str()).unwrap_or("_site"),
+        matches
+            .get_one::<String>("output")
+            .map(|s| s.as_str())
+            .unwrap_or("_site"),
         "Ensuring --output directory for generate",
     )?;
-    
+
     // Resolve theme with priority: command line > site.toml > default
     let theme_dir = resolve_theme_path(
         matches.get_one::<String>("theme").map(|s| s.as_str()),
@@ -271,7 +323,10 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
 
     info!("Scanning files in: {}", input_dir.display());
     info!("Output directory: {}", output_dir.display());
-    debug!("Theme directory: {:?}", theme_dir.as_ref().map(|p| p.display()));
+    debug!(
+        "Theme directory: {:?}",
+        theme_dir.as_ref().map(|p| p.display())
+    );
 
     let mut generator = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref())
         .map_err(|e| match &e {
@@ -282,7 +337,7 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
             }
             _ => e,
         })?;
-    
+
     generator.scan_files().map_err(|e| {
         error!("Scan Error: {e}");
         match &e {
@@ -296,14 +351,14 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
         }
         e
     })?;
-    
+
     if generator.documents.is_empty() {
         return Err(KrikError::Generation(GenerationError {
             kind: GenerationErrorKind::NoContent,
             context: format!("No markdown files found in {}", input_dir.display()),
         }));
     }
-    
+
     info!("Found {} documents", generator.documents.len());
 
     generator.generate_site()?;

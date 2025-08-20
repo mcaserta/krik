@@ -1,16 +1,24 @@
 use std::fs;
 use std::path::Path;
 
+use krik::error::KrikError;
 use krik::generator::templates;
-use krik::theme::{Theme, ThemeConfig};
 use krik::i18n::I18nManager;
-use krik::site::SiteConfig;
 use krik::parser::{Document, FrontMatter};
-use krik::error::{KrikError};
+use krik::site::SiteConfig;
+use krik::theme::{Theme, ThemeConfig};
 
 fn make_doc(path: &str) -> Document {
     Document {
-        front_matter: FrontMatter { title: Some("X".into()), date: None, tags: None, lang: None, draft: None, pdf: None, extra: Default::default() },
+        front_matter: FrontMatter {
+            title: Some("X".into()),
+            date: None,
+            tags: None,
+            lang: None,
+            draft: None,
+            pdf: None,
+            extra: Default::default(),
+        },
         content: "<p>content</p>".into(),
         file_path: path.into(),
         language: "en".into(),
@@ -28,7 +36,11 @@ fn build_empty_theme() -> Theme {
         description: None,
         templates: Default::default(),
     };
-    Theme { config, templates: tera::Tera::default(), theme_path: std::path::PathBuf::from("<test>") }
+    Theme {
+        config,
+        templates: tera::Tera::default(),
+        theme_path: std::path::PathBuf::from("<test>"),
+    }
 }
 
 #[test]
@@ -74,5 +86,3 @@ fn render_index_maps_template_error() {
         other => panic!("expected KrikError::Template, got {:?}", other),
     }
 }
-
-

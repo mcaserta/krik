@@ -5,13 +5,16 @@ use std::path::PathBuf;
 use krik::generator::SiteGenerator;
 
 fn write_file(path: &PathBuf, contents: &str) {
-    if let Some(parent) = path.parent() { fs::create_dir_all(parent).unwrap(); }
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).unwrap();
+    }
     let mut f = File::create(path).unwrap();
     f.write_all(contents.as_bytes()).unwrap();
 }
 
 #[test]
-fn index_selection_prefers_default_language_when_both_exist() -> Result<(), Box<dyn std::error::Error>> {
+fn index_selection_prefers_default_language_when_both_exist(
+) -> Result<(), Box<dyn std::error::Error>> {
     // Prepare temporary workspace
     let mut tmp_dir: PathBuf = std::env::temp_dir();
     tmp_dir.push(format!("krik_test_index_selection_{}", std::process::id()));
@@ -60,10 +63,14 @@ Contenuto.
     let index_html = fs::read_to_string(index_path)?;
 
     // Should link to posts/foo.html (default language) and not posts/foo.it.html
-    assert!(index_html.contains("href=\"posts/foo.html\""), "index should link to default-language post");
-    assert!(!index_html.contains("href=\"posts/foo.it.html\""), "index should not link to non-default variant when default exists");
+    assert!(
+        index_html.contains("href=\"posts/foo.html\""),
+        "index should link to default-language post"
+    );
+    assert!(
+        !index_html.contains("href=\"posts/foo.it.html\""),
+        "index should not link to non-default variant when default exists"
+    );
 
     Ok(())
 }
-
-

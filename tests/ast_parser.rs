@@ -1,4 +1,4 @@
-use krik::generator::ast_parser::{parse_markdown_ast, generate_toc_from_headings, Heading};
+use krik::generator::ast_parser::{generate_toc_from_headings, parse_markdown_ast, Heading};
 use pulldown_cmark::HeadingLevel;
 
 #[test]
@@ -21,11 +21,20 @@ fn heading_id_uniqueness() {
 #[test]
 fn toc_generation_skips_title() {
     let headings = vec![
-        Heading { level: HeadingLevel::H1, text: "Title".into(), id: "title".into(), line_number: 1 },
-        Heading { level: HeadingLevel::H2, text: "Section".into(), id: "section".into(), line_number: 2 },
+        Heading {
+            level: HeadingLevel::H1,
+            text: "Title".into(),
+            id: "title".into(),
+            line_number: 1,
+        },
+        Heading {
+            level: HeadingLevel::H2,
+            text: "Section".into(),
+            id: "section".into(),
+            line_number: 2,
+        },
     ];
     let toc = generate_toc_from_headings(&headings, Some("Title"));
     assert!(toc.contains("Section"));
     assert!(!toc.contains("Title"));
 }
-

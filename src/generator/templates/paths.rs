@@ -1,5 +1,5 @@
-use std::path::{Path, PathBuf};
 use pathdiff::diff_paths;
+use std::path::{Path, PathBuf};
 
 pub fn calculate_relative_path(file_path: &str, target: &str) -> String {
     let current_path = PathBuf::from(file_path);
@@ -24,7 +24,10 @@ pub fn get_base_path(path: &Path) -> String {
         .file_stem()
         .map(|s| s.to_string_lossy())
         .unwrap_or_default();
-    let parent = path.parent().map(|p| p.to_string_lossy()).unwrap_or_default();
+    let parent = path
+        .parent()
+        .map(|p| p.to_string_lossy())
+        .unwrap_or_default();
 
     let base_stem = if let Some(dot_pos) = stem.rfind('.') {
         let (base, lang) = stem.split_at(dot_pos);
@@ -43,5 +46,3 @@ pub fn get_base_path(path: &Path) -> String {
         format!("{parent}/{base_stem}")
     }
 }
-
-

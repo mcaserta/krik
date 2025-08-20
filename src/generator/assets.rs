@@ -1,6 +1,6 @@
+use crate::error::{IoError, IoErrorKind, KrikError, KrikResult};
 use crate::theme::Theme;
 use std::fs;
-use crate::error::{KrikError, KrikResult, IoError, IoErrorKind};
 use std::path::Path;
 use walkdir::WalkDir;
 
@@ -26,9 +26,15 @@ fn is_ignored_asset(path: &Path) -> bool {
             }
 
             // Temporary/backup extensions
-            if let Some(ext) = path.extension().and_then(|s| s.to_str()).map(|s| s.to_lowercase()) {
+            if let Some(ext) = path
+                .extension()
+                .and_then(|s| s.to_str())
+                .map(|s| s.to_lowercase())
+            {
                 match ext.as_str() {
-                    "swp" | "swo" | "swx" | "tmp" | "bak" | "orig" | "part" | "crdownload" => return true,
+                    "swp" | "swo" | "swx" | "tmp" | "bak" | "orig" | "part" | "crdownload" => {
+                        return true
+                    }
                     _ => {}
                 }
             }
@@ -62,18 +68,39 @@ pub fn copy_non_markdown_files(source_dir: &Path, output_dir: &Path) -> KrikResu
         }
 
         // Calculate relative path and destination
-        let relative_path = path.strip_prefix(source_dir)
-            .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: path.to_path_buf(), context: format!("Computing relative path from {} to {}", source_dir.display(), path.display()) }))?;
+        let relative_path = path.strip_prefix(source_dir).map_err(|_| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::InvalidPath,
+                path: path.to_path_buf(),
+                context: format!(
+                    "Computing relative path from {} to {}",
+                    source_dir.display(),
+                    path.display()
+                ),
+            })
+        })?;
         let dest_path = output_dir.join(relative_path);
 
         // Create parent directories if they don't exist
         if let Some(parent) = dest_path.parent() {
             // Always attempt to create; avoids existence checks (extra stats)
-            fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for asset copy".to_string() }))?;
+            fs::create_dir_all(parent).map_err(|e| {
+                KrikError::Io(IoError {
+                    kind: IoErrorKind::WriteFailed(e),
+                    path: parent.to_path_buf(),
+                    context: "Creating parent directories for asset copy".to_string(),
+                })
+            })?;
         }
 
         // Copy the file
-        fs::copy(path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying asset from {}", path.display()) }))?;
+        fs::copy(path, &dest_path).map_err(|e| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::WriteFailed(e),
+                path: dest_path.clone(),
+                context: format!("Copying asset from {}", path.display()),
+            })
+        })?;
     }
 
     Ok(())
@@ -86,7 +113,13 @@ pub fn copy_theme_assets(theme: &Theme, output_dir: &Path) -> KrikResult<()> {
         let dest_assets_dir = output_dir.join("assets");
 
         // Always attempt to create destination directory (idempotent)
-        fs::create_dir_all(&dest_assets_dir).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_assets_dir.clone(), context: "Creating destination assets directory".to_string() }))?;
+        fs::create_dir_all(&dest_assets_dir).map_err(|e| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::WriteFailed(e),
+                path: dest_assets_dir.clone(),
+                context: "Creating destination assets directory".to_string(),
+            })
+        })?;
 
         // Copy all files from theme assets
         copy_directory_contents(&asset_dir, &dest_assets_dir)?;
@@ -114,17 +147,38 @@ fn copy_directory_contents(src: &Path, dest: &Path) -> KrikResult<()> {
             continue;
         }
 
-        let relative_path = path.strip_prefix(src)
-            .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: path.to_path_buf(), context: format!("Computing relative path from {} to {}", src.display(), path.display()) }))?;
+        let relative_path = path.strip_prefix(src).map_err(|_| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::InvalidPath,
+                path: path.to_path_buf(),
+                context: format!(
+                    "Computing relative path from {} to {}",
+                    src.display(),
+                    path.display()
+                ),
+            })
+        })?;
         let dest_path = dest.join(relative_path);
 
         // Always attempt to create parent directories
         if let Some(parent) = dest_path.parent() {
-            fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for theme asset copy".to_string() }))?;
+            fs::create_dir_all(parent).map_err(|e| {
+                KrikError::Io(IoError {
+                    kind: IoErrorKind::WriteFailed(e),
+                    path: parent.to_path_buf(),
+                    context: "Creating parent directories for theme asset copy".to_string(),
+                })
+            })?;
         }
 
         // Copy the file
-        fs::copy(path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying theme asset from {}", path.display()) }))?;
+        fs::copy(path, &dest_path).map_err(|e| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::WriteFailed(e),
+                path: dest_path.clone(),
+                context: format!("Copying theme asset from {}", path.display()),
+            })
+        })?;
     }
 
     Ok(())
@@ -132,11 +186,7 @@ fn copy_directory_contents(src: &Path, dest: &Path) -> KrikResult<()> {
 
 /// Copy a single asset file from `source_dir` into the mirrored path under `output_dir`.
 /// Skips markdown files and ignored assets. Returns Ok even if the path is not a regular file.
-pub fn copy_single_asset(
-    source_dir: &Path,
-    output_dir: &Path,
-    file_path: &Path,
-) -> KrikResult<()> {
+pub fn copy_single_asset(source_dir: &Path, output_dir: &Path, file_path: &Path) -> KrikResult<()> {
     if !file_path.exists() || file_path.is_dir() {
         return Ok(());
     }
@@ -151,14 +201,35 @@ pub fn copy_single_asset(
         return Ok(());
     }
 
-    let relative_path = file_path.strip_prefix(source_dir)
-        .map_err(|_| KrikError::Io(IoError { kind: IoErrorKind::InvalidPath, path: file_path.to_path_buf(), context: format!("Computing relative path from {} to {}", source_dir.display(), file_path.display()) }))?;
+    let relative_path = file_path.strip_prefix(source_dir).map_err(|_| {
+        KrikError::Io(IoError {
+            kind: IoErrorKind::InvalidPath,
+            path: file_path.to_path_buf(),
+            context: format!(
+                "Computing relative path from {} to {}",
+                source_dir.display(),
+                file_path.display()
+            ),
+        })
+    })?;
     let dest_path = output_dir.join(relative_path);
 
     if let Some(parent) = dest_path.parent() {
-        fs::create_dir_all(parent).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: parent.to_path_buf(), context: "Creating parent directories for single asset copy".to_string() }))?;
+        fs::create_dir_all(parent).map_err(|e| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::WriteFailed(e),
+                path: parent.to_path_buf(),
+                context: "Creating parent directories for single asset copy".to_string(),
+            })
+        })?;
     }
-    fs::copy(file_path, &dest_path).map_err(|e| KrikError::Io(IoError { kind: IoErrorKind::WriteFailed(e), path: dest_path.clone(), context: format!("Copying single asset from {}", file_path.display()) }))?;
+    fs::copy(file_path, &dest_path).map_err(|e| {
+        KrikError::Io(IoError {
+            kind: IoErrorKind::WriteFailed(e),
+            path: dest_path.clone(),
+            context: format!("Copying single asset from {}", file_path.display()),
+        })
+    })?;
     Ok(())
 }
 
@@ -179,4 +250,3 @@ pub fn remove_single_asset(
     }
     Ok(())
 }
-

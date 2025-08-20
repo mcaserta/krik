@@ -1,23 +1,26 @@
-use crate::parser::{Document, extract_language_from_filename, parse_markdown_with_frontmatter_for_file};
-use crate::generator::ast_parser::{parse_markdown_ast, generate_toc_from_headings};
-use crate::error::{KrikResult, KrikError, IoError, IoErrorKind, MarkdownError, MarkdownErrorKind};
+use crate::error::{IoError, IoErrorKind, KrikError, KrikResult, MarkdownError, MarkdownErrorKind};
+use crate::generator::ast_parser::{generate_toc_from_headings, parse_markdown_ast};
+use crate::parser::{
+    extract_language_from_filename, parse_markdown_with_frontmatter_for_file, Document,
+};
+use rayon::prelude::*;
 use regex::Regex;
 use std::path::Path;
+use tracing::{debug, info, warn};
 use walkdir::WalkDir;
-use rayon::prelude::*;
-use tracing::{info, debug, warn};
-
 
 /// Scan files in the source directory and parse markdown documents
 pub fn scan_files(source_dir: &Path, documents: &mut Vec<Document>) -> KrikResult<()> {
     info!("Starting file scan in: {}", source_dir.display());
-    
+
     let entries = collect_markdown_files(source_dir);
     let results = process_files_parallel(&entries, source_dir);
     let scan_stats = collect_results(results, documents);
-    
-    info!("File scan completed: {} processed, {} skipped, {} errors", 
-          scan_stats.processed, scan_stats.skipped, scan_stats.errors);
+
+    info!(
+        "File scan completed: {} processed, {} skipped, {} errors",
+        scan_stats.processed, scan_stats.skipped, scan_stats.errors
+    );
     Ok(())
 }
 
@@ -38,12 +41,12 @@ pub fn parse_single_file(source_dir: &Path, path: &Path) -> KrikResult<Document>
     let rel_path = calculate_relative_path(source_dir, path);
     let content = read_file_content(path)?;
     let (frontmatter, markdown_content) = parse_markdown_with_frontmatter_for_file(&content, path)?;
-    
+
     validate_not_draft(&frontmatter, path)?;
-    
+
     let (base_name, language) = extract_file_metadata(path)?;
     let (html_content, toc_html) = process_markdown_content(&markdown_content, &frontmatter);
-    
+
     Ok(create_document(
         frontmatter,
         html_content,
@@ -95,10 +98,10 @@ pub fn generate_toc_and_content(content: &str, title: Option<&str>) -> (String, 
 /// Remove duplicate H1 title from content if it matches the frontmatter title
 pub fn remove_duplicate_title(content: &str, title: Option<&str>) -> String {
     if let Some(title) = title {
-    let h1_regex = match Regex::new(r"<h1[^>]*>([^<]+)</h1>") {
-        Ok(r) => r,
-        Err(_) => return content.to_string(),
-    };
+        let h1_regex = match Regex::new(r"<h1[^>]*>([^<]+)</h1>") {
+            Ok(r) => r,
+            Err(_) => return content.to_string(),
+        };
         if let Some(cap) = h1_regex.captures(content) {
             let heading_text = &cap[1];
             if heading_text.trim() == title.trim() {
@@ -118,10 +121,10 @@ pub fn process_footnotes(content: &str) -> String {
 
 /// Statistics for file scanning operations
 #[derive(Debug, Default)]
-struct ScanStats {
-    processed: usize,
-    skipped: usize,
-    errors: usize,
+pub struct ScanStats {
+    pub processed: usize,
+    pub skipped: usize,
+    pub errors: usize,
 }
 
 /// Collect all markdown files from the source directory
@@ -136,7 +139,10 @@ fn collect_markdown_files(source_dir: &Path) -> Vec<walkdir::DirEntry> {
 }
 
 /// Process files in parallel and return results
-fn process_files_parallel(entries: &[walkdir::DirEntry], source_dir: &Path) -> Vec<(String, Result<Document, KrikError>)> {
+fn process_files_parallel(
+    entries: &[walkdir::DirEntry],
+    source_dir: &Path,
+) -> Vec<(String, Result<Document, KrikError>)> {
     let mut results: Vec<(String, Result<Document, KrikError>)> = entries
         .par_iter()
         .map(|entry| {
@@ -155,15 +161,15 @@ fn process_files_parallel(entries: &[walkdir::DirEntry], source_dir: &Path) -> V
 /// Process a single markdown file and return a Document
 fn process_single_markdown_file(path: &Path, rel_path: &str) -> Result<Document, KrikError> {
     debug!("Processing file: {}", path.display());
-    
+
     let content = read_file_content(path)?;
     let (frontmatter, markdown_content) = parse_markdown_with_frontmatter_for_file(&content, path)?;
-    
+
     validate_not_draft(&frontmatter, path)?;
-    
+
     let (base_name, language) = extract_file_metadata(path)?;
     let (html_content, toc_html) = process_markdown_content(&markdown_content, &frontmatter);
-    
+
     Ok(create_document(
         frontmatter,
         html_content,
@@ -175,9 +181,12 @@ fn process_single_markdown_file(path: &Path, rel_path: &str) -> Result<Document,
 }
 
 /// Collect results from file processing and update documents vector
-fn collect_results(results: Vec<(String, Result<Document, KrikError>)>, documents: &mut Vec<Document>) -> ScanStats {
+pub fn collect_results(
+    results: Vec<(String, Result<Document, KrikError>)>,
+    documents: &mut Vec<Document>,
+) -> ScanStats {
     let mut stats = ScanStats::default();
-    
+
     for (path_str, res) in results {
         match res {
             Ok(doc) => {
@@ -196,12 +205,12 @@ fn collect_results(results: Vec<(String, Result<Document, KrikError>)>, document
             }
         }
     }
-    
+
     stats
 }
 
 /// Calculate relative path from source directory to file
-fn calculate_relative_path(source_dir: &Path, path: &Path) -> String {
+pub fn calculate_relative_path(source_dir: &Path, path: &Path) -> String {
     path.strip_prefix(source_dir)
         .ok()
         .map(|p| p.to_string_lossy().to_string())
@@ -210,15 +219,17 @@ fn calculate_relative_path(source_dir: &Path, path: &Path) -> String {
 
 /// Read file content with error handling
 fn read_file_content(path: &Path) -> KrikResult<String> {
-    std::fs::read_to_string(path).map_err(|e| KrikError::Io(IoError {
-        kind: IoErrorKind::ReadFailed(e),
-        path: path.to_path_buf(),
-        context: "Reading markdown file".to_string(),
-    }))
+    std::fs::read_to_string(path).map_err(|e| {
+        KrikError::Io(IoError {
+            kind: IoErrorKind::ReadFailed(e),
+            path: path.to_path_buf(),
+            context: "Reading markdown file".to_string(),
+        })
+    })
 }
 
 /// Validate that a document is not a draft
-fn validate_not_draft(frontmatter: &crate::parser::FrontMatter, path: &Path) -> KrikResult<()> {
+pub fn validate_not_draft(frontmatter: &crate::parser::FrontMatter, path: &Path) -> KrikResult<()> {
     if frontmatter.draft.unwrap_or(false) {
         return Err(KrikError::Markdown(MarkdownError {
             kind: MarkdownErrorKind::ParseError("Draft skipped".to_string()),
@@ -232,32 +243,37 @@ fn validate_not_draft(frontmatter: &crate::parser::FrontMatter, path: &Path) -> 
 }
 
 /// Extract base name and language from file path
-fn extract_file_metadata(path: &Path) -> KrikResult<(String, String)> {
+pub fn extract_file_metadata(path: &Path) -> KrikResult<(String, String)> {
     let filename_without_ext = path
         .file_stem()
-        .ok_or_else(|| KrikError::Io(IoError {
-            kind: IoErrorKind::InvalidPath,
-            path: path.to_path_buf(),
-            context: "Extracting filename stem".to_string(),
-        }))?
+        .ok_or_else(|| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::InvalidPath,
+                path: path.to_path_buf(),
+                context: "Extracting filename stem".to_string(),
+            })
+        })?
         .to_string_lossy();
-    
+
     extract_language_from_filename(&filename_without_ext)
 }
 
 /// Process markdown content and generate HTML with optional TOC
-fn process_markdown_content(markdown_content: &str, frontmatter: &crate::parser::FrontMatter) -> (String, String) {
+pub fn process_markdown_content(
+    markdown_content: &str,
+    frontmatter: &crate::parser::FrontMatter,
+) -> (String, String) {
     let with_toc = frontmatter
         .extra
         .get("toc")
         .and_then(|v| v.as_bool())
         .unwrap_or(false);
-    
+
     markdown_to_html(markdown_content, with_toc, frontmatter.title.as_deref())
 }
 
 /// Create a Document with the provided components
-fn create_document(
+pub fn create_document(
     front_matter: crate::parser::FrontMatter,
     content: String,
     file_path: String,
@@ -271,15 +287,17 @@ fn create_document(
         file_path,
         language,
         base_name,
-        toc: if toc_html.is_empty() { None } else { Some(toc_html) },
+        toc: if toc_html.is_empty() {
+            None
+        } else {
+            Some(toc_html)
+        },
     }
 }
 
 /// Check if an error is a draft skip error
-fn is_draft_skip_error(error: &KrikError) -> bool {
+pub fn is_draft_skip_error(error: &KrikError) -> bool {
     matches!(error, KrikError::Markdown(MarkdownError { 
         kind: MarkdownErrorKind::ParseError(msg), .. 
     }) if msg == "Draft skipped")
 }
-
-// tests moved to tests/ directory

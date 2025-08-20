@@ -14,4 +14,3 @@ fn robots_includes_sitemap_and_defaults() {
     let txt = fs::read_to_string(out.join("robots.txt")).unwrap();
     assert!(txt.contains("Sitemap: https://example.com/sitemap.xml"));
 }
-

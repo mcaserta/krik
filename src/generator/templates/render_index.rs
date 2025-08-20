@@ -1,8 +1,8 @@
-use crate::parser::Document;
+use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
 use crate::i18n::I18nManager;
+use crate::parser::Document;
 use crate::site::SiteConfig;
 use crate::theme::Theme;
-use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
 use chrono::{DateTime, Utc};
 use std::fs::File;
 use std::io::Write;
@@ -20,7 +20,12 @@ pub fn generate_index(
     output_dir: &Path,
 ) -> KrikResult<()> {
     let mut context = Context::new();
-    add_site_context(&mut context, site_config, i18n.default_language(), "index.html");
+    add_site_context(
+        &mut context,
+        site_config,
+        i18n.default_language(),
+        "index.html",
+    );
 
     let site_description = "Latest posts and articles".to_string();
     context.insert("site_description", &site_description);
@@ -44,7 +49,12 @@ pub fn generate_index(
         }
     }
     let mut post_docs: Vec<&Document> = chosen.values().cloned().collect();
-    post_docs.sort_by(|a, b| b.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC).cmp(&a.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC)));
+    post_docs.sort_by(|a, b| {
+        b.front_matter
+            .date
+            .unwrap_or(DateTime::<Utc>::MIN_UTC)
+            .cmp(&a.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC))
+    });
 
     let posts: Vec<std::collections::HashMap<String, serde_json::Value>> = post_docs
         .iter()
@@ -58,15 +68,15 @@ pub fn generate_index(
     let rendered = theme
         .templates
         .render("index.html", &context)
-        .map_err(|e| KrikError::Template(TemplateError {
-            kind: TemplateErrorKind::RenderError(e),
-            template: "index.html".to_string(),
-            context: "Rendering index page".to_string(),
-        }))?;
+        .map_err(|e| {
+            KrikError::Template(TemplateError {
+                kind: TemplateErrorKind::RenderError(e),
+                template: "index.html".to_string(),
+                context: "Rendering index page".to_string(),
+            })
+        })?;
     let index_path = output_dir.join("index.html");
     let mut file = File::create(&index_path)?;
     file.write_all(rendered.as_bytes())?;
     Ok(())
 }
-
-

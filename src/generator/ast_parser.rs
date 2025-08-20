@@ -1,6 +1,6 @@
-use pulldown_cmark::{Event, Tag, TagEnd, Options, Parser, HeadingLevel};
-use std::collections::HashMap;
+use pulldown_cmark::{Event, HeadingLevel, Options, Parser, Tag, TagEnd};
 use regex::Regex;
+use std::collections::HashMap;
 
 /// Represents a heading in the document structure
 #[derive(Debug, Clone)]
@@ -40,21 +40,21 @@ pub fn parse_markdown_ast(markdown: &str) -> AstParseResult {
 
     let parser = Parser::new_ext(markdown, options);
     let mut ast_parser = AstParser::new();
-    
+
     // Collect headings and footnotes
     let events: Vec<_> = parser.collect();
     for event in &events {
         ast_parser.process_event(event.clone());
     }
-    
+
     // Generate HTML using default pulldown-cmark HTML generation
     let mut html_output = String::new();
     use pulldown_cmark::html::push_html;
     push_html(&mut html_output, events.into_iter());
-    
+
     // Post-process HTML to add IDs to headings
     let processed_html = add_heading_ids_to_html(&html_output, &ast_parser.headings);
-    
+
     AstParseResult {
         headings: ast_parser.headings,
         footnotes: ast_parser.footnotes,
@@ -89,7 +89,7 @@ impl AstParser {
             in_footnote_definition: false,
         }
     }
-    
+
     fn process_event(&mut self, event: Event) {
         match event {
             Event::Start(Tag::Heading { level, .. }) => {
@@ -159,7 +159,7 @@ impl AstParser {
             _ => {}
         }
     }
-    
+
     fn generate_heading_id(&self, text: &str) -> String {
         // Generate a URL-friendly ID from heading text
         let mut id = text
@@ -167,16 +167,16 @@ impl AstParser {
             .chars()
             .filter(|c| c.is_alphanumeric() || c.is_whitespace())
             .collect::<String>();
-        
+
         // Replace spaces with hyphens and remove multiple hyphens
         id = id.replace(' ', "-");
         while id.contains("--") {
             id = id.replace("--", "-");
         }
-        
+
         // Remove leading/trailing hyphens
         id = id.trim_matches('-').to_string();
-        
+
         // Ensure uniqueness by adding counter if needed
         let base_id = id.clone();
         let mut counter = 1;
@@ -184,7 +184,7 @@ impl AstParser {
             id = format!("{base_id}-{counter}");
             counter += 1;
         }
-        
+
         id
     }
 }
@@ -192,34 +192,41 @@ impl AstParser {
 /// Add heading IDs to HTML content
 fn add_heading_ids_to_html(html: &str, headings: &[Heading]) -> String {
     let mut result = html.to_string();
-    
+
     // Use regex to find and replace heading tags
     let heading_regex = Regex::new(r"<h([1-6])([^>]*)>([^<]*)</h[1-6]>").unwrap();
-    
-    result = heading_regex.replace_all(&result, |caps: &regex::Captures| {
-        let level = &caps[1];
-        let attrs = &caps[2];
-        let text = &caps[3];
-        
-        // Find matching heading by text content
-        if let Some(heading) = headings.iter().find(|h| h.text.trim() == text.trim()) {
-            format!("<h{}{} id=\"{}\">{}</h{}>", level, attrs, heading.id, text, level)
-        } else {
-            // If no match found, just return the original
-            caps[0].to_string()
-        }
-    }).to_string();
-    
+
+    result = heading_regex
+        .replace_all(&result, |caps: &regex::Captures| {
+            let level = &caps[1];
+            let attrs = &caps[2];
+            let text = &caps[3];
+
+            // Find matching heading by text content
+            if let Some(heading) = headings.iter().find(|h| h.text.trim() == text.trim()) {
+                format!(
+                    "<h{}{} id=\"{}\">{}</h{}>",
+                    level, attrs, heading.id, text, level
+                )
+            } else {
+                // If no match found, just return the original
+                caps[0].to_string()
+            }
+        })
+        .to_string();
+
     result
 }
 
 /// Generate table of contents from parsed headings
 pub fn generate_toc_from_headings(headings: &[Heading], title: Option<&str>) -> String {
     let mut toc_html = String::new();
-    
+
     for heading in headings {
         // Skip h1 if it matches the title
-        if !(heading.level == HeadingLevel::H1 && title.is_some_and(|t| t.trim() == heading.text.trim())) {
+        if !(heading.level == HeadingLevel::H1
+            && title.is_some_and(|t| t.trim() == heading.text.trim()))
+        {
             let indent = "  ".repeat((heading.level as u8).saturating_sub(1) as usize);
             toc_html.push_str(&format!(
                 "{}<li><a href=\"#{}\">{}</a></li>\n",
@@ -227,25 +234,25 @@ pub fn generate_toc_from_headings(headings: &[Heading], title: Option<&str>) -> 
             ));
         }
     }
-    
+
     if !toc_html.is_empty() {
         toc_html = format!("<ul class=\"toc\">\n{toc_html}</ul>");
     }
-    
+
     toc_html
 }
 
 /// Process footnotes to add proper navigation
 pub fn process_footnotes_ast(footnotes: &HashMap<String, Footnote>) -> HashMap<String, Footnote> {
     let mut processed_footnotes = footnotes.clone();
-    
+
     for (id, footnote) in processed_footnotes.iter_mut() {
         // Ensure proper ID format
         if !id.starts_with("fn:") {
             footnote.id = format!("fn:{id}");
         }
     }
-    
+
     processed_footnotes
 }
 

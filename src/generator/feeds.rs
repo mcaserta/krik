@@ -12,12 +12,15 @@ pub fn generate_feed(
     output_dir: &Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Filter and sort posts
-    let mut posts: Vec<&Document> = documents.iter()
+    let mut posts: Vec<&Document> = documents
+        .iter()
         .filter(|doc| is_post_for_feed(doc))
         .collect();
-    
+
     posts.sort_by(|a, b| {
-        b.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC)
+        b.front_matter
+            .date
+            .unwrap_or(DateTime::<Utc>::MIN_UTC)
             .cmp(&a.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC))
     });
 
@@ -35,31 +38,44 @@ pub fn generate_feed(
 }
 
 /// Generate Atom feed XML content
-fn generate_atom_feed(posts: &[&Document], site_config: &SiteConfig) -> Result<String, Box<dyn std::error::Error>> {
+fn generate_atom_feed(
+    posts: &[&Document],
+    site_config: &SiteConfig,
+) -> Result<String, Box<dyn std::error::Error>> {
     let mut feed = String::new();
-    
+
     // XML declaration and feed opening
     feed.push_str("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
     feed.push_str("<feed xmlns=\"http://www.w3.org/2005/Atom\"");
-    
+
     // Add xml:base if base_url is configured
     if let Some(ref base_url) = site_config.base_url {
         feed.push_str(&format!(" xml:base=\"{}\"", escape_xml_url(base_url)));
     }
-    
+
     feed.push_str(">\n");
 
     // Feed metadata
-    feed.push_str(&format!("  <title>{}</title>\n", escape_xml(&site_config.get_site_title())));
-    
+    feed.push_str(&format!(
+        "  <title>{}</title>\n",
+        escape_xml(&site_config.get_site_title())
+    ));
+
     if let Some(ref base_url) = site_config.base_url {
-        feed.push_str(&format!("  <link href=\"{}/feed.xml\" rel=\"self\" />\n", escape_xml_url(base_url)));
-        feed.push_str(&format!("  <link href=\"{}\" />\n", escape_xml_url(base_url)));
+        feed.push_str(&format!(
+            "  <link href=\"{}/feed.xml\" rel=\"self\" />\n",
+            escape_xml_url(base_url)
+        ));
+        feed.push_str(&format!(
+            "  <link href=\"{}\" />\n",
+            escape_xml_url(base_url)
+        ));
         feed.push_str(&format!("  <id>{}</id>\n", escape_xml_url(base_url)));
     }
 
     // Updated time (most recent post date or current time)
-    let updated = posts.first()
+    let updated = posts
+        .first()
         .and_then(|post| post.front_matter.date)
         .unwrap_or_else(Utc::now);
     feed.push_str(&format!("  <updated>{}</updated>\n", updated.to_rfc3339()));
@@ -78,11 +94,14 @@ fn generate_atom_feed(posts: &[&Document], site_config: &SiteConfig) -> Result<S
 }
 
 /// Generate a single feed entry
-fn generate_feed_entry(post: &Document, site_config: &SiteConfig) -> Result<String, Box<dyn std::error::Error>> {
+fn generate_feed_entry(
+    post: &Document,
+    site_config: &SiteConfig,
+) -> Result<String, Box<dyn std::error::Error>> {
     let mut entry = String::new();
-    
+
     entry.push_str("  <entry>\n");
-    
+
     // Title
     if let Some(ref title) = post.front_matter.title {
         entry.push_str(&format!("    <title>{}</title>\n", escape_xml(title)));
@@ -90,13 +109,19 @@ fn generate_feed_entry(post: &Document, site_config: &SiteConfig) -> Result<Stri
 
     // Link and ID
     let post_url = generate_post_url(post, site_config);
-    entry.push_str(&format!("    <link href=\"{}\" />\n", escape_xml_url(&post_url)));
+    entry.push_str(&format!(
+        "    <link href=\"{}\" />\n",
+        escape_xml_url(&post_url)
+    ));
     entry.push_str(&format!("    <id>{}</id>\n", escape_xml_url(&post_url)));
 
     // Date
     if let Some(date) = post.front_matter.date {
         entry.push_str(&format!("    <updated>{}</updated>\n", date.to_rfc3339()));
-        entry.push_str(&format!("    <published>{}</published>\n", date.to_rfc3339()));
+        entry.push_str(&format!(
+            "    <published>{}</published>\n",
+            date.to_rfc3339()
+        ));
     }
 
     // Content
@@ -120,9 +145,13 @@ fn generate_feed_entry(post: &Document, site_config: &SiteConfig) -> Result<Stri
 fn generate_post_url(post: &Document, site_config: &SiteConfig) -> String {
     let mut path = std::path::PathBuf::from(&post.file_path);
     path.set_extension("html");
-    
+
     if let Some(ref base_url) = site_config.base_url {
-        format!("{}/{}", base_url.trim_end_matches('/'), path.to_string_lossy())
+        format!(
+            "{}/{}",
+            base_url.trim_end_matches('/'),
+            path.to_string_lossy()
+        )
     } else {
         path.to_string_lossy().to_string()
     }
@@ -131,8 +160,14 @@ fn generate_post_url(post: &Document, site_config: &SiteConfig) -> String {
 /// Check if document should be included in feed
 fn is_post_for_feed(document: &Document) -> bool {
     // Include only posts (not pages) and only default language
-    (document.front_matter.extra.get("layout").and_then(|v| v.as_str()) == Some("post") || document.file_path.starts_with("posts/")) &&
-    document.language == "en"
+    (document
+        .front_matter
+        .extra
+        .get("layout")
+        .and_then(|v| v.as_str())
+        == Some("post")
+        || document.file_path.starts_with("posts/"))
+        && document.language == "en"
 }
 
 /// Escape XML special characters

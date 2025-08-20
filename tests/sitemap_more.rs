@@ -1,12 +1,29 @@
 use krik::generator::sitemap::generate_sitemap;
-use krik::site::SiteConfig;
 use krik::parser::{Document, FrontMatter};
+use krik::site::SiteConfig;
 use std::collections::HashMap;
 
 fn base_doc(file_path: &str, layout: Option<&str>, draft: Option<bool>, lang: &str) -> Document {
     let mut extra = HashMap::new();
-    if let Some(l) = layout { extra.insert("layout".into(), serde_yaml::Value::String(l.into())); }
-    Document { file_path: file_path.into(), front_matter: FrontMatter { title: None, date: None, tags: None, lang: None, draft, pdf: None, extra }, content: String::new(), language: lang.into(), base_name: "base".into(), toc: None }
+    if let Some(l) = layout {
+        extra.insert("layout".into(), serde_yaml::Value::String(l.into()));
+    }
+    Document {
+        file_path: file_path.into(),
+        front_matter: FrontMatter {
+            title: None,
+            date: None,
+            tags: None,
+            lang: None,
+            draft,
+            pdf: None,
+            extra,
+        },
+        content: String::new(),
+        language: lang.into(),
+        base_name: "base".into(),
+        toc: None,
+    }
 }
 
 #[test]
@@ -24,4 +41,3 @@ fn sitemap_inclusion_and_is_post() {
     generate_sitemap(&docs, &cfg, &out).unwrap();
     assert!(out.join("sitemap.xml").exists());
 }
-

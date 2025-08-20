@@ -1,18 +1,18 @@
+use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
 use crate::i18n::I18nManager;
 use crate::parser::Document;
 use crate::site::SiteConfig;
 use crate::theme::Theme;
-use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use tera::Context;
 
 use super::context::{
-    add_language_context, add_navigation_context, add_page_links_context, add_sidebar_context, add_site_context,
-    generate_description,
+    add_language_context, add_navigation_context, add_page_links_context, add_sidebar_context,
+    add_site_context, generate_description,
 };
-use super::paths::{determine_output_path};
+use super::paths::determine_output_path;
 use super::select::determine_template_name;
 use rayon::prelude::*;
 use std::sync::Mutex;
@@ -39,7 +39,9 @@ pub fn generate_pages(
     });
 
     if let Ok(guard) = first_error.into_inner() {
-        if let Some(err) = guard { return Err(err); }
+        if let Some(err) = guard {
+            return Err(err);
+        }
     }
     Ok(())
 }
@@ -58,7 +60,7 @@ pub fn generate_page(
 }
 
 /// Build the template context for a page
-fn build_page_context(
+pub fn build_page_context(
     document: &Document,
     all_documents: &[Document],
     site_config: &SiteConfig,
@@ -71,7 +73,7 @@ fn build_page_context(
 }
 
 /// Create the base template context with document fields
-fn create_base_context(document: &Document) -> Context {
+pub fn create_base_context(document: &Document) -> Context {
     let mut context = Context::new();
     context.insert("title", &document.front_matter.title);
     context.insert("content", &document.content);
@@ -99,7 +101,7 @@ fn create_base_context(document: &Document) -> Context {
 }
 
 /// Add processed content (without duplicate title, with footnotes) to context
-fn add_processed_content(context: &mut Context, document: &Document) {
+pub fn add_processed_content(context: &mut Context, document: &Document) {
     let content_without_title = crate::generator::markdown::remove_duplicate_title(
         &document.content,
         document.front_matter.title.as_deref(),
@@ -112,20 +114,28 @@ fn add_processed_content(context: &mut Context, document: &Document) {
 
     // footnotes pass-through for now
     let processed_content = crate::generator::markdown::process_footnotes(
-        context.get("content").and_then(|v| v.as_str()).unwrap_or("")
+        context
+            .get("content")
+            .and_then(|v| v.as_str())
+            .unwrap_or(""),
     );
     context.insert("content", &processed_content);
 }
 
 /// Add all context helpers (site, navigation, language, sidebar, page links)
-fn add_all_contexts(
+pub fn add_all_contexts(
     context: &mut Context,
     document: &Document,
     all_documents: &[Document],
     site_config: &SiteConfig,
     i18n: &I18nManager,
 ) {
-    add_site_context(context, site_config, &document.language, &document.file_path);
+    add_site_context(
+        context,
+        site_config,
+        &document.language,
+        &document.file_path,
+    );
     add_navigation_context(context, document, i18n);
     add_language_context(context, document, all_documents, i18n);
     add_sidebar_context(context, all_documents);
@@ -133,20 +143,30 @@ fn add_all_contexts(
 }
 
 /// Render the template with the given context
-fn render_template(theme: &Theme, document: &Document, context: &Context) -> KrikResult<String> {
+pub fn render_template(
+    theme: &Theme,
+    document: &Document,
+    context: &Context,
+) -> KrikResult<String> {
     let template_name = determine_template_name(document);
     theme
         .templates
         .render(&template_name, context)
-        .map_err(|e| KrikError::Template(TemplateError {
-            kind: TemplateErrorKind::RenderError(e),
-            template: template_name.clone(),
-            context: format!("Rendering page for {}", document.file_path),
-        }))
+        .map_err(|e| {
+            KrikError::Template(TemplateError {
+                kind: TemplateErrorKind::RenderError(e),
+                template: template_name.clone(),
+                context: format!("Rendering page for {}", document.file_path),
+            })
+        })
 }
 
 /// Write the rendered content to the output file
-fn write_output_file(document: &Document, output_dir: &Path, rendered_content: &str) -> KrikResult<()> {
+pub fn write_output_file(
+    document: &Document,
+    output_dir: &Path,
+    rendered_content: &str,
+) -> KrikResult<()> {
     let output_path = determine_output_path(&document.file_path, output_dir);
     if let Some(parent) = output_path.parent() {
         std::fs::create_dir_all(parent)?;

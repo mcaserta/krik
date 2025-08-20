@@ -1,4 +1,4 @@
-use crate::error::{KrikResult, MarkdownError, MarkdownErrorKind, IoError, IoErrorKind};
+use crate::error::{IoError, IoErrorKind, KrikResult, MarkdownError, MarkdownErrorKind};
 use std::path::Path;
 use tracing::warn;
 
@@ -15,23 +15,31 @@ impl ErrorRecovery {
         match &error.kind {
             MarkdownErrorKind::InvalidFrontMatter(_) => {
                 // If front matter is invalid, try to extract just the content without front matter
-                warn!("Warning: Invalid front matter in {}, using content without metadata", 
-                          file_path.display());
-                
+                warn!(
+                    "Warning: Invalid front matter in {}, using content without metadata",
+                    file_path.display()
+                );
+
                 // Skip the front matter section and use remaining content
                 if let Some(stripped) = content.strip_prefix("---\n") {
                     if let Some(end_pos) = stripped.find("\n---\n") {
                         let markdown_content = &stripped[end_pos + 5..];
-                        return Some((Self::create_default_frontmatter(), markdown_content.to_string()));
+                        return Some((
+                            Self::create_default_frontmatter(),
+                            markdown_content.to_string(),
+                        ));
                     }
                 }
-                
+
                 // If we can't find the end of front matter, use entire content
                 Some((Self::create_default_frontmatter(), content.to_string()))
             }
             MarkdownErrorKind::InvalidDate(_) => {
                 // For invalid dates, we can still process the content with a warning
-                warn!("Warning: Invalid date in {}, using current date", file_path.display());
+                warn!(
+                    "Warning: Invalid date in {}, using current date",
+                    file_path.display()
+                );
                 Some((Self::create_default_frontmatter(), content.to_string()))
             }
             _ => None, // Can't recover from other errors
@@ -67,7 +75,7 @@ impl ErrorRecovery {
     fn create_default_frontmatter() -> crate::parser::FrontMatter {
         use chrono::Utc;
         use std::collections::HashMap;
-        
+
         crate::parser::FrontMatter {
             title: Some("Untitled".to_string()),
             date: Some(Utc::now()),
@@ -145,13 +153,13 @@ impl ErrorRecovery {
             .into_iter()
             .filter_map(|e| e.ok())
             .any(|entry| {
-                entry.path().is_file() &&
-                entry.path().extension().is_some_and(|ext| ext == "md")
+                entry.path().is_file() && entry.path().extension().is_some_and(|ext| ext == "md")
             });
 
         if !has_markdown {
             suggestions.push(
-                "No markdown files found. Create your first post with: kk post \"My First Post\"".to_string()
+                "No markdown files found. Create your first post with: kk post \"My First Post\""
+                    .to_string(),
             );
         }
 
@@ -161,19 +169,20 @@ impl ErrorRecovery {
     /// Auto-fix common issues when possible
     pub fn auto_fix_issues(content_dir: &Path) -> KrikResult<Vec<String>> {
         let mut fixes_applied = Vec::new();
-        
+
         // Create basic directory structure if missing
         let dirs_to_create = ["posts", "pages"];
-        
+
         for dir_name in &dirs_to_create {
             let dir_path = content_dir.join(dir_name);
             if !dir_path.exists() {
-                std::fs::create_dir_all(&dir_path)
-                    .map_err(|e| crate::io_error!(
+                std::fs::create_dir_all(&dir_path).map_err(|e| {
+                    crate::io_error!(
                         IoErrorKind::WriteFailed(e),
                         &dir_path,
                         "Creating directory structure"
-                    ))?;
+                    )
+                })?;
                 fixes_applied.push(format!("Created directory: {}", dir_path.display()));
             }
         }
@@ -184,13 +193,17 @@ impl ErrorRecovery {
             let default_config = r#"title = "My Krik Site"
 # base_url = "https://example.com"  # Uncomment and update for production
 "#;
-            std::fs::write(&site_config, default_config)
-                .map_err(|e| crate::io_error!(
+            std::fs::write(&site_config, default_config).map_err(|e| {
+                crate::io_error!(
                     IoErrorKind::WriteFailed(e),
                     &site_config,
                     "Creating default site configuration"
-                ))?;
-            fixes_applied.push(format!("Created default site.toml: {}", site_config.display()));
+                )
+            })?;
+            fixes_applied.push(format!(
+                "Created default site.toml: {}",
+                site_config.display()
+            ));
         }
 
         Ok(fixes_applied)
@@ -201,7 +214,7 @@ impl ErrorRecovery {
 pub trait ErrorRecoverable<T> {
     /// Continue processing even if this operation fails
     fn continue_on_error(self, description: &str) -> KrikResult<Option<T>>;
-    
+
     /// Provide a default value if this operation fails
     fn or_default_with_warning(self, default: T, description: &str) -> KrikResult<T>;
 }
@@ -217,7 +230,7 @@ impl<T> ErrorRecoverable<T> for KrikResult<T> {
             }
         }
     }
-    
+
     fn or_default_with_warning(self, default: T, description: &str) -> KrikResult<T> {
         match self {
             Ok(value) => Ok(value),

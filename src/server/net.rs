@@ -8,12 +8,13 @@ pub fn get_network_interfaces() -> Vec<String> {
     if let Ok(network_interfaces) = local_ip_address::list_afinet_netifas() {
         for (_name, ip) in network_interfaces {
             let ip_str = ip.to_string();
-            if !ip_str.starts_with("127.") && !ip_str.starts_with("169.254.") && !interfaces.contains(&ip_str) {
+            if !ip_str.starts_with("127.")
+                && !ip_str.starts_with("169.254.")
+                && !interfaces.contains(&ip_str)
+            {
                 interfaces.push(ip_str);
             }
         }
     }
     interfaces
 }
-
-

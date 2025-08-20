@@ -14,4 +14,3 @@ fn create_page_and_post_smoke() {
     assert!(tmp.join("posts/hello-world.md").exists());
     assert!(tmp.join("pages/about.md").exists());
 }
-

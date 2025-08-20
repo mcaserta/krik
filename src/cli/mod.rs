@@ -1,8 +1,8 @@
-use clap::{Arg, ArgMatches, Command};
 use crate::error::KrikResult;
 use crate::logging;
-mod validate;
+use clap::{Arg, ArgMatches, Command};
 mod commands;
+mod validate;
 
 /// CLI configuration and command handling for Krik
 pub struct KrikCli {
@@ -159,12 +159,22 @@ impl KrikCli {
 
     /// Create the input directory argument
     fn input_arg() -> Arg {
-        Self::create_dir_arg("input", 'i', "Input directory containing markdown files", Some("content"))
+        Self::create_dir_arg(
+            "input",
+            'i',
+            "Input directory containing markdown files",
+            Some("content"),
+        )
     }
 
     /// Create the output directory argument
     fn output_arg() -> Arg {
-        Self::create_dir_arg("output", 'o', "Output directory for generated HTML files", Some("_site"))
+        Self::create_dir_arg(
+            "output",
+            'o',
+            "Output directory for generated HTML files",
+            Some("_site"),
+        )
     }
 
     /// Create the theme directory argument
@@ -182,17 +192,22 @@ impl KrikCli {
     }
 
     /// Helper method to create directory arguments with consistent structure
-    fn create_dir_arg(name: &'static str, short: char, help: &'static str, default: Option<&'static str>) -> Arg {
+    fn create_dir_arg(
+        name: &'static str,
+        short: char,
+        help: &'static str,
+        default: Option<&'static str>,
+    ) -> Arg {
         let mut arg = Arg::new(name)
             .short(short)
             .long(name)
             .value_name("DIR")
             .help(help);
-        
+
         if let Some(default_value) = default {
             arg = arg.default_value(default_value);
         }
-        
+
         arg
     }
 

@@ -4,17 +4,72 @@ use std::collections::HashMap;
 pub const DEFAULT_LANGUAGE: &str = "en";
 
 pub static SUPPORTED_LANGUAGES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {
-    let mut m = HashMap::new();
-    m.insert("en", "English");
-    m.insert("it", "Italiano");
-    m.insert("es", "Español");
-    m.insert("fr", "Français");
-    m.insert("de", "Deutsch");
-    m.insert("pt", "Português");
-    m.insert("ja", "日本語");
-    m.insert("zh", "中文");
-    m.insert("ru", "Русский");
-    m.insert("ar", "العربية");
+    let m = HashMap::from([
+        ("af", "Afrikaans"),
+        ("am", "አማርኛ"),
+        ("ar", "العربية"),
+        ("az", "Azərbaycanca"),
+        ("bg", "Български"),
+        ("bn", "বাংলা"),
+        ("bs", "Bosanski"),
+        ("ca", "Català"),
+        ("cs", "Čeština"),
+        ("cy", "Cymraeg"),
+        ("da", "Dansk"),
+        ("de", "Deutsch"),
+        ("el", "Ελληνικά"),
+        ("en", "English"),
+        ("es", "Español"),
+        ("et", "Eesti"),
+        ("eu", "Euskara"),
+        ("fa", "فارسی"),
+        ("fi", "Suomi"),
+        ("fr", "Français"),
+        ("gl", "Galego"),
+        ("gu", "ગુજરાતી"),
+        ("he", "עברית"),
+        ("hi", "हिन्दी"),
+        ("hr", "Hrvatski"),
+        ("hu", "Magyar"),
+        ("id", "Bahasa Indonesia"),
+        ("is", "Íslenska"),
+        ("it", "Italiano"),
+        ("ja", "日本語"),
+        ("kn", "ಕನ್ನಡ"),
+        ("ko", "한국어"),
+        ("lt", "Lietuvių"),
+        ("lv", "Latviešu"),
+        ("mk", "Македонски"),
+        ("ml", "മലയാളം"),
+        ("mr", "मराठी"),
+        ("ms", "Bahasa Melayu"),
+        ("nl", "Nederlands"),
+        ("no", "Norsk"),
+        ("pa", "ਪੰਜਾਬੀ"),
+        ("pl", "Polski"),
+        ("pt", "Português"),
+        ("ro", "Română"),
+        ("ru", "Русский"),
+        ("si", "සිංහල"),
+        ("sk", "Slovenčina"),
+        ("sl", "Slovenščina"),
+        ("sq", "Shqip"),
+        ("sr", "Српски"),
+        ("sv", "Svenska"),
+        ("sw", "Kiswahili"),
+        ("ta", "தமிழ்"),
+        ("te", "తెలుగు"),
+        ("th", "ไทย"),
+        ("tl", "Tagalog"),
+        ("tr", "Türkçe"),
+        ("uk", "Українська"),
+        ("ur", "اردو"),
+        ("vi", "Tiếng Việt"),
+        ("xh", "isiXhosa"),
+        ("yo", "Yorùbá"),
+        ("zh", "中文"),
+        ("zu", "isiZulu")
+    ]);
     m
 });
 
@@ -30,7 +85,9 @@ impl I18nManager {
         } else {
             DEFAULT_LANGUAGE.to_string()
         };
-        Self { default_language: normalized }
+        Self {
+            default_language: normalized,
+        }
     }
 
     pub fn default_language(&self) -> &str {

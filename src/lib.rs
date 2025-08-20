@@ -40,23 +40,23 @@
 //! - `content/site.toml` - Site configuration
 //! - `content/images/` - Images and assets (copied as-is)
 
-pub mod error;
-pub mod parser;
-pub mod theme;
-pub mod i18n;
-pub mod generator;
-pub mod site;
-pub mod server;
-pub mod init;
-pub mod content;
-pub mod lint;
 pub mod cli;
+pub mod content;
+pub mod error;
+pub mod generator;
+pub mod i18n;
+pub mod init;
+pub mod lint;
 pub mod logging;
+pub mod parser;
+pub mod server;
+pub mod site;
+pub mod theme;
 
 pub use error::*;
-pub use parser::*;
-pub use theme::*;
-pub use i18n::*;
 pub use generator::*;
-pub use site::*;
+pub use i18n::*;
 pub use logging::*;
+pub use parser::*;
+pub use site::*;
+pub use theme::*;

@@ -1,6 +1,6 @@
 mod recovery;
 
-pub use recovery::{ErrorRecovery, ErrorRecoverable};
+pub use recovery::{ErrorRecoverable, ErrorRecovery};
 
 use std::fmt;
 use std::path::PathBuf;
@@ -68,7 +68,6 @@ pub enum CliErrorKind {
     ThemeNotFound,
 }
 
-
 /// Configuration file and parsing errors
 #[derive(Debug)]
 pub struct ConfigError {
@@ -88,7 +87,11 @@ pub enum ConfigErrorKind {
     /// Missing required field
     MissingField(String),
     /// Invalid field value
-    InvalidValue { field: String, expected: String, found: String },
+    InvalidValue {
+        field: String,
+        expected: String,
+        found: String,
+    },
     /// File permissions error
     PermissionDenied,
 }
@@ -238,7 +241,11 @@ pub enum GenerationErrorKind {
     /// Output directory creation failed
     OutputDirError(std::io::Error),
     /// Asset copying failed
-    AssetCopyError { source: PathBuf, target: PathBuf, error: std::io::Error },
+    AssetCopyError {
+        source: PathBuf,
+        target: PathBuf,
+        error: std::io::Error,
+    },
     /// Feed generation failed
     FeedError(String),
     /// Sitemap generation failed
@@ -297,7 +304,9 @@ impl fmt::Display for CliError {
 
 impl fmt::Display for ConfigError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let path_str = self.path.as_ref()
+        let path_str = self
+            .path
+            .as_ref()
             .map(|p| p.to_string_lossy().to_string())
             .unwrap_or_else(|| "<unknown>".to_string());
 
@@ -306,20 +315,39 @@ impl fmt::Display for ConfigError {
                 write!(f, "Configuration file not found: {path_str}")
             }
             ConfigErrorKind::InvalidToml(e) => {
-                write!(f, "Invalid TOML in {}: {}\n  Context: {}", path_str, e, self.context)
+                write!(
+                    f,
+                    "Invalid TOML in {}: {}\n  Context: {}",
+                    path_str, e, self.context
+                )
             }
             ConfigErrorKind::InvalidYaml(e) => {
-                write!(f, "Invalid YAML in {}: {}\n  Context: {}", path_str, e, self.context)
+                write!(
+                    f,
+                    "Invalid YAML in {}: {}\n  Context: {}",
+                    path_str, e, self.context
+                )
             }
             ConfigErrorKind::MissingField(field) => {
-                write!(f, "Missing required field '{}' in {}\n  Context: {}", field, path_str, self.context)
+                write!(
+                    f,
+                    "Missing required field '{}' in {}\n  Context: {}",
+                    field, path_str, self.context
+                )
             }
-            ConfigErrorKind::InvalidValue { field, expected, found } => {
+            ConfigErrorKind::InvalidValue {
+                field,
+                expected,
+                found,
+            } => {
                 write!(f, "Invalid value for field '{}' in {}\n  Expected: {}\n  Found: {}\n  Context: {}", 
                        field, path_str, expected, found, self.context)
             }
             ConfigErrorKind::PermissionDenied => {
-                write!(f, "Permission denied accessing configuration file: {path_str}")
+                write!(
+                    f,
+                    "Permission denied accessing configuration file: {path_str}"
+                )
             }
         }
     }
@@ -328,25 +356,49 @@ impl fmt::Display for ConfigError {
 impl fmt::Display for IoError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let path_str = self.path.to_string_lossy();
-        
+
         match &self.kind {
             IoErrorKind::NotFound => {
-                write!(f, "File or directory not found: {}\n  Context: {}", path_str, self.context)
+                write!(
+                    f,
+                    "File or directory not found: {}\n  Context: {}",
+                    path_str, self.context
+                )
             }
             IoErrorKind::PermissionDenied => {
-                write!(f, "Permission denied: {}\n  Context: {}", path_str, self.context)
+                write!(
+                    f,
+                    "Permission denied: {}\n  Context: {}",
+                    path_str, self.context
+                )
             }
             IoErrorKind::AlreadyExists => {
-                write!(f, "File already exists: {}\n  Context: {}", path_str, self.context)
+                write!(
+                    f,
+                    "File already exists: {}\n  Context: {}",
+                    path_str, self.context
+                )
             }
             IoErrorKind::InvalidPath => {
-                write!(f, "Invalid file path: {}\n  Context: {}", path_str, self.context)
+                write!(
+                    f,
+                    "Invalid file path: {}\n  Context: {}",
+                    path_str, self.context
+                )
             }
             IoErrorKind::WriteFailed(e) => {
-                write!(f, "Failed to write file: {}\n  Error: {}\n  Context: {}", path_str, e, self.context)
+                write!(
+                    f,
+                    "Failed to write file: {}\n  Error: {}\n  Context: {}",
+                    path_str, e, self.context
+                )
             }
             IoErrorKind::ReadFailed(e) => {
-                write!(f, "Failed to read file: {}\n  Error: {}\n  Context: {}", path_str, e, self.context)
+                write!(
+                    f,
+                    "Failed to read file: {}\n  Error: {}\n  Context: {}",
+                    path_str, e, self.context
+                )
             }
         }
     }
@@ -363,28 +415,42 @@ impl fmt::Display for MarkdownError {
 
         match &self.kind {
             MarkdownErrorKind::InvalidFrontMatter(e) => {
-                write!(f, "Invalid front matter in {}{}\n  Error: {}\n  Context: {}", 
-                       file_str, location, e, self.context)
+                write!(
+                    f,
+                    "Invalid front matter in {}{}\n  Error: {}\n  Context: {}",
+                    file_str, location, e, self.context
+                )
             }
             MarkdownErrorKind::MissingFrontMatterField(field) => {
-                write!(f, "Missing required front matter field '{}' in {}{}\n  Context: {}", 
-                       field, file_str, location, self.context)
+                write!(
+                    f,
+                    "Missing required front matter field '{}' in {}{}\n  Context: {}",
+                    field, file_str, location, self.context
+                )
             }
             MarkdownErrorKind::InvalidDate(date) => {
                 write!(f, "Invalid date format '{}' in {}{}\n  Expected ISO 8601 format (e.g., 2024-01-15T10:30:00Z)\n  Context: {}", 
                        date, file_str, location, self.context)
             }
             MarkdownErrorKind::ParseError(msg) => {
-                write!(f, "Markdown parsing error in {}{}\n  Error: {}\n  Context: {}", 
-                       file_str, location, msg, self.context)
+                write!(
+                    f,
+                    "Markdown parsing error in {}{}\n  Error: {}\n  Context: {}",
+                    file_str, location, msg, self.context
+                )
             }
             MarkdownErrorKind::InvalidLanguage(lang) => {
                 write!(f, "Invalid language code '{}' in {}{}\n  Supported languages: en, it, es, fr, de, pt, ja, zh, ru, ar\n  Context: {}", 
                        lang, file_str, location, self.context)
             }
             MarkdownErrorKind::CircularReference(ref_path) => {
-                write!(f, "Circular reference detected: {} references {}\n  Context: {}", 
-                       file_str, ref_path.to_string_lossy(), self.context)
+                write!(
+                    f,
+                    "Circular reference detected: {} references {}\n  Context: {}",
+                    file_str,
+                    ref_path.to_string_lossy(),
+                    self.context
+                )
             }
         }
     }
@@ -394,23 +460,39 @@ impl fmt::Display for TemplateError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
             TemplateErrorKind::NotFound => {
-                write!(f, "Template not found: {}\n  Context: {}", self.template, self.context)
+                write!(
+                    f,
+                    "Template not found: {}\n  Context: {}",
+                    self.template, self.context
+                )
             }
             TemplateErrorKind::SyntaxError(e) => {
-                write!(f, "Template syntax error in {}\n  Error: {}\n  Context: {}", 
-                       self.template, e, self.context)
+                write!(
+                    f,
+                    "Template syntax error in {}\n  Error: {}\n  Context: {}",
+                    self.template, e, self.context
+                )
             }
             TemplateErrorKind::MissingVariable(var) => {
-                write!(f, "Missing template variable '{}' in {}\n  Context: {}", 
-                       var, self.template, self.context)
+                write!(
+                    f,
+                    "Missing template variable '{}' in {}\n  Context: {}",
+                    var, self.template, self.context
+                )
             }
             TemplateErrorKind::RenderError(e) => {
-                write!(f, "Template rendering failed for {}\n  Error: {}\n  Context: {}", 
-                       self.template, e, self.context)
+                write!(
+                    f,
+                    "Template rendering failed for {}\n  Error: {}\n  Context: {}",
+                    self.template, e, self.context
+                )
             }
             TemplateErrorKind::CompileError(e) => {
-                write!(f, "Template compilation failed for {}\n  Error: {}\n  Context: {}", 
-                       self.template, e, self.context)
+                write!(
+                    f,
+                    "Template compilation failed for {}\n  Error: {}\n  Context: {}",
+                    self.template, e, self.context
+                )
             }
         }
     }
@@ -419,22 +501,35 @@ impl fmt::Display for TemplateError {
 impl fmt::Display for ThemeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let theme_str = self.theme_path.to_string_lossy();
-        
+
         match &self.kind {
             ThemeErrorKind::NotFound => {
-                write!(f, "Theme not found: {}\n  Context: {}", theme_str, self.context)
+                write!(
+                    f,
+                    "Theme not found: {}\n  Context: {}",
+                    theme_str, self.context
+                )
             }
             ThemeErrorKind::InvalidConfig(e) => {
-                write!(f, "Invalid theme configuration in {}\n  Error: {}\n  Context: {}", 
-                       theme_str, e, self.context)
+                write!(
+                    f,
+                    "Invalid theme configuration in {}\n  Error: {}\n  Context: {}",
+                    theme_str, e, self.context
+                )
             }
             ThemeErrorKind::MissingTemplate(template) => {
-                write!(f, "Missing required template '{}' in theme {}\n  Context: {}", 
-                       template, theme_str, self.context)
+                write!(
+                    f,
+                    "Missing required template '{}' in theme {}\n  Context: {}",
+                    template, theme_str, self.context
+                )
             }
             ThemeErrorKind::AssetError(msg) => {
-                write!(f, "Asset processing error in theme {}\n  Error: {}\n  Context: {}", 
-                       theme_str, msg, self.context)
+                write!(
+                    f,
+                    "Asset processing error in theme {}\n  Error: {}\n  Context: {}",
+                    theme_str, msg, self.context
+                )
             }
         }
     }
@@ -448,14 +543,21 @@ impl fmt::Display for ServerError {
                        port, source, self.context)
             }
             ServerErrorKind::WatchError(e) => {
-                write!(f, "File watching failed\n  Error: {}\n  Context: {}", e, self.context)
+                write!(
+                    f,
+                    "File watching failed\n  Error: {}\n  Context: {}",
+                    e, self.context
+                )
             }
             ServerErrorKind::WebSocketError(msg) => {
                 write!(f, "WebSocket error: {}\n  Context: {}", msg, self.context)
             }
             ServerErrorKind::LiveReloadError(msg) => {
-                write!(f, "Live reload error: {}\n  Context: {}\n  Suggestion: Try --no-live-reload flag", 
-                       msg, self.context)
+                write!(
+                    f,
+                    "Live reload error: {}\n  Context: {}\n  Suggestion: Try --no-live-reload flag",
+                    msg, self.context
+                )
             }
         }
     }
@@ -463,18 +565,26 @@ impl fmt::Display for ServerError {
 
 impl fmt::Display for ContentError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let path_str = self.path.as_ref()
+        let path_str = self
+            .path
+            .as_ref()
             .map(|p| p.to_string_lossy().to_string())
             .unwrap_or_else(|| "<unknown>".to_string());
 
         match &self.kind {
             ContentErrorKind::InvalidType(content_type) => {
-                write!(f, "Invalid content type '{}' for {}\n  Context: {}", 
-                       content_type, path_str, self.context)
+                write!(
+                    f,
+                    "Invalid content type '{}' for {}\n  Context: {}",
+                    content_type, path_str, self.context
+                )
             }
             ContentErrorKind::DuplicateSlug(slug) => {
-                write!(f, "Duplicate slug '{}' found\n  Path: {}\n  Context: {}", 
-                       slug, path_str, self.context)
+                write!(
+                    f,
+                    "Duplicate slug '{}' found\n  Path: {}\n  Context: {}",
+                    slug, path_str, self.context
+                )
             }
             ContentErrorKind::InvalidFileName(filename) => {
                 write!(f, "Invalid file name '{}'\n  Context: {}\n  Suggestion: Use alphanumeric characters, hyphens, and underscores only", 
@@ -499,18 +609,39 @@ impl fmt::Display for GenerationError {
                        self.context)
             }
             GenerationErrorKind::OutputDirError(e) => {
-                write!(f, "Failed to create output directory\n  Error: {}\n  Context: {}", 
-                       e, self.context)
+                write!(
+                    f,
+                    "Failed to create output directory\n  Error: {}\n  Context: {}",
+                    e, self.context
+                )
             }
-            GenerationErrorKind::AssetCopyError { source, target, error } => {
-                write!(f, "Failed to copy asset\n  From: {}\n  To: {}\n  Error: {}\n  Context: {}", 
-                       source.to_string_lossy(), target.to_string_lossy(), error, self.context)
+            GenerationErrorKind::AssetCopyError {
+                source,
+                target,
+                error,
+            } => {
+                write!(
+                    f,
+                    "Failed to copy asset\n  From: {}\n  To: {}\n  Error: {}\n  Context: {}",
+                    source.to_string_lossy(),
+                    target.to_string_lossy(),
+                    error,
+                    self.context
+                )
             }
             GenerationErrorKind::FeedError(msg) => {
-                write!(f, "Feed generation failed\n  Error: {}\n  Context: {}", msg, self.context)
+                write!(
+                    f,
+                    "Feed generation failed\n  Error: {}\n  Context: {}",
+                    msg, self.context
+                )
             }
             GenerationErrorKind::SitemapError(msg) => {
-                write!(f, "Sitemap generation failed\n  Error: {}\n  Context: {}", msg, self.context)
+                write!(
+                    f,
+                    "Sitemap generation failed\n  Error: {}\n  Context: {}",
+                    msg, self.context
+                )
             }
         }
     }

@@ -1,18 +1,18 @@
 use crate::error::{IoError, IoErrorKind, KrikError, KrikResult};
-use crate::parser::{extract_language_from_filename, parse_markdown_with_frontmatter_for_file};
 use crate::lint::report_generator::LintReport;
+use crate::parser::{extract_language_from_filename, parse_markdown_with_frontmatter_for_file};
 use chrono::Utc;
-use regex::Regex;
 use once_cell::sync::Lazy;
+use regex::Regex;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-use walkdir::WalkDir;
 use tracing::debug;
+use walkdir::WalkDir;
 
 /// Lint markdown content in a directory. Returns a report with errors and warnings.
 pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
     debug!("Starting content linting in: {}", content_dir.display());
-    
+
     if !content_dir.exists() {
         return Err(KrikError::Io(IoError {
             kind: IoErrorKind::NotFound,
@@ -24,7 +24,8 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
     let mut report = LintReport::default();
 
     // Precompiled regex
-    static MD_LINK_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\[[^\]]+\]\(([^)\s]+\.md)(?:#[^)]+)?\)").unwrap());
+    static MD_LINK_REGEX: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"\[[^\]]+\]\(([^)\s]+\.md)(?:#[^)]+)?\)").unwrap());
 
     // Track duplicates: (relative_parent_dir, base_name, language) -> Vec<paths>
     let mut seen_slugs: HashMap<(String, String, String), Vec<PathBuf>> = HashMap::new();
@@ -55,11 +56,9 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
         let content = match std::fs::read_to_string(path) {
             Ok(c) => c,
             Err(e) => {
-                report.errors.push(format!(
-                    "{}: failed to read file: {}",
-                    path.display(),
-                    e
-                ));
+                report
+                    .errors
+                    .push(format!("{}: failed to read file: {}", path.display(), e));
                 continue;
             }
         };
@@ -138,7 +137,8 @@ fn process_file_frontmatter(
     }
 
     // Validate slug format
-    static SLUG_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap());
+    static SLUG_REGEX: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"^[a-z0-9]+(?:-[a-z0-9]+)*$").unwrap());
     if !SLUG_REGEX.is_match(&base_name) {
         report.errors.push(format!(
             "{}: invalid slug '{}' (use lowercase letters, numbers, and hyphens)",
@@ -148,11 +148,7 @@ fn process_file_frontmatter(
     }
 
     // Validate layout if present
-    if let Some(layout) = front
-        .extra
-        .get("layout")
-        .and_then(|v| v.as_str())
-    {
+    if let Some(layout) = front.extra.get("layout").and_then(|v| v.as_str()) {
         if layout != "post" && layout != "page" {
             report.warnings.push(format!(
                 "{}: unrecognized layout '{}' (expected 'post' or 'page')",
@@ -165,22 +161,18 @@ fn process_file_frontmatter(
     // Validate toc type if present
     if let Some(toc_val) = front.extra.get("toc") {
         if !toc_val.is_bool() {
-            report.warnings.push(format!(
-                "{}: 'toc' should be a boolean",
-                path.display()
-            ));
+            report
+                .warnings
+                .push(format!("{}: 'toc' should be a boolean", path.display()));
         }
     }
 
     // Validate date presence/validity for posts (recommended)
-    let is_post = path
-        .to_string_lossy()
-        .contains(&format!("{}posts{}", std::path::MAIN_SEPARATOR, std::path::MAIN_SEPARATOR))
-        || front
-            .extra
-            .get("layout")
-            .and_then(|v| v.as_str())
-            == Some("post");
+    let is_post = path.to_string_lossy().contains(&format!(
+        "{}posts{}",
+        std::path::MAIN_SEPARATOR,
+        std::path::MAIN_SEPARATOR
+    )) || front.extra.get("layout").and_then(|v| v.as_str()) == Some("post");
     if is_post && front.date.is_none() {
         report.warnings.push(format!(
             "{}: missing 'date' in front matter for a post (recommended)",
@@ -203,10 +195,9 @@ fn process_file_frontmatter(
     // Validate title presence
     if let Some(title) = front.title.as_deref() {
         if title.trim().is_empty() {
-            report.errors.push(format!(
-                "{}: empty 'title' in front matter",
-                path.display()
-            ));
+            report
+                .errors
+                .push(format!("{}: empty 'title' in front matter", path.display()));
         }
     } else {
         report.errors.push(format!(
@@ -229,7 +220,9 @@ fn process_file_frontmatter(
 
     // Unknown front matter keys (flat extras) — warn if not in known set
     let known_keys = [
-        "layout", "toc", "description", // extras commonly used
+        "layout",
+        "toc",
+        "description", // extras commonly used
     ];
     for key in front.extra.keys() {
         if !known_keys.contains(&key.as_str()) {
@@ -253,7 +246,13 @@ fn process_file_frontmatter(
             }
         }
     } else if let Some(layout) = front.extra.get("layout").and_then(|v| v.as_str()) {
-        if layout == "post" && path.to_string_lossy().contains(&format!("{}pages{}", std::path::MAIN_SEPARATOR, std::path::MAIN_SEPARATOR)) {
+        if layout == "post"
+            && path.to_string_lossy().contains(&format!(
+                "{}pages{}",
+                std::path::MAIN_SEPARATOR,
+                std::path::MAIN_SEPARATOR
+            ))
+        {
             report.warnings.push(format!(
                 "{}: file appears under pages but layout is 'post'",
                 path.display()
@@ -272,12 +271,15 @@ fn track_duplicates(
     seen_slugs: &mut HashMap<(String, String, String), Vec<PathBuf>>,
     seen_titles: &mut HashMap<(String, String, String), Vec<PathBuf>>,
 ) -> KrikResult<()> {
-    let stem = path.file_stem()
-        .ok_or_else(|| KrikError::Io(IoError {
-            kind: IoErrorKind::InvalidPath,
-            path: path.to_path_buf(),
-            context: "Invalid filename (missing stem)".to_string(),
-        }))?
+    let stem = path
+        .file_stem()
+        .ok_or_else(|| {
+            KrikError::Io(IoError {
+                kind: IoErrorKind::InvalidPath,
+                path: path.to_path_buf(),
+                context: "Invalid filename (missing stem)".to_string(),
+            })
+        })?
         .to_string_lossy()
         .to_string();
 
@@ -296,11 +298,7 @@ fn track_duplicates(
     // Track titles for duplicates
     if let Some(title) = front.title.as_deref() {
         let norm_title = title.trim().to_lowercase();
-        let title_key = (
-            rel_parent.clone(),
-            norm_title,
-            language.clone(),
-        );
+        let title_key = (rel_parent.clone(), norm_title, language.clone());
         seen_titles
             .entry(title_key)
             .or_default()

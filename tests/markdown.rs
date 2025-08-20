@@ -1,4 +1,4 @@
-use krik::generator::markdown::{markdown_to_html, generate_toc_and_content};
+use krik::generator::markdown::{generate_toc_and_content, markdown_to_html};
 
 #[test]
 fn markdown_to_html_basic() {
@@ -16,4 +16,3 @@ fn toc_generation_excludes_title() {
     assert!(!toc.contains("Title"));
     assert_eq!(processed, content);
 }
-

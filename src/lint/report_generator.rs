@@ -1,6 +1,6 @@
 use crate::error::{IoError, IoErrorKind, KrikError, KrikResult};
 use crate::lint::link_checker::BrokenLink;
-use chrono::{Utc, DateTime};
+use chrono::{DateTime, Utc};
 use std::fs;
 use std::path::PathBuf;
 
@@ -30,10 +30,13 @@ impl LintReport {
 /// Generate HTML report from lint results
 pub fn generate_html_report(report: &LintReport, check_links: bool) -> KrikResult<String> {
     let timestamp = Utc::now();
-    let filename = format!("krik-report-{}.html", timestamp.format("%Y-%m-%dT%H-%M-%SZ"));
-    
+    let filename = format!(
+        "krik-report-{}.html",
+        timestamp.format("%Y-%m-%dT%H-%M-%SZ")
+    );
+
     let html_content = create_html_report_content(report, check_links, &timestamp);
-    
+
     fs::write(&filename, html_content).map_err(|e| {
         KrikError::Io(IoError {
             kind: IoErrorKind::WriteFailed(e),
@@ -41,17 +44,21 @@ pub fn generate_html_report(report: &LintReport, check_links: bool) -> KrikResul
             context: "Failed to write HTML report".to_string(),
         })
     })?;
-    
+
     Ok(filename)
 }
 
 /// Create the HTML content for the report
-fn create_html_report_content(report: &LintReport, check_links: bool, timestamp: &DateTime<Utc>) -> String {
+fn create_html_report_content(
+    report: &LintReport,
+    check_links: bool,
+    timestamp: &DateTime<Utc>,
+) -> String {
     let iso_timestamp = timestamp.format("%Y-%m-%dT%H:%M:%SZ");
-    
+
     // Calculate totals
     let total_issues = report.errors.len() + report.warnings.len() + report.broken_links.len();
-    
+
     // Determine overall status
     let status = if report.has_errors() || report.has_broken_links() {
         ("ERROR", "status-error", "❌")
@@ -60,8 +67,9 @@ fn create_html_report_content(report: &LintReport, check_links: bool, timestamp:
     } else {
         ("SUCCESS", "status-success", "✅")
     };
-    
-    format!(r#"<!DOCTYPE html>
+
+    format!(
+        r#"<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -120,17 +128,24 @@ fn create_html_report_content(report: &LintReport, check_links: bool, timestamp:
         report.errors.len(),
         report.warnings.len(),
         if check_links {
-            format!(r#"<div class="summary-card">
+            format!(
+                r#"<div class="summary-card">
             <h3>🔗 Broken Links</h3>
             <div class="number error">{}</div>
-        </div>"#, report.broken_links.len())
+        </div>"#,
+                report.broken_links.len()
+            )
         } else {
             String::new()
         },
         total_issues,
         create_errors_section(&report.errors),
         create_warnings_section(&report.warnings),
-        if check_links { create_links_section(&report.broken_links) } else { String::new() },
+        if check_links {
+            create_links_section(&report.broken_links)
+        } else {
+            String::new()
+        },
         iso_timestamp
     )
 }
@@ -269,20 +284,25 @@ fn create_errors_section(errors: &[String]) -> String {
     if errors.is_empty() {
         return String::new();
     }
-    
-    let items = errors.iter()
+
+    let items = errors
+        .iter()
         .map(|error| format!(r#"<div class="issue-item">{}</div>"#, html_escape(error)))
         .collect::<Vec<_>>()
         .join("");
-    
-    format!(r#"<div class="section">
+
+    format!(
+        r#"<div class="section">
         <div class="section-header errors">
             ❌ Errors ({})
         </div>
         <div class="section-content">
             {}
         </div>
-    </div>"#, errors.len(), items)
+    </div>"#,
+        errors.len(),
+        items
+    )
 }
 
 /// Create the warnings section HTML
@@ -290,20 +310,25 @@ fn create_warnings_section(warnings: &[String]) -> String {
     if warnings.is_empty() {
         return String::new();
     }
-    
-    let items = warnings.iter()
+
+    let items = warnings
+        .iter()
         .map(|warning| format!(r#"<div class="issue-item">{}</div>"#, html_escape(warning)))
         .collect::<Vec<_>>()
         .join("");
-    
-    format!(r#"<div class="section">
+
+    format!(
+        r#"<div class="section">
         <div class="section-header warnings">
             ⚠️ Warnings ({})
         </div>
         <div class="section-content">
             {}
         </div>
-    </div>"#, warnings.len(), items)
+    </div>"#,
+        warnings.len(),
+        items
+    )
 }
 
 /// Create the broken links section HTML
@@ -311,14 +336,16 @@ fn create_links_section(broken_links: &[BrokenLink]) -> String {
     if broken_links.is_empty() {
         return String::new();
     }
-    
-    let items = broken_links.iter()
+
+    let items = broken_links
+        .iter()
         .map(|link| {
-            format!(r#"<div class="link-item">
+            format!(
+                r#"<div class="link-item">
                 <div class="link-url">{}</div>
                 <div class="link-location">📍 {}:{}</div>
                 <div class="link-error">💥 {}</div>
-            </div>"#, 
+            </div>"#,
                 html_escape(&link.url),
                 html_escape(&link.file_path.display().to_string()),
                 link.line_number,
@@ -327,15 +354,19 @@ fn create_links_section(broken_links: &[BrokenLink]) -> String {
         })
         .collect::<Vec<_>>()
         .join("");
-    
-    format!(r#"<div class="section">
+
+    format!(
+        r#"<div class="section">
         <div class="section-header links">
             🔗 Broken Links ({})
         </div>
         <div class="section-content">
             {}
         </div>
-    </div>"#, broken_links.len(), items)
+    </div>"#,
+        broken_links.len(),
+        items
+    )
 }
 
 /// Simple HTML escape function

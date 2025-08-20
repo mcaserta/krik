@@ -1,15 +1,15 @@
-use crate::parser::Document;
-use crate::theme::Theme;
+use crate::error::{KrikError, KrikResult, ThemeError, ThemeErrorKind};
 use crate::i18n::I18nManager;
+use crate::parser::Document;
 use crate::site::SiteConfig;
-use crate::error::{KrikResult, KrikError, ThemeError, ThemeErrorKind};
+use crate::theme::Theme;
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
 use std::ffi::OsStr;
-use tracing::{info, debug, warn, error};
+use std::path::{Path, PathBuf};
+use tracing::{debug, error, info, warn};
 
 #[derive(Debug)]
-enum ChangeType {
+pub enum ChangeType {
     ThemeRelated,
     SiteConfig,
     Markdown { relative_path: String },
@@ -92,57 +92,70 @@ impl SiteGenerator {
     ) -> KrikResult<Self> {
         // Normalize paths to avoid mismatches between absolute and relative paths
         let mut source_dir = source_dir.as_ref().to_path_buf();
-        if let Ok(abs) = std::fs::canonicalize(&source_dir) { source_dir = abs; }
+        if let Ok(abs) = std::fs::canonicalize(&source_dir) {
+            source_dir = abs;
+        }
 
         let mut output_dir = output_dir.as_ref().to_path_buf();
         // Output directory might not exist yet; canonicalize only if it does
         if output_dir.exists() {
-            if let Ok(abs) = std::fs::canonicalize(&output_dir) { output_dir = abs; }
+            if let Ok(abs) = std::fs::canonicalize(&output_dir) {
+                output_dir = abs;
+            }
         }
-        
+
         let theme = if let Some(theme_path) = theme_dir {
             let mut path = theme_path.as_ref().to_path_buf();
-            if let Ok(abs) = std::fs::canonicalize(&path) { path = abs; }
+            if let Ok(abs) = std::fs::canonicalize(&path) {
+                path = abs;
+            }
             Theme::builder()
                 .theme_path(&path)
                 .autoescape_html(false)
                 .enable_reload(false)
                 .build()
-                .map_err(|_| KrikError::Theme(ThemeError {
-                    kind: ThemeErrorKind::NotFound,
-                    theme_path: path.clone(),
-                    context: format!("Loading custom theme from {}", path.display()),
-                }))?
+                .map_err(|_| {
+                    KrikError::Theme(ThemeError {
+                        kind: ThemeErrorKind::NotFound,
+                        theme_path: path.clone(),
+                        context: format!("Loading custom theme from {}", path.display()),
+                    })
+                })?
         } else {
             let default_path = PathBuf::from("themes/default");
-            let default_path = if let Ok(abs) = std::fs::canonicalize(&default_path) { abs } else { default_path };
+            let default_path = if let Ok(abs) = std::fs::canonicalize(&default_path) {
+                abs
+            } else {
+                default_path
+            };
             Theme::builder()
                 .theme_path(&default_path)
                 .autoescape_html(false)
                 .enable_reload(false)
                 .build()
-                .unwrap_or_else(|_| {
-                    Theme {
-                        config: crate::theme::ThemeConfig {
-                            name: "default".to_string(),
-                            version: "1.0.0".to_string(),
-                            author: None,
-                            description: None,
-                            templates: HashMap::new(),
-                        },
-                        templates: tera::Tera::new("themes/default/templates/**/*").unwrap_or_default(),
-                        theme_path: default_path,
-                    }
+                .unwrap_or_else(|_| Theme {
+                    config: crate::theme::ThemeConfig {
+                        name: "default".to_string(),
+                        version: "1.0.0".to_string(),
+                        author: None,
+                        description: None,
+                        templates: HashMap::new(),
+                    },
+                    templates: tera::Tera::new("themes/default/templates/**/*").unwrap_or_default(),
+                    theme_path: default_path,
                 })
         };
 
         let i18n = I18nManager::new("en".to_string());
-        
+
         // Load site configuration with proper error handling
         let site_config = match SiteConfig::load_from_path(&source_dir) {
             Ok(cfg) => cfg,
             Err(e) => {
-                warn!("Failed to load site configuration: {}. Falling back to defaults.", e);
+                warn!(
+                    "Failed to load site configuration: {}. Falling back to defaults.",
+                    e
+                );
                 SiteConfig::default()
             }
         };
@@ -160,27 +173,32 @@ impl SiteGenerator {
 
     /// Scan files in the source directory and parse markdown documents
     pub fn scan_files(&mut self) -> KrikResult<()> {
-        info!("Scanning for markdown files in: {}", self.source_dir.display());
+        info!(
+            "Scanning for markdown files in: {}",
+            self.source_dir.display()
+        );
         // Full scan rebuilds the cache
         self.document_cache.clear();
         self.documents.clear();
-        let result = super::markdown::scan_files(&self.source_dir, &mut self.documents)
-            .map_err(|e| match e {
+        let result = super::markdown::scan_files(&self.source_dir, &mut self.documents).map_err(
+            |e| match e {
                 KrikError::Generation(gen_err) => KrikError::Generation(gen_err),
                 other => other,
-            });
-        
+            },
+        );
+
         match &result {
             Ok(_) => {
                 // Populate cache from documents
                 for doc in &self.documents {
-                    self.document_cache.insert(doc.file_path.clone(), doc.clone());
+                    self.document_cache
+                        .insert(doc.file_path.clone(), doc.clone());
                 }
                 info!("Successfully scanned {} documents", self.documents.len())
             }
             Err(e) => error!("Failed to scan files: {}", e),
         }
-        
+
         result
     }
 
@@ -225,8 +243,20 @@ impl SiteGenerator {
 
         // Render
         info!("Rendering pages");
-        render.render_pages(&documents, &self.theme, &self.i18n, &self.site_config, &self.output_dir)?;
-        render.render_index(&documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
+        render.render_pages(
+            &documents,
+            &self.theme,
+            &self.i18n,
+            &self.site_config,
+            &self.output_dir,
+        )?;
+        render.render_index(
+            &documents,
+            &self.theme,
+            &self.site_config,
+            &self.i18n,
+            &self.output_dir,
+        )?;
 
         // Emit ancillary artifacts
         info!("Generating ancillary files");
@@ -239,10 +269,18 @@ impl SiteGenerator {
             info!("PDF generation tools available, generating PDFs");
             match super::pdf::PdfGenerator::new() {
                 Ok(pdf_generator) => {
-                    match pdf_generator.generate_pdfs(&documents, &self.source_dir, &self.output_dir, &self.site_config) {
+                    match pdf_generator.generate_pdfs(
+                        &documents,
+                        &self.source_dir,
+                        &self.output_dir,
+                        &self.site_config,
+                    ) {
                         Ok(generated_pdfs) => {
                             if !generated_pdfs.is_empty() {
-                                info!("Generated {} PDF files alongside their HTML counterparts", generated_pdfs.len());
+                                info!(
+                                    "Generated {} PDF files alongside their HTML counterparts",
+                                    generated_pdfs.len()
+                                );
                             }
                         }
                         Err(e) => warn!("PDF generation failed: {}", e),
@@ -271,8 +309,9 @@ impl SiteGenerator {
         is_removed: bool,
     ) -> KrikResult<()> {
         let changed_path = changed_path.as_ref();
-        let change_type = analyze_change_type(changed_path, &self.theme.theme_path, &self.source_dir)?;
-        
+        let change_type =
+            analyze_change_type(changed_path, &self.theme.theme_path, &self.source_dir)?;
+
         match change_type {
             ChangeType::ThemeRelated | ChangeType::SiteConfig => {
                 debug!("Theme or site config change detected, triggering full regeneration");
@@ -281,9 +320,7 @@ impl SiteGenerator {
             ChangeType::Markdown { relative_path } => {
                 self.handle_markdown_change(&relative_path, changed_path, is_removed)
             }
-            ChangeType::Asset => {
-                self.handle_asset_change(changed_path, is_removed)
-            }
+            ChangeType::Asset => self.handle_asset_change(changed_path, is_removed),
             ChangeType::Unrelated => {
                 debug!("Change not related to content or theme, triggering full regeneration");
                 self.generate_site()
@@ -296,19 +333,24 @@ impl SiteGenerator {
     /// For example: "welcome.md", "welcome.it.md", "welcome.fr.md" are all variants.
     fn find_language_variants(&self, target_path: &str) -> Vec<String> {
         let mut variants = Vec::new();
-        
+
         // Extract base name by removing language and extension
         // Example: "pages/welcome.it.md" -> "pages/welcome"
         let path_buf = std::path::PathBuf::from(target_path);
-        let parent = path_buf.parent().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
-        
+        let parent = path_buf
+            .parent()
+            .map(|p| p.to_string_lossy().to_string())
+            .unwrap_or_default();
+
         if let Some(_filename) = path_buf.file_name().and_then(|n| n.to_str()) {
             let base_name = if let Some(stem) = path_buf.file_stem().and_then(|s| s.to_str()) {
                 // Check if stem contains a language code (e.g., "welcome.it")
                 if let Some(dot_pos) = stem.rfind('.') {
                     let potential_lang = &stem[dot_pos + 1..];
                     // Check if it's a known language code
-                    if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"].contains(&potential_lang) {
+                    if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"]
+                        .contains(&potential_lang)
+                    {
                         &stem[..dot_pos] // Remove language part
                     } else {
                         stem // No language code found
@@ -323,18 +365,23 @@ impl SiteGenerator {
             // Find all documents with the same base name
             for doc in &self.documents {
                 let doc_path_buf = std::path::PathBuf::from(&doc.file_path);
-                let doc_parent = doc_path_buf.parent().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
-                
+                let doc_parent = doc_path_buf
+                    .parent()
+                    .map(|p| p.to_string_lossy().to_string())
+                    .unwrap_or_default();
+
                 // Must be in same directory
                 if doc_parent != parent {
                     continue;
                 }
-                
+
                 if let Some(_doc_filename) = doc_path_buf.file_name().and_then(|n| n.to_str()) {
                     if let Some(doc_stem) = doc_path_buf.file_stem().and_then(|s| s.to_str()) {
                         let doc_base_name = if let Some(dot_pos) = doc_stem.rfind('.') {
                             let potential_lang = &doc_stem[dot_pos + 1..];
-                            if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"].contains(&potential_lang) {
+                            if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"]
+                                .contains(&potential_lang)
+                            {
                                 &doc_stem[..dot_pos]
                             } else {
                                 doc_stem
@@ -342,7 +389,7 @@ impl SiteGenerator {
                         } else {
                             doc_stem
                         };
-                        
+
                         // If base names match, this is a language variant
                         if doc_base_name == base_name {
                             variants.push(doc.file_path.clone());
@@ -351,14 +398,19 @@ impl SiteGenerator {
                 }
             }
         }
-        
+
         variants
     }
 
     /// Handle markdown file changes by updating the document cache and re-rendering affected pages
-    fn handle_markdown_change(&mut self, relative_path: &str, changed_path: &Path, is_removed: bool) -> KrikResult<()> {
+    fn handle_markdown_change(
+        &mut self,
+        relative_path: &str,
+        changed_path: &Path,
+        is_removed: bool,
+    ) -> KrikResult<()> {
         use super::pipeline::{EmitPhase, RenderPhase, TransformPhase};
-        
+
         let transform = TransformPhase;
         let render = RenderPhase;
         let emit = EmitPhase;
@@ -366,7 +418,7 @@ impl SiteGenerator {
         emit.ensure_output_dir(&self.output_dir)?;
 
         let mut documents = self.documents.clone();
-        
+
         if is_removed {
             self.handle_markdown_removal(relative_path, &mut documents)
         } else {
@@ -385,29 +437,49 @@ impl SiteGenerator {
 
         // Update global artifacts that depend on full document set
         debug!("updating global artifacts (index/feed/sitemap/robots) after single-page change");
-        render.render_index(&self.documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
+        render.render_index(
+            &self.documents,
+            &self.theme,
+            &self.site_config,
+            &self.i18n,
+            &self.output_dir,
+        )?;
         emit.emit_feed(&self.documents, &self.site_config, &self.output_dir)?;
         emit.emit_sitemap(&self.documents, &self.site_config, &self.output_dir)?;
         emit.emit_robots(&self.site_config, &self.output_dir)?;
-        
+
         Ok(())
     }
 
     /// Handle asset file changes by copying or removing the file
     fn handle_asset_change(&self, changed_path: &Path, is_removed: bool) -> KrikResult<()> {
         use super::pipeline::EmitPhase;
-        
+
         let emit = EmitPhase;
         emit.ensure_output_dir(&self.output_dir)?;
 
         if is_removed {
             debug!("removing single asset {}", changed_path.display());
             super::assets::remove_single_asset(&self.source_dir, &self.output_dir, changed_path)
-                .map_err(|e| create_asset_error("Removing single changed asset", &self.source_dir, &self.output_dir, Box::new(e)))
+                .map_err(|e| {
+                    create_asset_error(
+                        "Removing single changed asset",
+                        &self.source_dir,
+                        &self.output_dir,
+                        Box::new(e),
+                    )
+                })
         } else {
             debug!("copying single asset {}", changed_path.display());
             super::assets::copy_single_asset(&self.source_dir, &self.output_dir, changed_path)
-                .map_err(|e| create_asset_error("Copying single changed asset", &self.source_dir, &self.output_dir, Box::new(e)))
+                .map_err(|e| {
+                    create_asset_error(
+                        "Copying single changed asset",
+                        &self.source_dir,
+                        &self.output_dir,
+                        Box::new(e),
+                    )
+                })
         }
     }
 
@@ -437,34 +509,45 @@ impl SiteGenerator {
     }
 
     /// Handle markdown file update by parsing and updating cache
-    fn handle_markdown_update(&mut self, relative_path: &str, changed_path: &Path, documents: &mut Vec<Document>) -> KrikResult<()> {
+    fn handle_markdown_update(
+        &mut self,
+        relative_path: &str,
+        changed_path: &Path,
+        documents: &mut Vec<Document>,
+    ) -> KrikResult<()> {
         match super::markdown::parse_single_file(&self.source_dir, changed_path) {
             Ok(doc) => {
-                let prev_pdf = self.document_cache
+                let prev_pdf = self
+                    .document_cache
                     .get(&doc.file_path)
                     .and_then(|d| d.front_matter.pdf)
                     .unwrap_or(false);
-                
+
                 // Replace or insert into cache and working set
-                self.document_cache.insert(doc.file_path.clone(), doc.clone());
+                self.document_cache
+                    .insert(doc.file_path.clone(), doc.clone());
                 if let Some(slot) = documents.iter_mut().find(|d| d.file_path == doc.file_path) {
                     *slot = doc;
                 } else {
                     documents.push(doc);
                 }
-                
+
                 // Handle PDF generation/removal
                 self.handle_pdf_change(relative_path, documents, prev_pdf)?;
                 Ok(())
             }
             Err(e) => {
-                warn!("Failed to parse changed file {}: {}. Falling back to full rescan.", changed_path.display(), e);
+                warn!(
+                    "Failed to parse changed file {}: {}. Falling back to full rescan.",
+                    changed_path.display(),
+                    e
+                );
                 documents.clear();
                 super::markdown::scan_files(&self.source_dir, documents)?;
                 // rebuild cache from full scan
                 self.document_cache.clear();
-                for d in documents { 
-                    self.document_cache.insert(d.file_path.clone(), d.clone()); 
+                for d in documents {
+                    self.document_cache.insert(d.file_path.clone(), d.clone());
                 }
                 Ok(())
             }
@@ -472,7 +555,12 @@ impl SiteGenerator {
     }
 
     /// Handle PDF generation or removal based on document settings
-    fn handle_pdf_change(&self, relative_path: &str, documents: &[Document], prev_pdf: bool) -> KrikResult<()> {
+    fn handle_pdf_change(
+        &self,
+        relative_path: &str,
+        documents: &[Document],
+        prev_pdf: bool,
+    ) -> KrikResult<()> {
         if let Some(current_doc) = documents.iter().find(|d| d.file_path == relative_path) {
             let current_pdf = current_doc.front_matter.pdf.unwrap_or(false);
             let mut pdf_rel_path = std::path::PathBuf::from(&current_doc.file_path);
@@ -512,10 +600,19 @@ impl SiteGenerator {
     }
 
     /// Render all language variants of a document
-    fn render_language_variants(&self, relative_path: &str, documents: &[Document]) -> KrikResult<()> {
+    fn render_language_variants(
+        &self,
+        relative_path: &str,
+        documents: &[Document],
+    ) -> KrikResult<()> {
         let variant_paths = self.find_language_variants(relative_path);
-        debug!("found {} language variants for {}: {:?}", variant_paths.len(), relative_path, variant_paths);
-        
+        debug!(
+            "found {} language variants for {}: {:?}",
+            variant_paths.len(),
+            relative_path,
+            variant_paths
+        );
+
         // Render all language variants (including the changed one)
         let mut rendered_any = false;
         for variant_path in &variant_paths {
@@ -529,17 +626,21 @@ impl SiteGenerator {
                     &self.site_config,
                     &self.output_dir,
                 )
-                .map_err(|e| KrikError::Generation(crate::error::GenerationError {
-                    kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        format!("Page generation failed for {}: {e}", variant_path),
-                    )),
-                    context: "Incremental language variant page generation".to_string(),
-                }))?;
+                .map_err(|e| {
+                    KrikError::Generation(crate::error::GenerationError {
+                        kind: crate::error::GenerationErrorKind::OutputDirError(
+                            std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                format!("Page generation failed for {}: {e}", variant_path),
+                            ),
+                        ),
+                        context: "Incremental language variant page generation".to_string(),
+                    })
+                })?;
                 rendered_any = true;
             }
         }
-        
+
         if !rendered_any {
             debug!(
                 "changed page {} and its variants not present in scanned documents; triggering full regeneration",
@@ -553,43 +654,55 @@ impl SiteGenerator {
                 context: "Language variant rendering".to_string(),
             }));
         }
-        
+
         Ok(())
     }
 }
 
 /// Analyze the type of change and determine how to handle it
-fn analyze_change_type(changed_path: &Path, theme_path: &Path, source_dir: &Path) -> KrikResult<ChangeType> {
+pub fn analyze_change_type(
+    changed_path: &Path,
+    theme_path: &Path,
+    source_dir: &Path,
+) -> KrikResult<ChangeType> {
     // If change is inside theme dir or is an HTML template, do full regen.
     let is_theme_related = theme_path.is_dir() && changed_path.starts_with(theme_path);
     let is_template_ext = is_html_template(changed_path);
-    
+
     if is_theme_related || is_template_ext {
         return Ok(ChangeType::ThemeRelated);
     }
 
     // Changes within content directory
-    let canonical_changed = std::fs::canonicalize(changed_path).unwrap_or_else(|_| changed_path.to_path_buf());
-    let canonical_source = std::fs::canonicalize(source_dir).unwrap_or_else(|_| source_dir.to_path_buf());
+    let canonical_changed =
+        std::fs::canonicalize(changed_path).unwrap_or_else(|_| changed_path.to_path_buf());
+    let canonical_source =
+        std::fs::canonicalize(source_dir).unwrap_or_else(|_| source_dir.to_path_buf());
 
     if canonical_changed.starts_with(&canonical_source) {
         let is_markdown = changed_path.extension().is_some_and(|ext| ext == "md");
         let is_site_toml = changed_path.file_name() == Some(OsStr::new("site.toml"));
-        
+
         if is_site_toml {
             return Ok(ChangeType::SiteConfig);
         }
-        
+
         if is_markdown {
-            let relative_path = canonical_changed.strip_prefix(&canonical_source)
+            let relative_path = canonical_changed
+                .strip_prefix(&canonical_source)
                 .map(|rel| rel.to_string_lossy().to_string())
                 .map_err(|_| {
-                    debug!("failed to compute relative path for {}", changed_path.display());
+                    debug!(
+                        "failed to compute relative path for {}",
+                        changed_path.display()
+                    );
                     KrikError::Generation(crate::error::GenerationError {
-                        kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
-                            std::io::ErrorKind::Other,
-                            "Failed to compute relative path",
-                        )),
+                        kind: crate::error::GenerationErrorKind::OutputDirError(
+                            std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                "Failed to compute relative path",
+                            ),
+                        ),
                         context: "Path canonicalization".to_string(),
                     })
                 })?;
@@ -603,22 +716,31 @@ fn analyze_change_type(changed_path: &Path, theme_path: &Path, source_dir: &Path
 }
 
 /// Check if a path is an HTML template
-fn is_html_template(path: &Path) -> bool {
+pub fn is_html_template(path: &Path) -> bool {
     path.extension()
         .and_then(OsStr::to_str)
         .map(|ext| ext.eq_ignore_ascii_case("html"))
         .unwrap_or(false)
-        && path.components()
+        && path
+            .components()
             .any(|c| c.as_os_str() == OsStr::new("templates"))
 }
 
 /// Create a standardized asset error
-fn create_asset_error(context: &str, source_dir: &Path, output_dir: &Path, error: Box<dyn std::error::Error + Send + Sync>) -> KrikError {
+pub fn create_asset_error(
+    context: &str,
+    source_dir: &Path,
+    output_dir: &Path,
+    error: Box<dyn std::error::Error + Send + Sync>,
+) -> KrikError {
     KrikError::Generation(crate::error::GenerationError {
         kind: crate::error::GenerationErrorKind::AssetCopyError {
             source: source_dir.to_path_buf(),
             target: output_dir.to_path_buf(),
-            error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset operation failed: {error}")),
+            error: std::io::Error::new(
+                std::io::ErrorKind::Other,
+                format!("Asset operation failed: {error}"),
+            ),
         },
         context: context.to_string(),
     })

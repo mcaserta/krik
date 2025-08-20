@@ -15,4 +15,3 @@ fn sitemap_escapes_home_url() {
     let xml = fs::read_to_string(out.join("sitemap.xml")).unwrap();
     assert!(xml.contains("<loc>https://example.com/page?a=1&amp;b=2</loc>"));
 }
-

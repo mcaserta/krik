@@ -23,14 +23,17 @@ use tracing::debug;
 
 /// Lint markdown content and check for broken links
 pub async fn lint_content_with_links(content_dir: &Path) -> KrikResult<LintReport> {
-    debug!("Starting content linting with link checking in: {}", content_dir.display());
-    
+    debug!(
+        "Starting content linting with link checking in: {}",
+        content_dir.display()
+    );
+
     // First, run the regular linting
     let mut report = lint_content(content_dir)?;
-    
+
     // Then check links
     let broken_links = check_links_in_directory(content_dir).await?;
     report.broken_links = broken_links;
-    
+
     Ok(report)
 }

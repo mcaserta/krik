@@ -1,21 +1,21 @@
+use crate::generator::SiteGenerator;
+use notify::EventKind;
 use std::path::PathBuf;
 use std::time::Duration;
 use tokio::sync::broadcast;
+use tracing::{debug, error, info};
 use warp::Filter;
-use notify::EventKind;
-use crate::generator::SiteGenerator;
-use tracing::{info, error, debug};
 
-pub mod websocket;
-pub mod static_files;
 pub mod live_reload;
-pub mod watcher;
 pub mod net;
+pub mod static_files;
+pub mod watcher;
+pub mod websocket;
 
-use websocket::*;
 use live_reload::*;
-use watcher::start_watcher;
 use net::get_network_interfaces;
+use watcher::start_watcher;
+use websocket::*;
 
 pub struct DevServer {
     input_dir: PathBuf,
@@ -35,7 +35,7 @@ impl DevServer {
         live_reload: bool,
     ) -> Self {
         let (reload_tx, _) = broadcast::channel(100);
-        
+
         Self {
             input_dir,
             output_dir,
@@ -49,13 +49,13 @@ impl DevServer {
     pub async fn start(&self) -> Result<(), Box<dyn std::error::Error>> {
         // Initial site generation
         self.generate_site()?;
-        
+
         // Start file watcher
         self.start_file_watcher().await?;
-        
+
         // Get network interfaces
         let interfaces = get_network_interfaces();
-        
+
         // Setup static file serving
         let output_dir = self.output_dir.clone();
 
@@ -64,17 +64,18 @@ impl DevServer {
             // Setup with WebSocket for live reload
             let static_route = warp::fs::dir(output_dir.clone())
                 .or(warp::path::end().and(warp::fs::file(output_dir.join("index.html"))));
-            
+
             let reload_tx = self.reload_tx.clone();
-            let ws_route = warp::path("__krik_reload")
-                .and(warp::ws())
-                .map(move |ws: warp::ws::Ws| {
-                    let tx = reload_tx.clone();
-                    ws.on_upgrade(move |websocket| handle_websocket(websocket, tx))
-                });
-            
+            let ws_route =
+                warp::path("__krik_reload")
+                    .and(warp::ws())
+                    .map(move |ws: warp::ws::Ws| {
+                        let tx = reload_tx.clone();
+                        ws.on_upgrade(move |websocket| handle_websocket(websocket, tx))
+                    });
+
             let routes = ws_route.or(static_route);
-            
+
             info!("🚀 Krik development server started!");
             info!("📁 Serving: {}", self.output_dir.display());
             info!("👀 Watching: {}", self.input_dir.display());
@@ -82,23 +83,21 @@ impl DevServer {
                 info!("👀 Watching theme: {}", theme_dir.display());
             }
             info!("🌐 Available on:");
-            
+
             for interface in &interfaces {
                 info!("   http://{}:{}", interface, self.port);
             }
-            
+
             info!("✅ Live reload enabled");
             info!("\n💡 Press Ctrl+C to stop");
 
             // Start server with live reload
-            warp::serve(routes)
-                .run(([0, 0, 0, 0], self.port))
-                .await;
+            warp::serve(routes).run(([0, 0, 0, 0], self.port)).await;
         } else {
             // Setup without WebSocket for static serving only
             let static_route = warp::fs::dir(output_dir.clone())
                 .or(warp::path::end().and(warp::fs::file(output_dir.join("index.html"))));
-            
+
             info!("🚀 Krik development server started!");
             info!("📁 Serving: {}", self.output_dir.display());
             info!("👀 Watching: {}", self.input_dir.display());
@@ -106,11 +105,11 @@ impl DevServer {
                 info!("👀 Watching theme: {}", theme_dir.display());
             }
             info!("🌐 Available on:");
-            
+
             for interface in &interfaces {
                 info!("   http://{}:{}", interface, self.port);
             }
-            
+
             info!("❌ Live reload disabled");
             info!("\n💡 Press Ctrl+C to stop");
 
@@ -124,15 +123,16 @@ impl DevServer {
     }
 
     fn generate_site(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let mut generator = SiteGenerator::new(&self.input_dir, &self.output_dir, self.theme_dir.as_ref())?;
+        let mut generator =
+            SiteGenerator::new(&self.input_dir, &self.output_dir, self.theme_dir.as_ref())?;
         generator.scan_files()?;
         generator.generate_site()?;
-        
+
         // Conditionally inject live reload script into HTML files
         if self.live_reload {
             inject_live_reload_script(&self.output_dir, self.port)?;
         }
-        
+
         Ok(())
     }
 
@@ -148,17 +148,21 @@ impl DevServer {
             let (tx, mut rx) = tokio::sync::mpsc::channel(100);
             start_watcher(input_dir.clone(), theme_dir.clone(), tx).await;
             // Canonicalize watched roots to compare against canonical event paths
-            let canonical_input_dir = std::fs::canonicalize(&input_dir).unwrap_or(input_dir.clone());
-            let canonical_theme_dir = theme_dir.as_ref().and_then(|t| std::fs::canonicalize(t).ok());
+            let canonical_input_dir =
+                std::fs::canonicalize(&input_dir).unwrap_or(input_dir.clone());
+            let canonical_theme_dir = theme_dir
+                .as_ref()
+                .and_then(|t| std::fs::canonicalize(t).ok());
 
             // Persistent generator to preserve document cache across changes
-            let mut generator = match SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
-                Ok(g) => g,
-                Err(e) => {
-                    error!("failed to initialize generator for watcher: {}", e);
-                    return;
-                }
-            };
+            let mut generator =
+                match SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref()) {
+                    Ok(g) => g,
+                    Err(e) => {
+                        error!("failed to initialize generator for watcher: {}", e);
+                        return;
+                    }
+                };
             if let Err(e) = generator.scan_files() {
                 error!("initial scan failed in watcher: {}", e);
                 // continue anyway; incremental may rescan as needed
@@ -211,25 +215,44 @@ impl DevServer {
                     dbg_paths.sort();
                     debug!("batched paths: {}", dbg_paths.join(", "));
                 }
-                info!("📝 {} changed path(s), running incremental build...", batched.len());
+                info!(
+                    "📝 {} changed path(s), running incremental build...",
+                    batched.len()
+                );
 
                 // Run incremental for the batched unique paths using persistent generator/cache
                 let mut did_anything = false;
                 for (path, is_remove) in batched.into_iter() {
                     // Only handle changes under input_dir or theme_dir
                     let relevant = path.starts_with(&canonical_input_dir)
-                        || canonical_theme_dir.as_ref().map(|t| path.starts_with(t)).unwrap_or(false);
+                        || canonical_theme_dir
+                            .as_ref()
+                            .map(|t| path.starts_with(t))
+                            .unwrap_or(false);
                     if !relevant {
                         debug!("skipping unrelated change: {}", path.display());
                         continue;
                     }
-                    debug!("incremental build for {} (remove={})", path.display(), is_remove);
+                    debug!(
+                        "incremental build for {} (remove={})",
+                        path.display(),
+                        is_remove
+                    );
                     match generator.generate_incremental_for_path(&path, is_remove) {
-                        Ok(()) => { did_anything = true; }
+                        Ok(()) => {
+                            did_anything = true;
+                        }
                         Err(e) => {
-                            error!("❌ Incremental generation failed for {}: {}", path.display(), e);
+                            error!(
+                                "❌ Incremental generation failed for {}: {}",
+                                path.display(),
+                                e
+                            );
                             if let Err(full_err) = generator.generate_site() {
-                                error!("❌ Full regeneration after failure also failed: {}", full_err);
+                                error!(
+                                    "❌ Full regeneration after failure also failed: {}",
+                                    full_err
+                                );
                             } else {
                                 debug!("fallback full regeneration completed after incremental failure");
                                 did_anything = true;
