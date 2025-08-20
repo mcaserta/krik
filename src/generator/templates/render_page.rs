@@ -52,6 +52,26 @@ pub fn generate_page(
     site_config: &SiteConfig,
     output_dir: &Path,
 ) -> KrikResult<()> {
+    let context = build_page_context(document, all_documents, site_config, i18n);
+    let rendered_content = render_template(theme, document, &context)?;
+    write_output_file(document, output_dir, &rendered_content)
+}
+
+/// Build the template context for a page
+fn build_page_context(
+    document: &Document,
+    all_documents: &[Document],
+    site_config: &SiteConfig,
+    i18n: &I18nManager,
+) -> Context {
+    let mut context = create_base_context(document);
+    add_processed_content(&mut context, document);
+    add_all_contexts(&mut context, document, all_documents, site_config, i18n);
+    context
+}
+
+/// Create the base template context with document fields
+fn create_base_context(document: &Document) -> Context {
     let mut context = Context::new();
     context.insert("title", &document.front_matter.title);
     context.insert("content", &document.content);
@@ -70,12 +90,16 @@ pub fn generate_page(
     let description = generate_description(&document.content, frontmatter_desc.as_ref());
     context.insert("description", &description);
 
-    add_site_context(&mut context, site_config, &document.language, &document.file_path);
-
+    // Add extra frontmatter fields
     for (key, value) in &document.front_matter.extra {
         context.insert(key, value);
     }
 
+    context
+}
+
+/// Add processed content (without duplicate title, with footnotes) to context
+fn add_processed_content(context: &mut Context, document: &Document) {
     let content_without_title = crate::generator::markdown::remove_duplicate_title(
         &document.content,
         document.front_matter.title.as_deref(),
@@ -91,29 +115,44 @@ pub fn generate_page(
         context.get("content").and_then(|v| v.as_str()).unwrap_or("")
     );
     context.insert("content", &processed_content);
+}
 
-    add_navigation_context(&mut context, document, i18n);
-    add_language_context(&mut context, document, all_documents, i18n);
-    add_sidebar_context(&mut context, all_documents);
-    add_page_links_context(&mut context, all_documents, &document.file_path);
+/// Add all context helpers (site, navigation, language, sidebar, page links)
+fn add_all_contexts(
+    context: &mut Context,
+    document: &Document,
+    all_documents: &[Document],
+    site_config: &SiteConfig,
+    i18n: &I18nManager,
+) {
+    add_site_context(context, site_config, &document.language, &document.file_path);
+    add_navigation_context(context, document, i18n);
+    add_language_context(context, document, all_documents, i18n);
+    add_sidebar_context(context, all_documents);
+    add_page_links_context(context, all_documents, &document.file_path);
+}
 
+/// Render the template with the given context
+fn render_template(theme: &Theme, document: &Document, context: &Context) -> KrikResult<String> {
     let template_name = determine_template_name(document);
-    // Rendering is CPU-bound and can be parallelized at a higher level, but file writes must be serialized per path.
-    let rendered = theme
+    theme
         .templates
-        .render(&template_name, &context)
+        .render(&template_name, context)
         .map_err(|e| KrikError::Template(TemplateError {
             kind: TemplateErrorKind::RenderError(e),
             template: template_name.clone(),
             context: format!("Rendering page for {}", document.file_path),
-        }))?;
-
-    let output_path = determine_output_path(&document.file_path, output_dir);
-    if let Some(parent) = output_path.parent() { std::fs::create_dir_all(parent)?; }
-
-    let mut file = File::create(&output_path)?;
-    file.write_all(rendered.as_bytes())?;
-    Ok(())
+        }))
 }
 
+/// Write the rendered content to the output file
+fn write_output_file(document: &Document, output_dir: &Path, rendered_content: &str) -> KrikResult<()> {
+    let output_path = determine_output_path(&document.file_path, output_dir);
+    if let Some(parent) = output_path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
 
+    let mut file = File::create(&output_path)?;
+    file.write_all(rendered_content.as_bytes())?;
+    Ok(())
+}

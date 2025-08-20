@@ -2,7 +2,7 @@ use krik::generator::markdown::{markdown_to_html, generate_toc_and_content};
 
 #[test]
 fn markdown_to_html_basic() {
-    let html = markdown_to_html("# Hello\n\nThis is **bold**.");
+    let (html, _toc) = markdown_to_html("# Hello\n\nThis is **bold**.", false, None);
     assert!(html.contains("<h1"));
     assert!(html.contains("<strong>"));
 }

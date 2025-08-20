@@ -5,7 +5,17 @@ use crate::site::SiteConfig;
 use crate::error::{KrikResult, KrikError, ThemeError, ThemeErrorKind};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::ffi::OsStr;
 use tracing::{info, debug, warn, error};
+
+#[derive(Debug)]
+enum ChangeType {
+    ThemeRelated,
+    SiteConfig,
+    Markdown { relative_path: String },
+    Asset,
+    Unrelated,
+}
 
 /// The main site generator that processes Markdown files and creates a static website.
 ///
@@ -260,239 +270,25 @@ impl SiteGenerator {
         changed_path: P,
         is_removed: bool,
     ) -> KrikResult<()> {
-        use super::pipeline::{EmitPhase, RenderPhase, TransformPhase};
-        use std::ffi::OsStr;
-
         let changed_path = changed_path.as_ref();
-        // no need to instantiate ScanPhase here
-        let transform = TransformPhase;
-        let render = RenderPhase;
-        let emit = EmitPhase;
-
-        emit.ensure_output_dir(&self.output_dir)?;
-
-        // If change is inside theme dir or is an HTML template, do full regen.
-        let is_theme_related = self.theme.theme_path.as_path().is_dir()
-            && changed_path.starts_with(&self.theme.theme_path);
-        let is_template_ext = changed_path
-            .extension()
-            .and_then(OsStr::to_str)
-            .map(|ext| ext.eq_ignore_ascii_case("html"))
-            .unwrap_or(false)
-            && changed_path
-                .components()
-                .any(|c| c.as_os_str() == OsStr::new("templates"));
-        if is_theme_related || is_template_ext {
-            debug!(
-                "theme-related change detected at {} (template_ext={}), triggering full regeneration",
-                changed_path.display(),
-                is_template_ext
-            );
-            // Templates affect all pages; safest to rebuild fully.
-            return self.generate_site();
-        }
-
-        // Changes within content directory
-        // Compare using canonicalized paths to avoid absolute/relative mismatches
-        let canonical_changed = std::fs::canonicalize(changed_path).unwrap_or_else(|_| changed_path.to_path_buf());
-        let canonical_source = std::fs::canonicalize(&self.source_dir).unwrap_or_else(|_| self.source_dir.clone());
-
-        if canonical_changed.starts_with(&canonical_source) {
-            let is_markdown = changed_path.extension().is_some_and(|ext| ext == "md");
-            let is_site_toml = changed_path.file_name() == Some(OsStr::new("site.toml"));
-            if is_site_toml {
-                debug!("site.toml changed ({}), triggering full regeneration", changed_path.display());
-                // Site configuration changes can affect all pages
-                return self.generate_site();
+        let change_type = analyze_change_type(changed_path, &self.theme.theme_path, &self.source_dir)?;
+        
+        match change_type {
+            ChangeType::ThemeRelated | ChangeType::SiteConfig => {
+                debug!("Theme or site config change detected, triggering full regeneration");
+                self.generate_site()
             }
-
-            if is_markdown {
-                // Determine relative path for matching Document
-                let relative_path = match canonical_changed.strip_prefix(&canonical_source) {
-                    Ok(rel) => rel.to_string_lossy().to_string(),
-                    Err(_) => {
-                        debug!(
-                            "failed to compute relative path for {}, falling back to full regeneration",
-                            changed_path.display()
-                        );
-                        return self.generate_site();
-                    }
-                };
-
-                // Update cache for this single file
-                let mut documents = self.documents.clone();
-                match super::markdown::parse_single_file(&self.source_dir, &canonical_changed) {
-                    Ok(doc) => {
-                        // Track previous pdf flag before updating cache
-                        let prev_pdf = self
-                            .document_cache
-                            .get(&doc.file_path)
-                            .and_then(|d| d.front_matter.pdf)
-                            .unwrap_or(false);
-                        // Replace or insert into cache and working set
-                        self.document_cache.insert(doc.file_path.clone(), doc.clone());
-                        if let Some(slot) = documents.iter_mut().find(|d| d.file_path == doc.file_path) {
-                            *slot = doc;
-                        } else {
-                            documents.push(doc);
-                        }
-                        // After updating, check current pdf flag and (re)generate/remove PDF as needed
-                        if let Some(current_doc) = documents.iter().find(|d| d.file_path == relative_path) {
-                            let current_pdf = current_doc.front_matter.pdf.unwrap_or(false);
-                            // Determine output PDF path
-                            let mut pdf_rel_path = std::path::PathBuf::from(&current_doc.file_path);
-                            pdf_rel_path.set_extension("pdf");
-                            let pdf_output_path = self.output_dir.join(pdf_rel_path);
-
-                            if current_pdf {
-                                // Generate or regenerate PDF
-                                if super::pdf::PdfGenerator::is_available() {
-                                    match super::pdf::PdfGenerator::new() {
-                                        Ok(pdf_gen) => {
-                                            let input_path = self.source_dir.join(&current_doc.file_path);
-                                            let _ = pdf_gen.generate_pdf_from_file(
-                                                &input_path,
-                                                &pdf_output_path,
-                                                &self.source_dir,
-                                                &self.site_config,
-                                                &current_doc.language,
-                                            );
-                                        }
-                                        Err(e) => {
-                                            warn!("PDF generator init failed during incremental: {}", e);
-                                        }
-                                    }
-                                } else if prev_pdf && pdf_output_path.exists() {
-                                    // Tools no longer available; remove stale PDF to reflect state
-                                    let _ = std::fs::remove_file(&pdf_output_path);
-                                }
-                            } else if prev_pdf {
-                                // PDF flag was removed; delete existing PDF if present
-                                if pdf_output_path.exists() {
-                                    let _ = std::fs::remove_file(&pdf_output_path);
-                                }
-                            }
-                        }
-                    }
-                    Err(e) => {
-                        warn!("Failed to parse changed file {}: {}. Falling back to full rescan.", changed_path.display(), e);
-                        documents.clear();
-                        super::markdown::scan_files(&self.source_dir, &mut documents)?;
-                        // rebuild cache from full scan
-                        self.document_cache.clear();
-                        for d in &documents { self.document_cache.insert(d.file_path.clone(), d.clone()); }
-                    }
-                }
-
-                // Transform documents for correct dates before rendering
-                transform.transform(&mut documents, &self.source_dir);
-
-                if is_removed {
-                    debug!("removing generated page for {}", relative_path);
-                    // Remove from cache and the mirrored HTML file
-                    if let Some(rel_removed) = self.document_cache.remove(&relative_path) {
-                        // Also remove from current documents vector copy
-                        documents.retain(|d| d.file_path != rel_removed.file_path);
-                        // If removed document had a PDF generated, remove corresponding PDF file
-                        if rel_removed.front_matter.pdf.unwrap_or(false) {
-                            let mut pdf_rel_path = std::path::PathBuf::from(&relative_path);
-                            pdf_rel_path.set_extension("pdf");
-                            let pdf_output_path = self.output_dir.join(pdf_rel_path);
-                            if pdf_output_path.exists() {
-                                let _ = std::fs::remove_file(pdf_output_path);
-                            }
-                        }
-                    }
-                    let mut output_path = std::path::PathBuf::from(&relative_path);
-                    output_path.set_extension("html");
-                    let output_path = self.output_dir.join(output_path);
-                    if output_path.exists() {
-                        let _ = std::fs::remove_file(output_path);
-                    }
-                } else {
-                    // Find all language variants for this document
-                    let variant_paths = self.find_language_variants(&relative_path);
-                    debug!("found {} language variants for {}: {:?}", variant_paths.len(), relative_path, variant_paths);
-                    
-                    // Render all language variants (including the changed one)
-                    let mut rendered_any = false;
-                    for variant_path in &variant_paths {
-                        if let Some(doc) = documents.iter().find(|d| d.file_path == *variant_path) {
-                            debug!("re-rendering language variant page {}", variant_path);
-                            super::templates::generate_page(
-                                doc,
-                                &documents,
-                                &self.theme,
-                                &self.i18n,
-                                &self.site_config,
-                                &self.output_dir,
-                            )
-                            .map_err(|e| KrikError::Generation(crate::error::GenerationError {
-                                kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
-                                    std::io::ErrorKind::Other,
-                                    format!("Page generation failed for {}: {e}", variant_path),
-                                )),
-                                context: "Incremental language variant page generation".to_string(),
-                            }))?;
-                            rendered_any = true;
-                        }
-                    }
-                    
-                    if !rendered_any {
-                        debug!(
-                            "changed page {} and its variants not present in scanned documents; triggering full regeneration",
-                            relative_path
-                        );
-                        // If not found, fall back to full regeneration
-                        return self.generate_site();
-                    }
-                }
-
-                // Persist updated working set back into generator state
-                self.documents = documents.clone();
-
-                // Update global artifacts that depend on full document set
-                debug!("updating global artifacts (index/feed/sitemap/robots) after single-page change");
-                render.render_index(&self.documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
-                emit.emit_feed(&self.documents, &self.site_config, &self.output_dir)?;
-                emit.emit_sitemap(&self.documents, &self.site_config, &self.output_dir)?;
-                emit.emit_robots(&self.site_config, &self.output_dir)?;
-                return Ok(());
-            } else {
-                // Non-markdown asset changed under content: copy or remove the single file
-                if is_removed {
-                    debug!("removing single asset {}", changed_path.display());
-                    super::assets::remove_single_asset(&self.source_dir, &self.output_dir, changed_path)
-                        .map_err(|e| KrikError::Generation(crate::error::GenerationError {
-                            kind: crate::error::GenerationErrorKind::AssetCopyError {
-                                source: self.source_dir.clone(),
-                                target: self.output_dir.clone(),
-                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset remove failed: {e}")),
-                            },
-                            context: "Removing single changed asset".to_string(),
-                        }))?;
-                } else {
-                    debug!("copying single asset {}", changed_path.display());
-                    super::assets::copy_single_asset(&self.source_dir, &self.output_dir, changed_path)
-                        .map_err(|e| KrikError::Generation(crate::error::GenerationError {
-                            kind: crate::error::GenerationErrorKind::AssetCopyError {
-                                source: self.source_dir.clone(),
-                                target: self.output_dir.clone(),
-                                error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset copy failed: {e}")),
-                            },
-                            context: "Copying single changed asset".to_string(),
-                        }))?;
-                }
-                return Ok(());
+            ChangeType::Markdown { relative_path } => {
+                self.handle_markdown_change(&relative_path, changed_path, is_removed)
+            }
+            ChangeType::Asset => {
+                self.handle_asset_change(changed_path, is_removed)
+            }
+            ChangeType::Unrelated => {
+                debug!("Change not related to content or theme, triggering full regeneration");
+                self.generate_site()
             }
         }
-
-        debug!(
-            "change at {} not under source/theme (or canonicalization mismatch); triggering full regeneration",
-            changed_path.display()
-        );
-        // Default: fall back to full regeneration
-        self.generate_site()
     }
 
     /// Find all documents that are language variants of the given document.
@@ -558,4 +354,272 @@ impl SiteGenerator {
         
         variants
     }
+
+    /// Handle markdown file changes by updating the document cache and re-rendering affected pages
+    fn handle_markdown_change(&mut self, relative_path: &str, changed_path: &Path, is_removed: bool) -> KrikResult<()> {
+        use super::pipeline::{EmitPhase, RenderPhase, TransformPhase};
+        
+        let transform = TransformPhase;
+        let render = RenderPhase;
+        let emit = EmitPhase;
+
+        emit.ensure_output_dir(&self.output_dir)?;
+
+        let mut documents = self.documents.clone();
+        
+        if is_removed {
+            self.handle_markdown_removal(relative_path, &mut documents)
+        } else {
+            self.handle_markdown_update(relative_path, changed_path, &mut documents)?
+        };
+
+        // Transform documents for correct dates before rendering
+        transform.transform(&mut documents, &self.source_dir);
+
+        if !is_removed {
+            self.render_language_variants(relative_path, &documents)?;
+        }
+
+        // Persist updated working set back into generator state
+        self.documents = documents;
+
+        // Update global artifacts that depend on full document set
+        debug!("updating global artifacts (index/feed/sitemap/robots) after single-page change");
+        render.render_index(&self.documents, &self.theme, &self.site_config, &self.i18n, &self.output_dir)?;
+        emit.emit_feed(&self.documents, &self.site_config, &self.output_dir)?;
+        emit.emit_sitemap(&self.documents, &self.site_config, &self.output_dir)?;
+        emit.emit_robots(&self.site_config, &self.output_dir)?;
+        
+        Ok(())
+    }
+
+    /// Handle asset file changes by copying or removing the file
+    fn handle_asset_change(&self, changed_path: &Path, is_removed: bool) -> KrikResult<()> {
+        use super::pipeline::EmitPhase;
+        
+        let emit = EmitPhase;
+        emit.ensure_output_dir(&self.output_dir)?;
+
+        if is_removed {
+            debug!("removing single asset {}", changed_path.display());
+            super::assets::remove_single_asset(&self.source_dir, &self.output_dir, changed_path)
+                .map_err(|e| create_asset_error("Removing single changed asset", &self.source_dir, &self.output_dir, Box::new(e)))
+        } else {
+            debug!("copying single asset {}", changed_path.display());
+            super::assets::copy_single_asset(&self.source_dir, &self.output_dir, changed_path)
+                .map_err(|e| create_asset_error("Copying single changed asset", &self.source_dir, &self.output_dir, Box::new(e)))
+        }
+    }
+
+    /// Handle markdown file removal by cleaning up cache and output files
+    fn handle_markdown_removal(&mut self, relative_path: &str, documents: &mut Vec<Document>) {
+        debug!("removing generated page for {}", relative_path);
+        // Remove from cache and the mirrored HTML file
+        if let Some(rel_removed) = self.document_cache.remove(relative_path) {
+            // Also remove from current documents vector copy
+            documents.retain(|d| d.file_path != rel_removed.file_path);
+            // If removed document had a PDF generated, remove corresponding PDF file
+            if rel_removed.front_matter.pdf.unwrap_or(false) {
+                let mut pdf_rel_path = std::path::PathBuf::from(relative_path);
+                pdf_rel_path.set_extension("pdf");
+                let pdf_output_path = self.output_dir.join(pdf_rel_path);
+                if pdf_output_path.exists() {
+                    let _ = std::fs::remove_file(pdf_output_path);
+                }
+            }
+        }
+        let mut output_path = std::path::PathBuf::from(relative_path);
+        output_path.set_extension("html");
+        let output_path = self.output_dir.join(output_path);
+        if output_path.exists() {
+            let _ = std::fs::remove_file(output_path);
+        }
+    }
+
+    /// Handle markdown file update by parsing and updating cache
+    fn handle_markdown_update(&mut self, relative_path: &str, changed_path: &Path, documents: &mut Vec<Document>) -> KrikResult<()> {
+        match super::markdown::parse_single_file(&self.source_dir, changed_path) {
+            Ok(doc) => {
+                let prev_pdf = self.document_cache
+                    .get(&doc.file_path)
+                    .and_then(|d| d.front_matter.pdf)
+                    .unwrap_or(false);
+                
+                // Replace or insert into cache and working set
+                self.document_cache.insert(doc.file_path.clone(), doc.clone());
+                if let Some(slot) = documents.iter_mut().find(|d| d.file_path == doc.file_path) {
+                    *slot = doc;
+                } else {
+                    documents.push(doc);
+                }
+                
+                // Handle PDF generation/removal
+                self.handle_pdf_change(relative_path, documents, prev_pdf)?;
+                Ok(())
+            }
+            Err(e) => {
+                warn!("Failed to parse changed file {}: {}. Falling back to full rescan.", changed_path.display(), e);
+                documents.clear();
+                super::markdown::scan_files(&self.source_dir, documents)?;
+                // rebuild cache from full scan
+                self.document_cache.clear();
+                for d in documents { 
+                    self.document_cache.insert(d.file_path.clone(), d.clone()); 
+                }
+                Ok(())
+            }
+        }
+    }
+
+    /// Handle PDF generation or removal based on document settings
+    fn handle_pdf_change(&self, relative_path: &str, documents: &[Document], prev_pdf: bool) -> KrikResult<()> {
+        if let Some(current_doc) = documents.iter().find(|d| d.file_path == relative_path) {
+            let current_pdf = current_doc.front_matter.pdf.unwrap_or(false);
+            let mut pdf_rel_path = std::path::PathBuf::from(&current_doc.file_path);
+            pdf_rel_path.set_extension("pdf");
+            let pdf_output_path = self.output_dir.join(pdf_rel_path);
+
+            if current_pdf {
+                // Generate or regenerate PDF
+                if super::pdf::PdfGenerator::is_available() {
+                    match super::pdf::PdfGenerator::new() {
+                        Ok(pdf_gen) => {
+                            let input_path = self.source_dir.join(&current_doc.file_path);
+                            let _ = pdf_gen.generate_pdf_from_file(
+                                &input_path,
+                                &pdf_output_path,
+                                &self.source_dir,
+                                &self.site_config,
+                                &current_doc.language,
+                            );
+                        }
+                        Err(e) => {
+                            warn!("PDF generator init failed during incremental: {}", e);
+                        }
+                    }
+                } else if prev_pdf && pdf_output_path.exists() {
+                    // Tools no longer available; remove stale PDF to reflect state
+                    let _ = std::fs::remove_file(&pdf_output_path);
+                }
+            } else if prev_pdf {
+                // PDF flag was removed; delete existing PDF if present
+                if pdf_output_path.exists() {
+                    let _ = std::fs::remove_file(&pdf_output_path);
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Render all language variants of a document
+    fn render_language_variants(&self, relative_path: &str, documents: &[Document]) -> KrikResult<()> {
+        let variant_paths = self.find_language_variants(relative_path);
+        debug!("found {} language variants for {}: {:?}", variant_paths.len(), relative_path, variant_paths);
+        
+        // Render all language variants (including the changed one)
+        let mut rendered_any = false;
+        for variant_path in &variant_paths {
+            if let Some(doc) = documents.iter().find(|d| d.file_path == *variant_path) {
+                debug!("re-rendering language variant page {}", variant_path);
+                super::templates::generate_page(
+                    doc,
+                    documents,
+                    &self.theme,
+                    &self.i18n,
+                    &self.site_config,
+                    &self.output_dir,
+                )
+                .map_err(|e| KrikError::Generation(crate::error::GenerationError {
+                    kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        format!("Page generation failed for {}: {e}", variant_path),
+                    )),
+                    context: "Incremental language variant page generation".to_string(),
+                }))?;
+                rendered_any = true;
+            }
+        }
+        
+        if !rendered_any {
+            debug!(
+                "changed page {} and its variants not present in scanned documents; triggering full regeneration",
+                relative_path
+            );
+            return Err(KrikError::Generation(crate::error::GenerationError {
+                kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
+                    std::io::ErrorKind::NotFound,
+                    "Document variants not found",
+                )),
+                context: "Language variant rendering".to_string(),
+            }));
+        }
+        
+        Ok(())
+    }
+}
+
+/// Analyze the type of change and determine how to handle it
+fn analyze_change_type(changed_path: &Path, theme_path: &Path, source_dir: &Path) -> KrikResult<ChangeType> {
+    // If change is inside theme dir or is an HTML template, do full regen.
+    let is_theme_related = theme_path.is_dir() && changed_path.starts_with(theme_path);
+    let is_template_ext = is_html_template(changed_path);
+    
+    if is_theme_related || is_template_ext {
+        return Ok(ChangeType::ThemeRelated);
+    }
+
+    // Changes within content directory
+    let canonical_changed = std::fs::canonicalize(changed_path).unwrap_or_else(|_| changed_path.to_path_buf());
+    let canonical_source = std::fs::canonicalize(source_dir).unwrap_or_else(|_| source_dir.to_path_buf());
+
+    if canonical_changed.starts_with(&canonical_source) {
+        let is_markdown = changed_path.extension().is_some_and(|ext| ext == "md");
+        let is_site_toml = changed_path.file_name() == Some(OsStr::new("site.toml"));
+        
+        if is_site_toml {
+            return Ok(ChangeType::SiteConfig);
+        }
+        
+        if is_markdown {
+            let relative_path = canonical_changed.strip_prefix(&canonical_source)
+                .map(|rel| rel.to_string_lossy().to_string())
+                .map_err(|_| {
+                    debug!("failed to compute relative path for {}", changed_path.display());
+                    KrikError::Generation(crate::error::GenerationError {
+                        kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "Failed to compute relative path",
+                        )),
+                        context: "Path canonicalization".to_string(),
+                    })
+                })?;
+            return Ok(ChangeType::Markdown { relative_path });
+        } else {
+            return Ok(ChangeType::Asset);
+        }
+    }
+
+    Ok(ChangeType::Unrelated)
+}
+
+/// Check if a path is an HTML template
+fn is_html_template(path: &Path) -> bool {
+    path.extension()
+        .and_then(OsStr::to_str)
+        .map(|ext| ext.eq_ignore_ascii_case("html"))
+        .unwrap_or(false)
+        && path.components()
+            .any(|c| c.as_os_str() == OsStr::new("templates"))
+}
+
+/// Create a standardized asset error
+fn create_asset_error(context: &str, source_dir: &Path, output_dir: &Path, error: Box<dyn std::error::Error + Send + Sync>) -> KrikError {
+    KrikError::Generation(crate::error::GenerationError {
+        kind: crate::error::GenerationErrorKind::AssetCopyError {
+            source: source_dir.to_path_buf(),
+            target: output_dir.to_path_buf(),
+            error: std::io::Error::new(std::io::ErrorKind::Other, format!("Asset operation failed: {error}")),
+        },
+        context: context.to_string(),
+    })
 }

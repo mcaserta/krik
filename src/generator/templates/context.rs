@@ -122,19 +122,47 @@ pub fn is_post(document: &Document) -> bool {
 }
 
 pub fn generate_description(content: &str, frontmatter_description: Option<&String>) -> String {
-    if let Some(desc) = frontmatter_description {
-        desc.trim().replace(['\n', '\r'], " ")
-    } else {
-        let mut text_content = content.to_string();
-        while let Some(start) = text_content.find('<') {
-            if let Some(end) = text_content[start..].find('>') {
-                text_content.replace_range(start..start + end + 1, " ");
-            } else {
-                break;
-            }
+    frontmatter_description
+        .map(clean_frontmatter_description)
+        .unwrap_or_else(|| extract_description_from_content(content))
+}
+
+/// Clean frontmatter description by removing line breaks
+fn clean_frontmatter_description(desc: &String) -> String {
+    desc.trim().replace(['\n', '\r'], " ")
+}
+
+/// Extract description from HTML content by removing tags and truncating
+fn extract_description_from_content(content: &str) -> String {
+    let text_content = strip_html_tags(content);
+    let cleaned = normalize_whitespace(&text_content);
+    truncate_description(&cleaned, 160)
+}
+
+/// Remove HTML tags from content
+fn strip_html_tags(content: &str) -> String {
+    let mut text_content = content.to_string();
+    while let Some(start) = text_content.find('<') {
+        if let Some(end) = text_content[start..].find('>') {
+            text_content.replace_range(start..start + end + 1, " ");
+        } else {
+            break;
         }
-        let cleaned = text_content.split_whitespace().collect::<Vec<&str>>().join(" ");
-        if cleaned.len() > 160 { format!("{}...", &cleaned[..157]) } else { cleaned }
+    }
+    text_content
+}
+
+/// Normalize whitespace by joining with single spaces
+fn normalize_whitespace(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<&str>>().join(" ")
+}
+
+/// Truncate description to specified length with ellipsis
+fn truncate_description(text: &str, max_len: usize) -> String {
+    if text.len() > max_len {
+        format!("{}...", &text[..max_len.saturating_sub(3)])
+    } else {
+        text.to_string()
     }
 }
 

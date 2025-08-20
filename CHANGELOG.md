@@ -40,6 +40,17 @@ and this project adheres to
   - Improved CSS positioning with fixed viewport positioning
   - Better visual feedback for touch interactions
 
+### Changed
+
+- 🏗️ **Code Architecture Refactoring**: Major refactoring to improve maintainability and modularity
+  - Broke down complex 238-line `generate_incremental_for_path` function into smaller, focused functions
+  - Refactored markdown processing pipeline into pure functions with single responsibilities
+  - Unified `markdown_to_html` and `markdown_to_html_with_toc` into single function using AST parser
+  - Split template rendering into modular components for better testability
+  - Eliminated internal state mutations in favor of pure function patterns
+  - All functions now pass state as parameters rather than maintaining internal state
+  - Improved error handling with standardized error creation functions
+
 ## [0.1.23] - 2025-08-12
 
 ### Added
