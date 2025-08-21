@@ -4,10 +4,5 @@ passthrough = [
 ]
 
 [target.aarch64-unknown-linux-gnu]
-image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"
-
-[target.aarch64-unknown-linux-gnu.env]
-# Use system SSL
-OPENSSL_DIR = "/usr"
-PKG_CONFIG_ALLOW_CROSS = "1"
-PKG_CONFIG_ALL_STATIC = "1"
+# Use updated cross image that supports rustls-tls
+image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:0.2.5"
