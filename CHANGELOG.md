@@ -24,6 +24,14 @@ and this project adheres to
   - Improved method signatures and accessibility patterns
   - Enhanced module organization and reduced coupling
 
+- 🚀 **Release Infrastructure**: Automated cross-platform binary releases
+  - GitHub Actions workflow for building 5 platform binaries (Linux x64/ARM64, macOS x64/ARM64, Windows x64)
+  - Automated GitHub releases with changelog integration and semantic versioning
+  - SHA256 checksums and binary verification for security
+  - Deployment workflow optimization using pre-built binaries (~10 minutes → ~30 seconds)
+  - Intelligent fallback to source compilation if binaries unavailable
+  - `latest` tag management for easy access to newest releases
+
 ### Added
 
 - 🎨 **New Manzana Theme**: macOS Tahoe-inspired theme with glassy interface

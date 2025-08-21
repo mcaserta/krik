@@ -19,21 +19,25 @@ jobs:
       - name: Install pandoc # for pdf generation
         uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
-
-      - name: Cache Cargo registry and build artifacts
-        uses: Swatinem/rust-cache@v2
-
       - name: Install typst # also for pdf generation
-        run: cargo install typst-cli
+        run: |
+          # Use pre-built typst if available, otherwise compile from source
+          if ! wget -q https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz; then
+            echo "Pre-built typst not available, installing from cargo..."
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+            source ~/.cargo/env
+            cargo install typst-cli
+          else
+            tar -xf typst-x86_64-unknown-linux-musl.tar.xz
+            sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
+            rm -rf typst-x86_64-unknown-linux-musl*
+          fi
 
-      - name: Install Krik
-        run: cargo install krik
+      - name: Setup Krik binary
+        run: |
+          # Use the download script with proper error handling
+          chmod +x .github/scripts/download-krik.sh
+          ./.github/scripts/download-krik.sh
 
       - name: Configure Git
         run: |

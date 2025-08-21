@@ -1,0 +1,200 @@
+name: Release Krik Binaries
+
+on:
+  # Trigger on version tags
+  push:
+    tags:
+      - 'v*.*.*'
+  # Allow manual dispatch for testing
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., v0.1.24)'
+        required: true
+        default: 'v0.1.24'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Create the GitHub release first
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      tag_name: ${{ steps.get_tag.outputs.tag_name }}
+    steps:
+      - name: Get tag name
+        id: get_tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag_name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog for release
+        id: changelog
+        run: |
+          # Extract version from tag (remove 'v' prefix)
+          VERSION="${{ steps.get_tag.outputs.tag_name }}"
+          VERSION_NO_V="${VERSION#v}"
+          
+          # Extract changelog section for this version
+          if grep -q "## \[$VERSION_NO_V\]" CHANGELOG.md; then
+            # Get section between this version and the next ## line
+            sed -n "/## \[$VERSION_NO_V\]/,/^## /p" CHANGELOG.md | sed '$d' > release_notes.md
+          else
+            # Fallback to unreleased section if version not found
+            sed -n "/## \[Unreleased\]/,/^## /p" CHANGELOG.md | sed '$d' > release_notes.md
+          fi
+          
+          # Remove the version header line
+          tail -n +2 release_notes.md > temp_notes.md
+          mv temp_notes.md release_notes.md
+          
+          echo "Generated release notes:"
+          cat release_notes.md
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          release_name: Krik ${{ steps.get_tag.outputs.tag_name }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+
+  # Build binaries for multiple platforms
+  build-binaries:
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64 (most common for GitHub Actions)
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            name: kk-linux-x86_64
+            cross: false
+
+          # Linux ARM64 (for ARM servers)
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest  
+            name: kk-linux-aarch64
+            cross: true
+
+          # macOS Intel
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            name: kk-macos-x86_64
+            cross: false
+
+          # macOS Apple Silicon
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            name: kk-macos-aarch64
+            cross: false
+
+          # Windows x86_64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            name: kk-windows-x86_64.exe
+            cross: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+
+      - name: Install cross-compilation tools
+        if: matrix.cross
+        run: |
+          cargo install cross --git https://github.com/cross-rs/cross
+
+      - name: Build binary
+        run: |
+          if [ "${{ matrix.cross }}" = "true" ]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
+
+      - name: Prepare binary for upload
+        shell: bash
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            cp target/${{ matrix.target }}/release/kk.exe ${{ matrix.name }}
+          else
+            cp target/${{ matrix.target }}/release/kk ${{ matrix.name }}
+          fi
+          
+          # Create checksum
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            certUtil -hashfile ${{ matrix.name }} SHA256 > ${{ matrix.name }}.sha256
+          else
+            shasum -a 256 ${{ matrix.name }} > ${{ matrix.name }}.sha256
+          fi
+
+      - name: Upload binary to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ${{ matrix.name }}
+          asset_name: ${{ matrix.name }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload checksum to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ${{ matrix.name }}.sha256
+          asset_name: ${{ matrix.name }}.sha256
+          asset_content_type: text/plain
+
+  # Create latest tag for easy access
+  update-latest:
+    needs: [create-release, build-binaries]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update latest tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Delete existing latest tag if it exists
+          if git tag -l | grep -q "^latest$"; then
+            git tag -d latest
+            git push origin :refs/tags/latest || true
+          fi
+          
+          # Create new latest tag pointing to the current release
+          git tag latest ${{ needs.create-release.outputs.tag_name }}
+          git push origin latest

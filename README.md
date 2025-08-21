@@ -61,6 +61,36 @@ Krik a powerful static site generator.
 
 ## 📦 Installation
 
+### Pre-built Binaries (Recommended)
+
+Download the latest release for your platform:
+
+```bash
+# Linux x64
+wget https://github.com/mcaserta/krik/releases/latest/download/kk-linux-x86_64
+chmod +x kk-linux-x86_64
+sudo mv kk-linux-x86_64 /usr/local/bin/kk
+
+# macOS (Intel)
+wget https://github.com/mcaserta/krik/releases/latest/download/kk-macos-x86_64
+chmod +x kk-macos-x86_64
+sudo mv kk-macos-x86_64 /usr/local/bin/kk
+
+# macOS (Apple Silicon)
+wget https://github.com/mcaserta/krik/releases/latest/download/kk-macos-aarch64
+chmod +x kk-macos-aarch64
+sudo mv kk-macos-aarch64 /usr/local/bin/kk
+
+# Windows (download and add to PATH)
+# https://github.com/mcaserta/krik/releases/latest/download/kk-windows-x86_64.exe
+```
+
+### From Cargo
+
+```bash
+cargo install krik
+```
+
 ### From Source
 
 ```bash
@@ -70,12 +100,6 @@ cargo build --release
 ```
 
 The executable will be available at `target/release/kk`.
-
-### Global Install
-
-```bash
-cargo install krik
-```
 
 ## 🔧 Usage
 
