@@ -69,11 +69,11 @@ pub fn generate_index(
         .templates
         .render("index.html", &context)
         .map_err(|e| {
-            KrikError::Template(TemplateError {
+            KrikError::Template(Box::new(TemplateError {
                 kind: TemplateErrorKind::RenderError(e),
                 template: "index.html".to_string(),
                 context: "Rendering index page".to_string(),
-            })
+            }))
         })?;
     let index_path = output_dir.join("index.html");
     let mut file = File::create(&index_path)?;

@@ -23,22 +23,22 @@ impl PdfGenerator {
     /// Create a new PDF generator, checking for required tools
     pub fn new() -> KrikResult<Self> {
         let pandoc_path = Self::find_executable("pandoc").ok_or_else(|| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(
                     "Pandoc not found in PATH. Install pandoc to enable PDF generation."
                         .to_string(),
                 ),
                 context: "Initializing PDF generator".to_string(),
-            })
+            }))
         })?;
 
         let typst_path = Self::find_executable("typst").ok_or_else(|| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(
                     "Typst not found in PATH. Install typst to enable PDF generation.".to_string(),
                 ),
                 context: "Initializing PDF generator".to_string(),
-            })
+            }))
         })?;
 
         debug!("Pandoc path: {}", pandoc_path.display());
@@ -72,11 +72,11 @@ impl PdfGenerator {
         // Ensure the output directory exists
         if let Some(parent) = output_path.parent() {
             fs::create_dir_all(parent).map_err(|e| {
-                KrikError::Io(IoError {
+                KrikError::Io(Box::new(IoError {
                     kind: IoErrorKind::WriteFailed(e),
                     path: parent.to_path_buf(),
                     context: "Creating PDF output directory".to_string(),
-                })
+                }))
             })?;
         }
 
@@ -101,18 +101,18 @@ impl PdfGenerator {
 
         // Execute pandoc
         let output = cmd.output().map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(format!("Failed to execute pandoc: {e}")),
                 context: "Running pandoc to generate PDF".to_string(),
-            })
+            }))
         })?;
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            return Err(KrikError::Generation(GenerationError {
+            return Err(KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(format!("Pandoc failed: {stderr}")),
                 context: "Converting markdown to PDF with pandoc".to_string(),
-            }));
+            })));
         }
 
         // Clean up temporary markdown file
@@ -132,11 +132,11 @@ impl PdfGenerator {
     ) -> KrikResult<PathBuf> {
         // Read the original markdown content
         let content = fs::read_to_string(input_path).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::ReadFailed(e),
                 path: input_path.to_path_buf(),
                 context: "Reading markdown file for PDF generation".to_string(),
-            })
+            }))
         })?;
 
         // Parse front matter and content
@@ -197,11 +197,11 @@ impl PdfGenerator {
 
         // Write the filtered content to temporary file
         fs::write(&temp_file, filtered_content).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::WriteFailed(e),
                 path: temp_file.clone(),
                 context: "Writing temporary filtered markdown file".to_string(),
-            })
+            }))
         })?;
 
         Ok(temp_file)
@@ -309,12 +309,12 @@ impl PdfGenerator {
 
         let img_regex =
             Regex::new(r#"!\[([^]]*)]\(([^)]+?)(?:\s+["']([^"']*?)["'])?\)"#).map_err(|e| {
-                KrikError::Generation(GenerationError {
+                KrikError::Generation(Box::new(GenerationError {
                     kind: GenerationErrorKind::FeedError(format!(
                         "Failed to compile image regex: {e}"
                     )),
                     context: "Processing markdown image paths".to_string(),
-                })
+                }))
             })?;
 
         let mut fixed_content = content.to_string();
@@ -441,11 +441,11 @@ impl PdfGenerator {
 
         // Determine project root by canonicalizing the source directory path
         let canonical_source_dir = fs::canonicalize(source_dir).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::ReadFailed(e),
                 path: source_dir.to_path_buf(),
                 context: "Canonicalizing source directory path".to_string(),
-            })
+            }))
         })?;
 
         let project_root = canonical_source_dir
@@ -503,14 +503,14 @@ impl PdfGenerator {
 
     fn get_tool_version(&self, tool_path: &Path, args: &[&str]) -> KrikResult<String> {
         let output = Command::new(tool_path).args(args).output().map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(format!(
                     "Failed to get version for {}: {}",
                     tool_path.display(),
                     e
                 )),
                 context: "Getting tool version information".to_string(),
-            })
+            }))
         })?;
 
         if output.status.success() {
@@ -518,13 +518,13 @@ impl PdfGenerator {
             let first_line = version_output.lines().next().unwrap_or("Unknown").trim();
             Ok(first_line.to_string())
         } else {
-            Err(KrikError::Generation(GenerationError {
+            Err(KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(format!(
                     "Failed to get version for {}",
                     tool_path.display()
                 )),
                 context: "Getting tool version information".to_string(),
-            }))
+            })))
         }
     }
 }

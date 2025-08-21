@@ -38,10 +38,8 @@ pub fn generate_pages(
         }
     });
 
-    if let Ok(guard) = first_error.into_inner() {
-        if let Some(err) = guard {
-            return Err(err);
-        }
+    if let Ok(Some(err)) = first_error.into_inner() {
+        return Err(err);
     }
     Ok(())
 }
@@ -153,11 +151,11 @@ pub fn render_template(
         .templates
         .render(&template_name, context)
         .map_err(|e| {
-            KrikError::Template(TemplateError {
+            KrikError::Template(Box::new(TemplateError {
                 kind: TemplateErrorKind::RenderError(e),
                 template: template_name.clone(),
                 context: format!("Rendering page for {}", document.file_path),
-            })
+            }))
         })
 }
 

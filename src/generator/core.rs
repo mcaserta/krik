@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use tracing::{debug, error, info, warn};
+use crate::i18n;
 
 #[derive(Debug)]
 pub enum ChangeType {
@@ -115,11 +116,11 @@ impl SiteGenerator {
                 .enable_reload(false)
                 .build()
                 .map_err(|_| {
-                    KrikError::Theme(ThemeError {
+                    KrikError::Theme(Box::new(ThemeError {
                         kind: ThemeErrorKind::NotFound,
                         theme_path: path.clone(),
                         context: format!("Loading custom theme from {}", path.display()),
-                    })
+                    }))
                 })?
         } else {
             let default_path = PathBuf::from("themes/default");
@@ -379,9 +380,7 @@ impl SiteGenerator {
                     if let Some(doc_stem) = doc_path_buf.file_stem().and_then(|s| s.to_str()) {
                         let doc_base_name = if let Some(dot_pos) = doc_stem.rfind('.') {
                             let potential_lang = &doc_stem[dot_pos + 1..];
-                            if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"]
-                                .contains(&potential_lang)
-                            {
+                            if i18n::SUPPORTED_LANGUAGES.contains_key(&potential_lang) {
                                 &doc_stem[..dot_pos]
                             } else {
                                 doc_stem
@@ -627,7 +626,7 @@ impl SiteGenerator {
                     &self.output_dir,
                 )
                 .map_err(|e| {
-                    KrikError::Generation(crate::error::GenerationError {
+                    KrikError::Generation(Box::new(crate::error::GenerationError {
                         kind: crate::error::GenerationErrorKind::OutputDirError(
                             std::io::Error::new(
                                 std::io::ErrorKind::Other,
@@ -635,7 +634,7 @@ impl SiteGenerator {
                             ),
                         ),
                         context: "Incremental language variant page generation".to_string(),
-                    })
+                    }))
                 })?;
                 rendered_any = true;
             }
@@ -646,13 +645,13 @@ impl SiteGenerator {
                 "changed page {} and its variants not present in scanned documents; triggering full regeneration",
                 relative_path
             );
-            return Err(KrikError::Generation(crate::error::GenerationError {
+            return Err(KrikError::Generation(Box::new(crate::error::GenerationError {
                 kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
                     std::io::ErrorKind::NotFound,
                     "Document variants not found",
                 )),
                 context: "Language variant rendering".to_string(),
-            }));
+            })));
         }
 
         Ok(())
@@ -696,7 +695,7 @@ pub fn analyze_change_type(
                         "failed to compute relative path for {}",
                         changed_path.display()
                     );
-                    KrikError::Generation(crate::error::GenerationError {
+                    KrikError::Generation(Box::new(crate::error::GenerationError {
                         kind: crate::error::GenerationErrorKind::OutputDirError(
                             std::io::Error::new(
                                 std::io::ErrorKind::Other,
@@ -704,7 +703,7 @@ pub fn analyze_change_type(
                             ),
                         ),
                         context: "Path canonicalization".to_string(),
-                    })
+                    }))
                 })?;
             return Ok(ChangeType::Markdown { relative_path });
         } else {
@@ -733,7 +732,7 @@ pub fn create_asset_error(
     output_dir: &Path,
     error: Box<dyn std::error::Error + Send + Sync>,
 ) -> KrikError {
-    KrikError::Generation(crate::error::GenerationError {
+    KrikError::Generation(Box::new(crate::error::GenerationError {
         kind: crate::error::GenerationErrorKind::AssetCopyError {
             source: source_dir.to_path_buf(),
             target: output_dir.to_path_buf(),
@@ -743,5 +742,5 @@ pub fn create_asset_error(
             ),
         },
         context: context.to_string(),
-    })
+    }))
 }

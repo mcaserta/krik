@@ -157,12 +157,12 @@ pub fn is_post(document: &Document) -> bool {
 
 pub fn generate_description(content: &str, frontmatter_description: Option<&String>) -> String {
     frontmatter_description
-        .map(clean_frontmatter_description)
+        .map(|desc| clean_frontmatter_description(desc))
         .unwrap_or_else(|| extract_description_from_content(content))
 }
 
 /// Clean frontmatter description by removing line breaks
-pub fn clean_frontmatter_description(desc: &String) -> String {
+pub fn clean_frontmatter_description(desc: &str) -> String {
     desc.trim().replace(['\n', '\r'], " ")
 }
 

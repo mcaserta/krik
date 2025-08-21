@@ -4,7 +4,7 @@ use std::collections::HashMap;
 pub const DEFAULT_LANGUAGE: &str = "en";
 
 pub static SUPPORTED_LANGUAGES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {
-    let m = HashMap::from([
+    HashMap::from([
         ("af", "Afrikaans"),
         ("am", "አማርኛ"),
         ("ar", "العربية"),
@@ -69,8 +69,7 @@ pub static SUPPORTED_LANGUAGES: Lazy<HashMap<&'static str, &'static str>> = Lazy
         ("yo", "Yorùbá"),
         ("zh", "中文"),
         ("zu", "isiZulu")
-    ]);
-    m
+    ])
 });
 
 #[derive(Debug, Clone)]

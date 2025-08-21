@@ -14,11 +14,11 @@ pub fn lint_content(content_dir: &Path) -> KrikResult<LintReport> {
     debug!("Starting content linting in: {}", content_dir.display());
 
     if !content_dir.exists() {
-        return Err(KrikError::Io(IoError {
+        return Err(KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::NotFound,
             path: content_dir.to_path_buf(),
             context: "Content directory not found".to_string(),
-        }));
+        })));
     }
 
     let mut report = LintReport::default();
@@ -274,11 +274,11 @@ fn track_duplicates(
     let stem = path
         .file_stem()
         .ok_or_else(|| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::InvalidPath,
                 path: path.to_path_buf(),
                 context: "Invalid filename (missing stem)".to_string(),
-            })
+            }))
         })?
         .to_string_lossy()
         .to_string();
@@ -291,7 +291,7 @@ fn track_duplicates(
         .ok()
         .and_then(|p| p.parent())
         .map(|p| p.to_string_lossy().to_string())
-        .unwrap_or_else(|| "".to_string());
+        .unwrap_or_default();
     let key = (rel_parent.clone(), base_name.clone(), language.clone());
     seen_slugs.entry(key).or_default().push(path.to_path_buf());
 

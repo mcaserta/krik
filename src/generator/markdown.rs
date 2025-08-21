@@ -220,24 +220,24 @@ pub fn calculate_relative_path(source_dir: &Path, path: &Path) -> String {
 /// Read file content with error handling
 fn read_file_content(path: &Path) -> KrikResult<String> {
     std::fs::read_to_string(path).map_err(|e| {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::ReadFailed(e),
             path: path.to_path_buf(),
             context: "Reading markdown file".to_string(),
-        })
+        }))
     })
 }
 
 /// Validate that a document is not a draft
 pub fn validate_not_draft(frontmatter: &crate::parser::FrontMatter, path: &Path) -> KrikResult<()> {
     if frontmatter.draft.unwrap_or(false) {
-        return Err(KrikError::Markdown(MarkdownError {
+        return Err(KrikError::Markdown(Box::new(MarkdownError {
             kind: MarkdownErrorKind::ParseError("Draft skipped".to_string()),
             file: path.to_path_buf(),
             line: None,
             column: None,
             context: "Skipping draft file".to_string(),
-        }));
+        })));
     }
     Ok(())
 }
@@ -247,11 +247,11 @@ pub fn extract_file_metadata(path: &Path) -> KrikResult<(String, String)> {
     let filename_without_ext = path
         .file_stem()
         .ok_or_else(|| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::InvalidPath,
                 path: path.to_path_buf(),
                 context: "Extracting filename stem".to_string(),
-            })
+            }))
         })?
         .to_string_lossy();
 
@@ -297,7 +297,8 @@ pub fn create_document(
 
 /// Check if an error is a draft skip error
 pub fn is_draft_skip_error(error: &KrikError) -> bool {
-    matches!(error, KrikError::Markdown(MarkdownError { 
-        kind: MarkdownErrorKind::ParseError(msg), .. 
-    }) if msg == "Draft skipped")
+    matches!(error, KrikError::Markdown(markdown_error) 
+        if matches!(**markdown_error, MarkdownError { 
+            kind: MarkdownErrorKind::ParseError(ref msg), .. 
+        } if msg == "Draft skipped"))
 }

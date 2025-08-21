@@ -114,13 +114,13 @@ pub fn parse_markdown_with_frontmatter_for_file(
             let markdown_content = &stripped[end_pos + 5..];
 
             let front_matter: FrontMatter = serde_yaml::from_str(yaml_content).map_err(|e| {
-                KrikError::Markdown(MarkdownError {
+                KrikError::Markdown(Box::new(MarkdownError {
                     kind: MarkdownErrorKind::InvalidFrontMatter(e),
                     file: file_path.to_path_buf(),
                     line: None,
                     column: None,
                     context: "Parsing YAML front matter".to_string(),
-                })
+                }))
             })?;
             return Ok((front_matter, markdown_content.to_string()));
         }
@@ -149,13 +149,13 @@ pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, Str
             // Validate language code via i18n map
             let i18n = I18nManager::new("en".to_string());
             if !i18n.is_supported_language(potential_lang) {
-                return Err(KrikError::Markdown(MarkdownError {
+                return Err(KrikError::Markdown(Box::new(MarkdownError {
                     kind: MarkdownErrorKind::InvalidLanguage(potential_lang.to_string()),
                     file: Path::new(filename).to_path_buf(),
                     line: None,
                     column: None,
                     context: format!("Extracting language from filename: {filename}"),
-                }));
+                })));
             }
             return Ok((base_part.to_string(), potential_lang.to_string()));
         }

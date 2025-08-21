@@ -15,11 +15,11 @@ pub fn create_post(
     // Create posts directory if it doesn't exist
     if !posts_dir.exists() {
         fs::create_dir_all(&posts_dir).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::WriteFailed(e),
                 path: posts_dir.clone(),
                 context: "Creating posts directory".to_string(),
-            })
+            }))
         })?;
         info!("📁 Created directory: {}", posts_dir.display());
     }
@@ -35,12 +35,12 @@ pub fn create_post(
 
     // Check if file already exists
     if file_path.exists() {
-        return Err(KrikError::Content(ContentError {
+        return Err(KrikError::Content(Box::new(ContentError {
             kind: ContentErrorKind::DuplicateSlug(filename),
             path: Some(file_path),
             context: "Post file already exists. Use a different filename with --filename."
                 .to_string(),
-        }));
+        })));
     }
 
     // Generate post content with front matter
@@ -48,11 +48,11 @@ pub fn create_post(
 
     // Write the file
     fs::write(&file_path, content).map_err(|e| {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::WriteFailed(e),
             path: file_path.clone(),
             context: "Writing post content to file".to_string(),
-        })
+        }))
     })?;
 
     info!("📝 Created new blog post: {}", file_path.display());
@@ -72,11 +72,11 @@ pub fn create_page(
     // Create pages directory if it doesn't exist
     if !pages_dir.exists() {
         fs::create_dir_all(&pages_dir).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::WriteFailed(e),
                 path: pages_dir.clone(),
                 context: "Creating pages directory".to_string(),
-            })
+            }))
         })?;
         info!("📁 Created directory: {}", pages_dir.display());
     }
@@ -92,12 +92,12 @@ pub fn create_page(
 
     // Check if file already exists
     if file_path.exists() {
-        return Err(KrikError::Content(ContentError {
+        return Err(KrikError::Content(Box::new(ContentError {
             kind: ContentErrorKind::DuplicateSlug(filename),
             path: Some(file_path),
             context: "Page file already exists. Use a different filename with --filename."
                 .to_string(),
-        }));
+        })));
     }
 
     // Generate page content with front matter
@@ -105,11 +105,11 @@ pub fn create_page(
 
     // Write the file
     fs::write(&file_path, content).map_err(|e| {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::WriteFailed(e),
             path: file_path.clone(),
             context: "Writing page content to file".to_string(),
-        })
+        }))
     })?;
 
     info!("📄 Created new page: {}", file_path.display());

@@ -55,13 +55,13 @@ impl RenderPhase {
     ) -> KrikResult<()> {
         super::templates::generate_pages(documents, theme, i18n, site_config, output_dir).map_err(
             |e| {
-                KrikError::Generation(GenerationError {
+                KrikError::Generation(Box::new(GenerationError {
                     kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                         std::io::ErrorKind::Other,
                         format!("Page generation failed: {e}"),
                     )),
                     context: "Generating HTML pages from documents".to_string(),
-                })
+                }))
             },
         )
     }
@@ -76,13 +76,13 @@ impl RenderPhase {
     ) -> KrikResult<()> {
         super::templates::generate_index(documents, theme, site_config, i18n, output_dir).map_err(
             |e| {
-                KrikError::Generation(GenerationError {
+                KrikError::Generation(Box::new(GenerationError {
                     kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                         std::io::ErrorKind::Other,
                         format!("Index page generation failed: {e}"),
                     )),
                     context: "Generating index page with post listings".to_string(),
-                })
+                }))
             },
         )
     }
@@ -95,10 +95,10 @@ impl EmitPhase {
     pub fn ensure_output_dir(&self, output_dir: &Path) -> KrikResult<()> {
         if !output_dir.exists() {
             std::fs::create_dir_all(output_dir).map_err(|e| {
-                KrikError::Generation(GenerationError {
+                KrikError::Generation(Box::new(GenerationError {
                     kind: GenerationErrorKind::OutputDirError(e),
                     context: format!("Creating output directory: {}", output_dir.display()),
-                })
+                }))
             })?;
         }
         Ok(())
@@ -111,7 +111,7 @@ impl EmitPhase {
         output_dir: &Path,
     ) -> KrikResult<()> {
         super::assets::copy_non_markdown_files(source_dir, output_dir).map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::AssetCopyError {
                     source: source_dir.to_path_buf(),
                     target: output_dir.to_path_buf(),
@@ -121,11 +121,11 @@ impl EmitPhase {
                     ),
                 },
                 context: "Copying non-markdown assets".to_string(),
-            })
+            }))
         })?;
 
         super::assets::copy_theme_assets(theme, output_dir).map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::AssetCopyError {
                     source: theme.theme_path.clone(),
                     target: output_dir.to_path_buf(),
@@ -135,7 +135,7 @@ impl EmitPhase {
                     ),
                 },
                 context: "Copying theme assets".to_string(),
-            })
+            }))
         })
     }
 
@@ -146,10 +146,10 @@ impl EmitPhase {
         output_dir: &Path,
     ) -> KrikResult<()> {
         super::feeds::generate_feed(documents, site_config, output_dir).map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::FeedError(format!("Atom feed generation failed: {e}")),
                 context: "Generating Atom feed for posts".to_string(),
-            })
+            }))
         })
     }
 
@@ -160,24 +160,24 @@ impl EmitPhase {
         output_dir: &Path,
     ) -> KrikResult<()> {
         super::sitemap::generate_sitemap(documents, site_config, output_dir).map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::SitemapError(format!(
                     "XML sitemap generation failed: {e}"
                 )),
                 context: "Generating XML sitemap with multilingual support".to_string(),
-            })
+            }))
         })
     }
 
     pub fn emit_robots(&self, site_config: &SiteConfig, output_dir: &Path) -> KrikResult<()> {
         super::robots::generate_robots(site_config, output_dir).map_err(|e| {
-            KrikError::Generation(GenerationError {
+            KrikError::Generation(Box::new(GenerationError {
                 kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                     std::io::ErrorKind::Other,
                     format!("robots.txt generation failed: {e}"),
                 )),
                 context: "Generating robots.txt with sitemap reference".to_string(),
-            })
+            }))
         })
     }
 }

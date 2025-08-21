@@ -16,18 +16,18 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
     // Create target directory if it doesn't exist
     if !target_dir.exists() {
         fs::create_dir_all(target_dir).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::WriteFailed(e),
                 path: target_dir.to_path_buf(),
                 context: "Creating target directory for site initialization".to_string(),
-            })
+            }))
         })?;
         info!("📁 Created directory: {}", target_dir.display());
     }
 
     // Check if directory is empty (unless force is specified)
     if !force && is_directory_not_empty(target_dir)? {
-        return Err(KrikError::Generation(GenerationError {
+        return Err(KrikError::Generation(Box::new(GenerationError {
             kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                 std::io::ErrorKind::AlreadyExists,
                 "Directory is not empty",
@@ -36,32 +36,32 @@ pub fn init_site(target_dir: &Path, force: bool) -> KrikResult<()> {
                 "Directory '{}' is not empty. Use --force to overwrite existing files.",
                 target_dir.display()
             ),
-        }));
+        })));
     }
 
     // Extract content directory
     let content_target = target_dir.join("content");
     extract_embedded_dir(&CONTENT_DIR, &content_target, force).map_err(|e| {
-        KrikError::Generation(GenerationError {
+        KrikError::Generation(Box::new(GenerationError {
             kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                 std::io::ErrorKind::Other,
                 format!("Failed to extract content directory: {e}"),
             )),
             context: "Extracting embedded content directory".to_string(),
-        })
+        }))
     })?;
     info!("📝 Created content directory with sample posts and pages");
 
     // Extract themes directory
     let themes_target = target_dir.join("themes");
     extract_embedded_dir(&THEMES_DIR, &themes_target, force).map_err(|e| {
-        KrikError::Generation(GenerationError {
+        KrikError::Generation(Box::new(GenerationError {
             kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
                 std::io::ErrorKind::Other,
                 format!("Failed to extract themes directory: {e}"),
             )),
             context: "Extracting embedded themes directory".to_string(),
-        })
+        }))
     })?;
     info!("🎨 Created themes directory with default theme");
 
@@ -80,11 +80,11 @@ fn is_directory_not_empty(dir: &Path) -> KrikResult<bool> {
     }
 
     let entries = fs::read_dir(dir).map_err(|e| {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::ReadFailed(e),
             path: dir.to_path_buf(),
             context: "Checking if directory is empty".to_string(),
-        })
+        }))
     })?;
     Ok(entries.count() > 0)
 }
@@ -92,11 +92,11 @@ fn is_directory_not_empty(dir: &Path) -> KrikResult<bool> {
 fn extract_embedded_dir(embedded_dir: &Dir, target_path: &Path, force: bool) -> KrikResult<()> {
     // Create target directory
     fs::create_dir_all(target_path).map_err(|e| {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::WriteFailed(e),
             path: target_path.to_path_buf(),
             context: "Creating directory for embedded file extraction".to_string(),
-        })
+        }))
     })?;
 
     // Extract all files in this directory level
@@ -115,11 +115,11 @@ fn extract_embedded_dir(embedded_dir: &Dir, target_path: &Path, force: bool) -> 
 
         // Write file contents
         fs::write(&file_path, file.contents()).map_err(|e| {
-            KrikError::Io(IoError {
+            KrikError::Io(Box::new(IoError {
                 kind: IoErrorKind::WriteFailed(e),
                 path: file_path.clone(),
                 context: "Writing embedded file contents".to_string(),
-            })
+            }))
         })?;
         info!(
             "📄 Created: {}",

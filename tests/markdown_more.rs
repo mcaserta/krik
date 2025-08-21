@@ -194,37 +194,37 @@ fn test_create_document_empty_toc() {
 
 #[test]
 fn test_is_draft_skip_error_true() {
-    let error = KrikError::Markdown(MarkdownError {
+    let error = KrikError::Markdown(Box::new(MarkdownError {
         kind: MarkdownErrorKind::ParseError("Draft skipped".to_string()),
         file: PathBuf::from("test.md"),
         line: None,
         column: None,
         context: "test".to_string(),
-    });
+    }));
 
     assert!(is_draft_skip_error(&error));
 }
 
 #[test]
 fn test_is_draft_skip_error_false() {
-    let error = KrikError::Markdown(MarkdownError {
+    let error = KrikError::Markdown(Box::new(MarkdownError {
         kind: MarkdownErrorKind::ParseError("Other error".to_string()),
         file: PathBuf::from("test.md"),
         line: None,
         column: None,
         context: "test".to_string(),
-    });
+    }));
 
     assert!(!is_draft_skip_error(&error));
 }
 
 #[test]
 fn test_is_draft_skip_error_different_error_type() {
-    let error = KrikError::Io(IoError {
+    let error = KrikError::Io(Box::new(IoError {
         kind: IoErrorKind::InvalidPath,
         path: PathBuf::from("test.md"),
         context: "test".to_string(),
-    });
+    }));
 
     assert!(!is_draft_skip_error(&error));
 }
@@ -253,13 +253,13 @@ fn test_collect_results_all_success() {
 
 #[test]
 fn test_collect_results_with_draft_skip() {
-    let draft_error = KrikError::Markdown(MarkdownError {
+    let draft_error = KrikError::Markdown(Box::new(MarkdownError {
         kind: MarkdownErrorKind::ParseError("Draft skipped".to_string()),
         file: PathBuf::from("draft.md"),
         line: None,
         column: None,
         context: "test".to_string(),
-    });
+    }));
 
     let results = vec![
         (
@@ -280,11 +280,11 @@ fn test_collect_results_with_draft_skip() {
 
 #[test]
 fn test_collect_results_with_error() {
-    let error = KrikError::Io(IoError {
+    let error = KrikError::Io(Box::new(IoError {
         kind: IoErrorKind::InvalidPath,
         path: PathBuf::from("error.md"),
         context: "test".to_string(),
-    });
+    }));
 
     let results = vec![
         (

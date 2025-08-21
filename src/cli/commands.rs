@@ -93,17 +93,17 @@ pub async fn handle_server(server_matches: &ArgMatches) -> KrikResult<()> {
         .start()
         .await
         .map_err(|e| match e.downcast::<std::io::Error>() {
-            Ok(io_err) => KrikError::Server(ServerError {
+            Ok(io_err) => KrikError::Server(Box::new(ServerError {
                 kind: ServerErrorKind::BindError {
                     port,
                     source: *io_err,
                 },
                 context: format!("Starting development server on port {port}"),
-            }),
-            Err(other_err) => KrikError::Server(ServerError {
+            })),
+            Err(other_err) => KrikError::Server(Box::new(ServerError {
                 kind: ServerErrorKind::WebSocketError(other_err.to_string()),
                 context: "Starting development server".to_string(),
-            }),
+            })),
         })?;
     Ok(())
 }
@@ -264,7 +264,7 @@ pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
             );
         }
         // Return a content validation error
-        return Err(KrikError::Content(crate::error::ContentError {
+        return Err(KrikError::Content(Box::new(crate::error::ContentError {
             kind: crate::error::ContentErrorKind::ValidationFailed({
                 let mut msgs = report.errors.clone();
                 if strict {
@@ -284,7 +284,7 @@ pub async fn handle_lint(lint_matches: &ArgMatches) -> KrikResult<()> {
             }),
             path: None,
             context: "Content lint failed".to_string(),
-        }));
+        })));
     }
 
     if check_links {
@@ -353,10 +353,10 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
     })?;
 
     if generator.documents.is_empty() {
-        return Err(KrikError::Generation(GenerationError {
+        return Err(KrikError::Generation(Box::new(GenerationError {
             kind: GenerationErrorKind::NoContent,
             context: format!("No markdown files found in {}", input_dir.display()),
-        }));
+        })));
     }
 
     info!("Found {} documents", generator.documents.len());

@@ -38,11 +38,11 @@ pub fn generate_html_report(report: &LintReport, check_links: bool) -> KrikResul
     let html_content = create_html_report_content(report, check_links, &timestamp);
 
     fs::write(&filename, html_content).map_err(|e| {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: IoErrorKind::WriteFailed(e),
             path: PathBuf::from(&filename),
             context: "Failed to write HTML report".to_string(),
-        })
+        }))
     })?;
 
     Ok(filename)

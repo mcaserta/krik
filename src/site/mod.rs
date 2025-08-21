@@ -35,15 +35,15 @@ impl SiteConfig {
                 Ok(content) => match toml::from_str::<SiteConfig>(&content) {
                     Ok(config) => return Ok(Some(config)),
                     Err(e) => {
-                        return Err(KrikError::Config(ConfigError {
+                        return Err(KrikError::Config(Box::new(ConfigError {
                             kind: ConfigErrorKind::InvalidToml(e),
                             path: Some(PathBuf::from(config_path)),
                             context: "Parsing site configuration".to_string(),
-                        }));
+                        })));
                     }
                 },
                 Err(e) => {
-                    return Err(KrikError::Config(ConfigError {
+                    return Err(KrikError::Config(Box::new(ConfigError {
                         kind: match e.kind() {
                             std::io::ErrorKind::NotFound => ConfigErrorKind::NotFound,
                             std::io::ErrorKind::PermissionDenied => {
@@ -57,7 +57,7 @@ impl SiteConfig {
                         },
                         path: Some(PathBuf::from(config_path)),
                         context: "Reading site configuration".to_string(),
-                    }));
+                    })));
                 }
             }
         }

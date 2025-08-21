@@ -189,20 +189,14 @@ impl DevServer {
                 }
 
                 // Collect more events for 250ms of idle
-                loop {
-                    match tokio::time::timeout(Duration::from_millis(250), rx.recv()).await {
-                        Ok(Some(ev)) => {
-                            let is_remove = matches!(ev.kind, EventKind::Remove(_));
-                            for p in ev.paths.iter() {
-                                let canonical_path = std::fs::canonicalize(p).unwrap_or(p.clone());
-                                batched
-                                    .entry(canonical_path)
-                                    .and_modify(|r| *r |= is_remove)
-                                    .or_insert(is_remove);
-                            }
-                            continue;
-                        }
-                        _ => break,
+                while let Ok(Some(ev)) = tokio::time::timeout(Duration::from_millis(250), rx.recv()).await {
+                    let is_remove = matches!(ev.kind, EventKind::Remove(_));
+                    for p in ev.paths.iter() {
+                        let canonical_path = std::fs::canonicalize(p).unwrap_or(p.clone());
+                        batched
+                            .entry(canonical_path)
+                            .and_modify(|r| *r |= is_remove)
+                            .or_insert(is_remove);
                     }
                 }
 

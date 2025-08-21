@@ -16,31 +16,31 @@ pub type KrikResult<T> = Result<T, KrikError>;
 pub enum KrikError {
     /// CLI argument and validation errors
     #[error(transparent)]
-    Cli(#[from] CliError),
+    Cli(#[from] Box<CliError>),
     /// Configuration-related errors
     #[error(transparent)]
-    Config(#[from] ConfigError),
+    Config(#[from] Box<ConfigError>),
     /// File I/O errors
     #[error(transparent)]
-    Io(#[from] IoError),
+    Io(#[from] Box<IoError>),
     /// Markdown parsing errors
     #[error(transparent)]
-    Markdown(#[from] MarkdownError),
+    Markdown(#[from] Box<MarkdownError>),
     /// Template processing errors
     #[error(transparent)]
-    Template(#[from] TemplateError),
+    Template(#[from] Box<TemplateError>),
     /// Theme-related errors
     #[error(transparent)]
-    Theme(#[from] ThemeError),
+    Theme(#[from] Box<ThemeError>),
     /// Server-related errors
     #[error(transparent)]
-    Server(#[from] ServerError),
+    Server(#[from] Box<ServerError>),
     /// Content creation errors
     #[error(transparent)]
-    Content(#[from] ContentError),
+    Content(#[from] Box<ContentError>),
     /// Site generation errors
     #[error(transparent)]
-    Generation(#[from] GenerationError),
+    Generation(#[from] Box<GenerationError>),
 }
 /// CLI validation and argument parsing errors
 #[derive(Debug)]
@@ -663,7 +663,7 @@ impl std::error::Error for GenerationError {}
 
 impl From<std::io::Error> for KrikError {
     fn from(e: std::io::Error) -> Self {
-        KrikError::Io(IoError {
+        KrikError::Io(Box::new(IoError {
             kind: match e.kind() {
                 std::io::ErrorKind::NotFound => IoErrorKind::NotFound,
                 std::io::ErrorKind::PermissionDenied => IoErrorKind::PermissionDenied,
@@ -672,37 +672,37 @@ impl From<std::io::Error> for KrikError {
             },
             path: PathBuf::new(), // Will be set by context
             context: "I/O operation".to_string(),
-        })
+        }))
     }
 }
 
 impl From<toml::de::Error> for KrikError {
     fn from(e: toml::de::Error) -> Self {
-        KrikError::Config(ConfigError {
+        KrikError::Config(Box::new(ConfigError {
             kind: ConfigErrorKind::InvalidToml(e),
             path: None,
             context: "TOML parsing".to_string(),
-        })
+        }))
     }
 }
 
 impl From<serde_yaml::Error> for KrikError {
     fn from(e: serde_yaml::Error) -> Self {
-        KrikError::Config(ConfigError {
+        KrikError::Config(Box::new(ConfigError {
             kind: ConfigErrorKind::InvalidYaml(e),
             path: None,
             context: "YAML parsing".to_string(),
-        })
+        }))
     }
 }
 
 impl From<tera::Error> for KrikError {
     fn from(e: tera::Error) -> Self {
-        KrikError::Template(TemplateError {
+        KrikError::Template(Box::new(TemplateError {
             kind: TemplateErrorKind::RenderError(e),
             template: "<unknown>".to_string(),
             context: "Template processing".to_string(),
-        })
+        }))
     }
 }
 
@@ -712,11 +712,11 @@ impl From<tera::Error> for KrikError {
 #[macro_export]
 macro_rules! io_error {
     ($kind:expr, $path:expr, $context:expr) => {
-        $crate::error::KrikError::Io($crate::error::IoError {
+        $crate::error::KrikError::Io(Box::new($crate::error::IoError {
             kind: $kind,
             path: $path.into(),
             context: $context.to_string(),
-        })
+        }))
     };
 }
 
@@ -724,22 +724,22 @@ macro_rules! io_error {
 #[macro_export]
 macro_rules! markdown_error {
     ($kind:expr, $file:expr, $context:expr) => {
-        $crate::error::KrikError::Markdown($crate::error::MarkdownError {
+        $crate::error::KrikError::Markdown(Box::new($crate::error::MarkdownError {
             kind: $kind,
             file: $file.into(),
             line: None,
             column: None,
             context: $context.to_string(),
-        })
+        }))
     };
     ($kind:expr, $file:expr, $line:expr, $context:expr) => {
-        $crate::error::KrikError::Markdown($crate::error::MarkdownError {
+        $crate::error::KrikError::Markdown(Box::new($crate::error::MarkdownError {
             kind: $kind,
             file: $file.into(),
             line: Some($line),
             column: None,
             context: $context.to_string(),
-        })
+        }))
     };
 }
 
@@ -747,11 +747,11 @@ macro_rules! markdown_error {
 #[macro_export]
 macro_rules! template_error {
     ($kind:expr, $template:expr, $context:expr) => {
-        $crate::error::KrikError::Template($crate::error::TemplateError {
+        $crate::error::KrikError::Template(Box::new($crate::error::TemplateError {
             kind: $kind,
             template: $template.to_string(),
             context: $context.to_string(),
-        })
+        }))
     };
 }
 
@@ -759,10 +759,10 @@ macro_rules! template_error {
 #[macro_export]
 macro_rules! config_error {
     ($kind:expr, $path:expr, $context:expr) => {
-        $crate::error::KrikError::Config($crate::error::ConfigError {
+        $crate::error::KrikError::Config(Box::new($crate::error::ConfigError {
             kind: $kind,
             path: Some($path.into()),
             context: $context.to_string(),
-        })
+        }))
     };
 }

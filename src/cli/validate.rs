@@ -13,29 +13,29 @@ pub fn normalize_path<P: AsRef<Path>>(
     let p = path.as_ref();
     if must_exist {
         if !p.exists() {
-            return Err(KrikError::Cli(CliError {
+            return Err(KrikError::Cli(Box::new(CliError {
                 kind: CliErrorKind::PathDoesNotExist,
                 path: Some(p.to_path_buf()),
                 context: context.to_string(),
-            }));
+            })));
         }
         match fs::canonicalize(p) {
             Ok(abs) => Ok(abs),
-            Err(e) => Err(KrikError::Cli(CliError {
+            Err(e) => Err(KrikError::Cli(Box::new(CliError {
                 kind: CliErrorKind::CanonicalizeFailed(e),
                 path: Some(p.to_path_buf()),
                 context: context.to_string(),
-            })),
+            }))),
         }
     } else {
         // When the path may not exist yet, we canonicalize the parent if possible.
         if p.exists() {
             return fs::canonicalize(p).map_err(|e| {
-                KrikError::Cli(CliError {
+                KrikError::Cli(Box::new(CliError {
                     kind: CliErrorKind::CanonicalizeFailed(e),
                     path: Some(p.to_path_buf()),
                     context: context.to_string(),
-                })
+                }))
             });
         }
         if let Some(parent) = p.parent() {
@@ -57,18 +57,18 @@ pub fn normalize_path<P: AsRef<Path>>(
 pub fn validate_directory<P: AsRef<Path>>(path: P, context: &str) -> KrikResult<PathBuf> {
     let p = path.as_ref();
     if !p.exists() {
-        return Err(KrikError::Cli(CliError {
+        return Err(KrikError::Cli(Box::new(CliError {
             kind: CliErrorKind::PathDoesNotExist,
             path: Some(p.to_path_buf()),
             context: context.to_string(),
-        }));
+        })));
     }
     if !p.is_dir() {
-        return Err(KrikError::Cli(CliError {
+        return Err(KrikError::Cli(Box::new(CliError {
             kind: CliErrorKind::NotADirectory,
             path: Some(p.to_path_buf()),
             context: context.to_string(),
-        }));
+        })));
     }
     normalize_path(p, true, context)
 }
@@ -80,14 +80,14 @@ pub fn ensure_directory<P: AsRef<Path>>(path: P, context: &str) -> KrikResult<Pa
         return validate_directory(p, context);
     }
     if let Err(e) = fs::create_dir_all(p) {
-        return Err(KrikError::Cli(CliError {
+        return Err(KrikError::Cli(Box::new(CliError {
             kind: match e.kind() {
                 std::io::ErrorKind::PermissionDenied => CliErrorKind::PermissionDenied,
                 _ => CliErrorKind::CreateDirFailed(e),
             },
             path: Some(p.to_path_buf()),
             context: context.to_string(),
-        }));
+        })));
     }
     normalize_path(p, true, context)
 }
@@ -96,11 +96,11 @@ pub fn ensure_directory<P: AsRef<Path>>(path: P, context: &str) -> KrikResult<Pa
 pub fn parse_port(value: &str, context: &str) -> KrikResult<u16> {
     match value.parse::<u16>() {
         Ok(port) if port >= 1 => Ok(port),
-        _ => Err(KrikError::Cli(CliError {
+        _ => Err(KrikError::Cli(Box::new(CliError {
             kind: CliErrorKind::InvalidPort(value.to_string()),
             path: None,
             context: context.to_string(),
-        })),
+        }))),
     }
 }
 
@@ -113,11 +113,11 @@ pub fn validate_theme_dir<P: AsRef<Path>>(
         Some(dir) => {
             let p = dir.as_ref();
             if !p.exists() {
-                return Err(KrikError::Cli(CliError {
+                return Err(KrikError::Cli(Box::new(CliError {
                     kind: CliErrorKind::ThemeNotFound,
                     path: Some(p.to_path_buf()),
                     context: context.to_string(),
-                }));
+                })));
             }
             Ok(Some(normalize_path(p, true, context)?))
         }

@@ -24,7 +24,7 @@ where
         if let Some(message) = visitor.message {
             writeln!(writer, "{}", message)
         } else {
-            writeln!(writer, "")
+            writeln!(writer)
         }
     }
 }
@@ -41,15 +41,15 @@ impl MessageExtractor {
 }
 
 impl tracing::field::Visit for MessageExtractor {
-    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
-        if field.name() == "message" && self.message.is_none() {
-            self.message = Some(format!("{:?}", value));
-        }
-    }
-
     fn record_str(&mut self, field: &tracing::field::Field, value: &str) {
         if field.name() == "message" && self.message.is_none() {
             self.message = Some(value.to_string());
+        }
+    }
+
+    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
+        if field.name() == "message" && self.message.is_none() {
+            self.message = Some(format!("{:?}", value));
         }
     }
 }

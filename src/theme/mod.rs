@@ -85,11 +85,11 @@ index = "index"
 
         // Fall back to original name
         self.templates.render(template_name, context).map_err(|e| {
-            KrikError::Template(crate::error::TemplateError {
+            KrikError::Template(Box::new(crate::error::TemplateError {
                 kind: crate::error::TemplateErrorKind::RenderError(e),
                 template: template_name.to_string(),
                 context: "Rendering template via Theme::render_page".to_string(),
-            })
+            }))
         })
     }
 
@@ -160,7 +160,7 @@ impl ThemeBuilder {
         let config: ThemeConfig = match toml::from_str(&config_content) {
             Ok(cfg) => cfg,
             Err(e) => {
-                return Err(KrikError::Theme(ThemeError {
+                return Err(KrikError::Theme(Box::new(ThemeError {
                     kind: ThemeErrorKind::InvalidConfig(ConfigError {
                         kind: ConfigErrorKind::InvalidToml(e),
                         path: Some(config_path.clone()),
@@ -168,7 +168,7 @@ impl ThemeBuilder {
                     }),
                     theme_path: theme_path.clone(),
                     context: format!("Failed to parse {}", config_path.display()),
-                }));
+                })));
             }
         };
 
@@ -179,14 +179,14 @@ impl ThemeBuilder {
                 Ok(t) => t,
                 Err(e) => {
                     // Surface compile errors as Template errors wrapped by ThemeError
-                    return Err(KrikError::Theme(ThemeError {
+                    return Err(KrikError::Theme(Box::new(ThemeError {
                         kind: ThemeErrorKind::AssetError(format!(
                             "Template compilation failed: {}",
                             e
                         )),
                         theme_path: theme_path.clone(),
                         context: "Compiling theme templates".to_string(),
-                    }));
+                    })));
                 }
             }
         } else {
