@@ -8,6 +8,23 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.26] - 2025-08-21
+
+### Fixed
+
+- 🧪 **Test Reliability**: Fixed PDF unit tests to work without pandoc/typst
+  installed
+  - Added `PdfGenerator::new_for_testing()` method for mock instances
+  - Tests now use mock generators instead of requiring external tools
+  - Improved CI/CD reliability for environments without PDF tools
+
+### Changed
+
+- 🛠️ **PDF Generator Architecture**: Made PDF tools optional in PdfGenerator
+  - Changed from required tools to optional with graceful fallback
+  - Enhanced error handling with warning messages instead of hard failures
+  - Better separation of path utilities from PDF generation functionality
+
 ## [0.1.25] - 2025-08-21
 
 ### Changed
