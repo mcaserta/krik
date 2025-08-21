@@ -23,20 +23,24 @@ impl ScanPhase {
 pub struct TransformPhase;
 
 impl TransformPhase {
-    /// Apply non-rendering transformations (mutates in place)
+    /// Apply non-rendering transformations and return new immutable documents
     /// Currently: set missing dates from file modification time when available
-    pub fn transform(&self, documents: &mut [Document], source_dir: &Path) {
-        for doc in documents.iter_mut() {
-            if doc.front_matter.date.is_none() {
-                let file_path = source_dir.join(&doc.file_path);
-                if let Ok(metadata) = std::fs::metadata(&file_path) {
-                    if let Ok(modified) = metadata.modified() {
-                        let dt: DateTime<Utc> = modified.into();
-                        doc.front_matter.date = Some(dt);
+    pub fn transform(&self, documents: Vec<Document>, source_dir: &Path) -> Vec<Document> {
+        documents
+            .into_iter()
+            .map(|mut doc| {
+                if doc.front_matter.date.is_none() {
+                    let file_path = source_dir.join(&doc.file_path);
+                    if let Ok(metadata) = std::fs::metadata(&file_path) {
+                        if let Ok(modified) = metadata.modified() {
+                            let dt: DateTime<Utc> = modified.into();
+                            doc.front_matter.date = Some(dt);
+                        }
                     }
                 }
-            }
-        }
+                doc
+            })
+            .collect()
     }
 }
 

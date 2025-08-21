@@ -222,12 +222,12 @@ impl SiteGenerator {
 
         // Scan
         info!("Scanning source files");
-        let mut documents = scan.scan(&self.source_dir)?;
+        let documents = scan.scan(&self.source_dir)?;
         debug!("Found {} documents to process", documents.len());
 
         // Transform
         info!("Transforming documents");
-        transform.transform(&mut documents, &self.source_dir);
+        let documents = transform.transform(documents, &self.source_dir);
 
         // Assets
         info!("Copying assets");
@@ -408,7 +408,7 @@ impl SiteGenerator {
         };
 
         // Transform documents for correct dates before rendering
-        transform.transform(&mut documents, &self.source_dir);
+        let documents = transform.transform(documents, &self.source_dir);
 
         if !is_removed {
             self.render_language_variants(relative_path, &documents)?;
