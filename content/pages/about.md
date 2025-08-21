@@ -65,7 +65,8 @@ websites. Krik stands out by combining:
 
 Explore all available themes in the live gallery:
 
-- **Themes Demo**: [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
+- **Themes Demo**:
+  [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
 
 ### Advanced Navigation & UX
 

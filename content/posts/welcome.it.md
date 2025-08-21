@@ -92,7 +92,8 @@ il pulsante del tema nella navigazione in alto!
 
 Vuoi vedere più stili? Esplora la galleria completa dei temi disponibili:
 
-- **Themes Demo**: [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
+- **Themes Demo**:
+  [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
 
 ### Scorri in Alto
 

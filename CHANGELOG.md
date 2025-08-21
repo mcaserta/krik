@@ -8,31 +8,45 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.24] - 2025-01-21
+
 ### Fixed
 
 - 🔧 **Code Quality**: Fixed all Clippy lint warnings for improved code quality
-  - Boxed large error variants to reduce memory footprint and improve performance
+  - Boxed large error variants to reduce memory footprint and improve
+    performance
   - Optimized loop patterns using idiomatic `while let` constructs
   - Fixed function parameter types (`&String` → `&str`) for better API design
   - Eliminated redundant pattern matching and unnecessary allocations
   - Improved error handling patterns with collapsed match expressions
   - Enhanced code readability and maintainability across the entire codebase
 
-- ♻️ **Code Refactoring**: Additional structural improvements for better API design
-  - Made language utility methods static where appropriate (`I18nManager` methods)
+- ♻️ **Code Refactoring**: Additional structural improvements for better API
+  design
+  - Made language utility methods static where appropriate (`I18nManager`
+    methods)
   - Removed unused functions to reduce code surface area
   - Improved method signatures and accessibility patterns
   - Enhanced module organization and reduced coupling
 
-- 🚀 **Release Infrastructure**: Automated cross-platform binary releases
-  - GitHub Actions workflow for building 5 platform binaries (Linux x64/ARM64, macOS x64/ARM64, Windows x64)
-  - Automated GitHub releases with changelog integration and semantic versioning
-  - SHA256 checksums and binary verification for security
-  - Deployment workflow optimization using pre-built binaries (~10 minutes → ~30 seconds)
-  - Intelligent fallback to source compilation if binaries unavailable
-  - `latest` tag management for easy access to newest releases
+- 🔧 **Cross-platform Compilation**: Resolved OpenSSL compilation issues for
+  release builds
+  - Switched HTTP client to use rustls-tls instead of native OpenSSL for better
+    cross-compilation
+  - Added Cross.toml configuration for ARM64 cross-compilation support
+  - Enhanced build process with verbose logging and error handling
 
 ### Added
+
+- 🚀 **Release Infrastructure**: Automated cross-platform binary releases
+  - GitHub Actions workflow for building 5 platform binaries (Linux x64/ARM64,
+    macOS x64/ARM64, Windows x64)
+  - Automated GitHub releases with changelog integration and semantic versioning
+  - SHA256 checksums and binary verification for security
+  - Deployment workflow optimization using pre-built binaries (~10 minutes → ~30
+    seconds)
+  - Intelligent fallback to source compilation if binaries unavailable
+  - `latest` tag management for easy access to newest releases
 
 - 🎨 **New Manzana Theme**: macOS Tahoe-inspired theme with glassy interface
   - Beautiful glass morphism effects with backdrop blur and saturation
@@ -66,13 +80,18 @@ and this project adheres to
 
 ### Changed
 
-- 🏗️ **Code Architecture Refactoring**: Major refactoring to improve maintainability and modularity
-  - Broke down complex 238-line `generate_incremental_for_path` function into smaller, focused functions
-  - Refactored markdown processing pipeline into pure functions with single responsibilities
-  - Unified `markdown_to_html` and `markdown_to_html_with_toc` into single function using AST parser
+- 🏗️ **Code Architecture Refactoring**: Major refactoring to improve
+  maintainability and modularity
+  - Broke down complex 238-line `generate_incremental_for_path` function into
+    smaller, focused functions
+  - Refactored markdown processing pipeline into pure functions with single
+    responsibilities
+  - Unified `markdown_to_html` and `markdown_to_html_with_toc` into single
+    function using AST parser
   - Split template rendering into modular components for better testability
   - Eliminated internal state mutations in favor of pure function patterns
-  - All functions now pass state as parameters rather than maintaining internal state
+  - All functions now pass state as parameters rather than maintaining internal
+    state
   - Improved error handling with standardized error creation functions
 
 ## [0.1.23] - 2025-08-12

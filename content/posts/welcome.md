@@ -90,7 +90,8 @@ the top navigation!
 
 Want to see more looks? Browse the full gallery of available themes:
 
-- **Themes Demo**: [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
+- **Themes Demo**:
+  [https://themes.krik.mirkocaserta.com](https://themes.krik.mirkocaserta.com)
 
 ### Scroll to Top
 
