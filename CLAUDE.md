@@ -42,3 +42,9 @@ template
   portability across different hosting environments
 - **Title Deduplication**: H1 titles matching frontmatter titles are removed
   from content to prevent duplication
+
+# Release Process Notes
+- GitHub Actions automatically handles releases when tags are pushed
+- Do NOT run 'gh release create' manually - the .github/workflows/release.yml workflow creates releases automatically
+- Release workflow is triggered by pushing version tags (e.g., v0.1.25)
+- Automated releases include cross-platform binaries, checksums, and changelog integration
