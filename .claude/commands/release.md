@@ -13,7 +13,6 @@
   - Make sure everything is committed in git
   - Tag the release in git
   - Push to GitHub
-  - Release to GitHub using `gh release create`
   - Publish to crates.io using `cargo publish`
 
 It is of absolute importance that the release workflow is followed without
