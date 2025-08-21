@@ -26,6 +26,7 @@ jobs:
     steps:
       - name: Get tag name
         id: get_tag
+        shell: bash
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "tag_name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
@@ -40,6 +41,7 @@ jobs:
 
       - name: Generate changelog for release
         id: changelog
+        shell: bash
         run: |
           # Extract version from tag (remove 'v' prefix)
           VERSION="${{ steps.get_tag.outputs.tag_name }}"
@@ -137,11 +139,13 @@ jobs:
 
       - name: Install cross-compilation tools
         if: matrix.cross
+        shell: bash
         run: |
           cargo install cross --git https://github.com/cross-rs/cross
 
       - name: Set up cross-compilation environment
         if: matrix.cross && matrix.target == 'aarch64-unknown-linux-gnu'
+        shell: bash
         run: |
           echo "CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
           echo "AR_aarch64_unknown_linux_gnu=aarch64-linux-gnu-ar" >> $GITHUB_ENV
@@ -214,6 +218,7 @@ jobs:
           fetch-depth: 0
 
       - name: Update latest tag
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
