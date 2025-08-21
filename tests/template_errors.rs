@@ -46,14 +46,13 @@ fn build_empty_theme() -> Theme {
 #[test]
 fn render_page_maps_template_error() {
     let theme = build_empty_theme();
-    let i18n = I18nManager::new("en".to_string());
     let site = SiteConfig::default();
     let out = std::env::temp_dir().join(format!("krik_test_out_{}", std::process::id()));
     let _ = fs::remove_dir_all(&out);
     fs::create_dir_all(&out).unwrap();
 
     let doc = make_doc("posts/missing.md");
-    let err = templates::generate_page(&doc, &[doc.clone()], &theme, &i18n, &site, Path::new(&out))
+    let err = templates::generate_page(&doc, &[doc.clone()], &theme, &site, Path::new(&out))
         .expect_err("expected template render to fail");
 
     match err {
