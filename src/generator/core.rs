@@ -7,7 +7,6 @@ use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use tracing::{debug, error, info, warn};
-use crate::i18n;
 
 #[derive(Debug)]
 pub enum ChangeType {
@@ -150,16 +149,13 @@ impl SiteGenerator {
         let i18n = I18nManager::new("en".to_string());
 
         // Load site configuration with proper error handling
-        let site_config = match SiteConfig::load_from_path(&source_dir) {
-            Ok(cfg) => cfg,
-            Err(e) => {
-                warn!(
-                    "Failed to load site configuration: {}. Falling back to defaults.",
-                    e
-                );
-                SiteConfig::default()
-            }
-        };
+        let site_config = SiteConfig::load_from_path(&source_dir).unwrap_or_else(|e| {
+            warn!(
+                "Failed to load site configuration: {}. Falling back to defaults.",
+                e
+            );
+            SiteConfig::default()
+        });
 
         Ok(Self {
             source_dir,
@@ -244,13 +240,7 @@ impl SiteGenerator {
 
         // Render
         info!("Rendering pages");
-        render.render_pages(
-            &documents,
-            &self.theme,
-            &self.i18n,
-            &self.site_config,
-            &self.output_dir,
-        )?;
+        render.render_pages(&documents, &self.theme, &self.site_config, &self.output_dir)?;
         render.render_index(
             &documents,
             &self.theme,
@@ -380,7 +370,7 @@ impl SiteGenerator {
                     if let Some(doc_stem) = doc_path_buf.file_stem().and_then(|s| s.to_str()) {
                         let doc_base_name = if let Some(dot_pos) = doc_stem.rfind('.') {
                             let potential_lang = &doc_stem[dot_pos + 1..];
-                            if i18n::SUPPORTED_LANGUAGES.contains_key(&potential_lang) {
+                            if I18nManager::is_supported_language(&potential_lang) {
                                 &doc_stem[..dot_pos]
                             } else {
                                 doc_stem
@@ -621,7 +611,6 @@ impl SiteGenerator {
                     doc,
                     documents,
                     &self.theme,
-                    &self.i18n,
                     &self.site_config,
                     &self.output_dir,
                 )
@@ -645,13 +634,15 @@ impl SiteGenerator {
                 "changed page {} and its variants not present in scanned documents; triggering full regeneration",
                 relative_path
             );
-            return Err(KrikError::Generation(Box::new(crate::error::GenerationError {
-                kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
-                    std::io::ErrorKind::NotFound,
-                    "Document variants not found",
-                )),
-                context: "Language variant rendering".to_string(),
-            })));
+            return Err(KrikError::Generation(Box::new(
+                crate::error::GenerationError {
+                    kind: crate::error::GenerationErrorKind::OutputDirError(std::io::Error::new(
+                        std::io::ErrorKind::NotFound,
+                        "Document variants not found",
+                    )),
+                    context: "Language variant rendering".to_string(),
+                },
+            )));
         }
 
         Ok(())
@@ -686,7 +677,7 @@ pub fn analyze_change_type(
             return Ok(ChangeType::SiteConfig);
         }
 
-        if is_markdown {
+        return if is_markdown {
             let relative_path = canonical_changed
                 .strip_prefix(&canonical_source)
                 .map(|rel| rel.to_string_lossy().to_string())
@@ -705,10 +696,10 @@ pub fn analyze_change_type(
                         context: "Path canonicalization".to_string(),
                     }))
                 })?;
-            return Ok(ChangeType::Markdown { relative_path });
+            Ok(ChangeType::Markdown { relative_path })
         } else {
-            return Ok(ChangeType::Asset);
-        }
+            Ok(ChangeType::Asset)
+        };
     }
 
     Ok(ChangeType::Unrelated)

@@ -1,5 +1,4 @@
 use crate::error::{KrikError, KrikResult, TemplateError, TemplateErrorKind};
-use crate::i18n::I18nManager;
 use crate::parser::Document;
 use crate::site::SiteConfig;
 use crate::theme::Theme;
@@ -20,7 +19,6 @@ use std::sync::Mutex;
 pub fn generate_pages(
     documents: &[Document],
     theme: &Theme,
-    i18n: &I18nManager,
     site_config: &SiteConfig,
     output_dir: &Path,
 ) -> KrikResult<()> {
@@ -29,7 +27,7 @@ pub fn generate_pages(
     let first_error: Mutex<Option<KrikError>> = Mutex::new(None);
 
     documents.par_iter().for_each(|document| {
-        if let Err(e) = generate_page(document, documents, theme, i18n, site_config, output_dir) {
+        if let Err(e) = generate_page(document, documents, theme, site_config, output_dir) {
             if let Ok(mut guard) = first_error.lock() {
                 if guard.is_none() {
                     *guard = Some(e);
@@ -48,11 +46,10 @@ pub fn generate_page(
     document: &Document,
     all_documents: &[Document],
     theme: &Theme,
-    i18n: &I18nManager,
     site_config: &SiteConfig,
     output_dir: &Path,
 ) -> KrikResult<()> {
-    let context = build_page_context(document, all_documents, site_config, i18n);
+    let context = build_page_context(document, all_documents, site_config);
     let rendered_content = render_template(theme, document, &context)?;
     write_output_file(document, output_dir, &rendered_content)
 }
@@ -62,11 +59,10 @@ pub fn build_page_context(
     document: &Document,
     all_documents: &[Document],
     site_config: &SiteConfig,
-    i18n: &I18nManager,
 ) -> Context {
     let mut context = create_base_context(document);
     add_processed_content(&mut context, document);
-    add_all_contexts(&mut context, document, all_documents, site_config, i18n);
+    add_all_contexts(&mut context, document, all_documents, site_config);
     context
 }
 
@@ -126,7 +122,6 @@ pub fn add_all_contexts(
     document: &Document,
     all_documents: &[Document],
     site_config: &SiteConfig,
-    i18n: &I18nManager,
 ) {
     add_site_context(
         context,
@@ -134,8 +129,8 @@ pub fn add_all_contexts(
         &document.language,
         &document.file_path,
     );
-    add_navigation_context(context, document, i18n);
-    add_language_context(context, document, all_documents, i18n);
+    add_navigation_context(context, document);
+    add_language_context(context, document, all_documents);
     add_sidebar_context(context, all_documents);
     add_page_links_context(context, all_documents, &document.file_path);
 }

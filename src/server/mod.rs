@@ -189,7 +189,9 @@ impl DevServer {
                 }
 
                 // Collect more events for 250ms of idle
-                while let Ok(Some(ev)) = tokio::time::timeout(Duration::from_millis(250), rx.recv()).await {
+                while let Ok(Some(ev)) =
+                    tokio::time::timeout(Duration::from_millis(250), rx.recv()).await
+                {
                     let is_remove = matches!(ev.kind, EventKind::Remove(_));
                     for p in ev.paths.iter() {
                         let canonical_path = std::fs::canonicalize(p).unwrap_or(p.clone());

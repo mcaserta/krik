@@ -49,21 +49,18 @@ impl RenderPhase {
         &self,
         documents: &[Document],
         theme: &Theme,
-        i18n: &I18nManager,
         site_config: &SiteConfig,
         output_dir: &Path,
     ) -> KrikResult<()> {
-        super::templates::generate_pages(documents, theme, i18n, site_config, output_dir).map_err(
-            |e| {
-                KrikError::Generation(Box::new(GenerationError {
-                    kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        format!("Page generation failed: {e}"),
-                    )),
-                    context: "Generating HTML pages from documents".to_string(),
-                }))
-            },
-        )
+        super::templates::generate_pages(documents, theme, site_config, output_dir).map_err(|e| {
+            KrikError::Generation(Box::new(GenerationError {
+                kind: GenerationErrorKind::OutputDirError(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    format!("Page generation failed: {e}"),
+                )),
+                context: "Generating HTML pages from documents".to_string(),
+            }))
+        })
     }
 
     pub fn render_index(

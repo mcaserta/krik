@@ -68,7 +68,7 @@ pub static SUPPORTED_LANGUAGES: Lazy<HashMap<&'static str, &'static str>> = Lazy
         ("xh", "isiXhosa"),
         ("yo", "Yorùbá"),
         ("zh", "中文"),
-        ("zu", "isiZulu")
+        ("zu", "isiZulu"),
     ])
 });
 
@@ -93,22 +93,14 @@ impl I18nManager {
         &self.default_language
     }
 
-    pub fn is_supported_language(&self, code: &str) -> bool {
+    pub fn is_supported_language(code: &str) -> bool {
         SUPPORTED_LANGUAGES.contains_key(code)
     }
 
-    pub fn get_language_name(&self, lang_code: &str) -> String {
+    pub fn get_language_name(lang_code: &str) -> String {
         SUPPORTED_LANGUAGES
             .get(lang_code)
             .map(|s| s.to_string())
             .unwrap_or_else(|| lang_code.to_uppercase())
-    }
-}
-
-pub fn normalize_language_or_default(code: &str) -> String {
-    if SUPPORTED_LANGUAGES.contains_key(code) {
-        code.to_string()
-    } else {
-        DEFAULT_LANGUAGE.to_string()
     }
 }

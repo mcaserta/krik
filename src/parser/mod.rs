@@ -147,8 +147,7 @@ pub fn extract_language_from_filename(filename: &str) -> KrikResult<(String, Str
         let potential_lang = &filename[dot_pos + 1..];
         if potential_lang.len() == 2 {
             // Validate language code via i18n map
-            let i18n = I18nManager::new("en".to_string());
-            if !i18n.is_supported_language(potential_lang) {
+            if !I18nManager::is_supported_language(potential_lang) {
                 return Err(KrikError::Markdown(Box::new(MarkdownError {
                     kind: MarkdownErrorKind::InvalidLanguage(potential_lang.to_string()),
                     file: Path::new(filename).to_path_buf(),

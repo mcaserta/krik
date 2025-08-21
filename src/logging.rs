@@ -1,7 +1,7 @@
-use tracing_subscriber::{EnvFilter, FmtSubscriber};
-use tracing_subscriber::fmt::format::Writer;
 use tracing::{Event, Subscriber};
+use tracing_subscriber::fmt::format::Writer;
 use tracing_subscriber::registry::LookupSpan;
+use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
 /// Custom event formatter that only prints the message
 struct QuietFormatter;
@@ -20,7 +20,7 @@ where
         // Create a visitor to extract only the message
         let mut visitor = MessageExtractor::new();
         event.record(&mut visitor);
-        
+
         if let Some(message) = visitor.message {
             writeln!(writer, "{}", message)
         } else {

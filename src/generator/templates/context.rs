@@ -27,18 +27,20 @@ pub fn add_site_context(
     context.insert("lang", language);
 }
 
-pub fn add_navigation_context(context: &mut Context, document: &Document, i18n: &I18nManager) {
+pub fn add_navigation_context(context: &mut Context, document: &Document) {
     if is_post(document) {
         context.insert("show_back_to_home", &true);
     }
-    context.insert("language_name", &i18n.get_language_name(&document.language));
+    context.insert(
+        "language_name",
+        &I18nManager::get_language_name(&document.language),
+    );
 }
 
 pub fn add_language_context(
     context: &mut Context,
     document: &Document,
     all_documents: &[Document],
-    i18n: &I18nManager,
 ) {
     let base_path = get_base_path(std::path::Path::new(&document.file_path));
     let mut available_translations: Vec<_> = all_documents
@@ -47,7 +49,7 @@ pub fn add_language_context(
         .map(|doc| {
             let mut translation = HashMap::new();
             translation.insert("lang", doc.language.clone());
-            translation.insert("lang_name", i18n.get_language_name(&doc.language));
+            translation.insert("lang_name", I18nManager::get_language_name(&doc.language));
             let target_path = format!("/{}", doc.file_path.replace(".md", ".html"));
             let relative_path = calculate_relative_path(&document.file_path, &target_path);
             translation.insert("path", relative_path);

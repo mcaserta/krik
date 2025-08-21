@@ -187,7 +187,9 @@ impl KrikCli {
         Arg::new("verbose")
             .short('v')
             .long("verbose")
-            .help("Enable verbose logging with optional log level (trace, debug, info, warn, error)")
+            .help(
+                "Enable verbose logging with optional log level (trace, debug, info, warn, error)",
+            )
             .value_name("LEVEL")
             .num_args(0..=1)
             .default_missing_value("info")

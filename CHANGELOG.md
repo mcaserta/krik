@@ -18,6 +18,12 @@ and this project adheres to
   - Improved error handling patterns with collapsed match expressions
   - Enhanced code readability and maintainability across the entire codebase
 
+- ♻️ **Code Refactoring**: Additional structural improvements for better API design
+  - Made language utility methods static where appropriate (`I18nManager` methods)
+  - Removed unused functions to reduce code surface area
+  - Improved method signatures and accessibility patterns
+  - Enhanced module organization and reduced coupling
+
 ### Added
 
 - 🎨 **New Manzana Theme**: macOS Tahoe-inspired theme with glassy interface
