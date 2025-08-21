@@ -16,14 +16,13 @@ pub fn generate_index(
     documents: &[Document],
     theme: &Theme,
     site_config: &SiteConfig,
-    i18n: &I18nManager,
     output_dir: &Path,
 ) -> KrikResult<()> {
     let mut context = Context::new();
     add_site_context(
         &mut context,
         site_config,
-        i18n.default_language(),
+        I18nManager::default_language(),
         "index.html",
     );
 
@@ -31,11 +30,11 @@ pub fn generate_index(
     context.insert("site_description", &site_description);
 
     // Choose one document per post base path, prefer default language if available
-    let default_lang = i18n.default_language();
+    let default_lang = I18nManager::default_language();
     use std::collections::HashMap;
     let mut chosen: HashMap<String, &Document> = HashMap::new();
     for doc in documents.iter().filter(|d| is_post(d)) {
-        let base = get_base_path(std::path::Path::new(&doc.file_path));
+        let base = get_base_path(Path::new(&doc.file_path));
         match chosen.get(&base) {
             None => {
                 chosen.insert(base, doc);
@@ -56,7 +55,7 @@ pub fn generate_index(
             .cmp(&a.front_matter.date.unwrap_or(DateTime::<Utc>::MIN_UTC))
     });
 
-    let posts: Vec<std::collections::HashMap<String, serde_json::Value>> = post_docs
+    let posts: Vec<HashMap<String, serde_json::Value>> = post_docs
         .iter()
         .map(|doc| create_post_object(doc, "index.html"))
         .collect();

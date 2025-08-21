@@ -12,6 +12,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
 use tracing::{debug, info, warn};
 use which::which;
+use crate::I18nManager;
 
 /// PDF generation using pandoc with typst engine
 pub struct PdfGenerator {
@@ -166,16 +167,16 @@ impl PdfGenerator {
             filtered_content.push_str("\n\n---\n\n");
 
             // Document Information heading
-            let doc_info_heading = self.translate_string("document_information", document_language);
+            let doc_info_heading = I18nManager::translate_string("document_information", document_language);
             filtered_content.push_str(&format!("## {doc_info_heading}\n\n"));
 
             // Download URL line
             let download_text =
-                self.translate_string("document_downloaded_from", document_language);
+                I18nManager::translate_string("document_downloaded_from", document_language);
             filtered_content.push_str(&format!("{download_text} {absolute_pdf_url}\n\n"));
 
             // Generation timestamp line
-            let generated_text = self.translate_string("generated_at", document_language);
+            let generated_text = I18nManager::translate_string("generated_at", document_language);
             let timestamp = Utc::now().format("%Y-%m-%d %H:%M:%S UTC");
             filtered_content.push_str(&format!("{generated_text} {timestamp}\n"));
         }
@@ -216,14 +217,14 @@ impl PdfGenerator {
     }
 
     /// Generate absolute PDF URL for the appendix
-    fn generate_absolute_pdf_url(&self, output_path: &Path, base_url: &str) -> String {
+    pub fn generate_absolute_pdf_url(&self, output_path: &Path, base_url: &str) -> String {
         let relative_path = self.generate_relative_pdf_path(output_path);
         let base_url_trimmed = base_url.trim_end_matches('/');
         format!("{base_url_trimmed}{relative_path}")
     }
 
     /// Generate the relative PDF path
-    fn generate_relative_pdf_path(&self, output_path: &Path) -> String {
+    pub fn generate_relative_pdf_path(&self, output_path: &Path) -> String {
         // Extract just the filename and create a relative URL
         if let Some(filename) = output_path.file_name() {
             // Get the directory path relative to _site
@@ -245,55 +246,6 @@ impl PdfGenerator {
         } else {
             // Fallback URL
             "/document.pdf".to_string()
-        }
-    }
-
-    /// Translate strings based on document language
-    fn translate_string(&self, key: &str, language: &str) -> String {
-        match (key, language) {
-            // Document Information
-            ("document_information", "it") => "Informazioni sul Documento".to_string(),
-            ("document_information", "es") => "Información del Documento".to_string(),
-            ("document_information", "fr") => "Informations sur le Document".to_string(),
-            ("document_information", "de") => "Dokumentinformationen".to_string(),
-            ("document_information", "pt") => "Informações do Documento".to_string(),
-            ("document_information", "ja") => "ドキュメント情報".to_string(),
-            ("document_information", "zh") => "文档信息".to_string(),
-            ("document_information", "ru") => "Информация о документе".to_string(),
-            ("document_information", "ar") => "معلومات الوثيقة".to_string(),
-            ("document_information", _) => "Document Information".to_string(),
-
-            // Document downloaded from
-            ("document_downloaded_from", "it") => {
-                "Questo documento è stato scaricato da".to_string()
-            }
-            ("document_downloaded_from", "es") => "Este documento fue descargado desde".to_string(),
-            ("document_downloaded_from", "fr") => "Ce document a été téléchargé depuis".to_string(),
-            ("document_downloaded_from", "de") => {
-                "Dieses Dokument wurde heruntergeladen von".to_string()
-            }
-            ("document_downloaded_from", "pt") => "Este documento foi baixado de".to_string(),
-            ("document_downloaded_from", "ja") => {
-                "このドキュメントはダウンロードされました".to_string()
-            }
-            ("document_downloaded_from", "zh") => "此文档下载自".to_string(),
-            ("document_downloaded_from", "ru") => "Этот документ был загружен с".to_string(),
-            ("document_downloaded_from", "ar") => "تم تحميل هذه الوثيقة من".to_string(),
-            ("document_downloaded_from", _) => "This document was downloaded from".to_string(),
-
-            // Generated at
-            ("generated_at", "it") => "Generato il".to_string(),
-            ("generated_at", "es") => "Generado el".to_string(),
-            ("generated_at", "fr") => "Généré le".to_string(),
-            ("generated_at", "de") => "Erstellt am".to_string(),
-            ("generated_at", "pt") => "Gerado em".to_string(),
-            ("generated_at", "ja") => "生成日時".to_string(),
-            ("generated_at", "zh") => "生成时间".to_string(),
-            ("generated_at", "ru") => "Создано".to_string(),
-            ("generated_at", "ar") => "تم الإنشاء في".to_string(),
-            ("generated_at", _) => "Generated at".to_string(),
-
-            _ => key.to_string(),
         }
     }
 
@@ -361,7 +313,7 @@ impl PdfGenerator {
     }
 
     /// Resolve a relative path from a markdown file to an absolute path from source root
-    fn resolve_relative_path(
+    pub fn resolve_relative_path(
         &self,
         relative_path: &str,
         input_dir: &Path,
@@ -396,7 +348,7 @@ impl PdfGenerator {
     }
 
     /// Normalize a path by resolving . and .. components
-    fn normalize_path(&self, path: &Path) -> PathBuf {
+    pub fn normalize_path(&self, path: &Path) -> PathBuf {
         let mut result = PathBuf::new();
 
         for component in path.components() {
@@ -526,151 +478,5 @@ impl PdfGenerator {
                 context: "Getting tool version information".to_string(),
             })))
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_path_normalization() {
-        let generator = PdfGenerator {
-            pandoc_path: PathBuf::from("pandoc"),
-            typst_path: PathBuf::from("typst"),
-        };
-
-        // Test basic parent directory resolution
-        let path = Path::new("posts/../images/logo.png");
-        let normalized = generator.normalize_path(path);
-        assert_eq!(normalized, PathBuf::from("images/logo.png"));
-
-        // Test multiple parent directories
-        let path = Path::new("posts/deep/../../images/logo.png");
-        let normalized = generator.normalize_path(path);
-        assert_eq!(normalized, PathBuf::from("images/logo.png"));
-
-        // Test current directory references
-        let path = Path::new("posts/./images/logo.png");
-        let normalized = generator.normalize_path(path);
-        assert_eq!(normalized, PathBuf::from("posts/images/logo.png"));
-    }
-
-    #[test]
-    fn test_relative_path_resolution() {
-        let generator = PdfGenerator {
-            pandoc_path: PathBuf::from("pandoc"),
-            typst_path: PathBuf::from("typst"),
-        };
-
-        let source_root = Path::new("/project");
-
-        // Test path resolution from posts directory (inside source root)
-        let input_dir = Path::new("/project/content/posts");
-        let resolved =
-            generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
-        assert_eq!(resolved, "content/images/logo.png");
-
-        // Test path resolution from pages directory (inside source root)
-        let input_dir = Path::new("/project/content/pages");
-        let resolved =
-            generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
-        assert_eq!(resolved, "content/images/logo.png");
-
-        // Test path resolution with deeper nesting (inside source root)
-        let input_dir = Path::new("/project/content/posts/year/month");
-        let resolved =
-            generator.resolve_relative_path("../../../../images/logo.png", input_dir, source_root);
-        assert_eq!(resolved, "images/logo.png");
-
-        // Test path resolution with input directory outside source root
-        let input_dir = Path::new("/other/project/content/posts");
-        let resolved =
-            generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
-        assert_eq!(resolved, "/other/project/content/images/logo.png");
-
-        // Test path resolution with input directory as parent of source root
-        let input_dir = Path::new("/other/content");
-        let resolved =
-            generator.resolve_relative_path("../images/logo.png", input_dir, source_root);
-        assert_eq!(resolved, "/other/images/logo.png");
-
-        // Test path resolution with complex relative paths (inside source root)
-        let input_dir = Path::new("/project/content/posts");
-        let resolved =
-            generator.resolve_relative_path("../../other/images/logo.png", input_dir, source_root);
-        assert_eq!(resolved, "other/images/logo.png");
-    }
-
-    #[test]
-    fn test_pdf_url_generation() {
-        let generator = PdfGenerator {
-            pandoc_path: PathBuf::from("pandoc"),
-            typst_path: PathBuf::from("typst"),
-        };
-
-        // Test absolute URL generation
-        let output_path = Path::new("/project/_site/posts/document.pdf");
-        let base_url = "https://example.com";
-        let absolute_url = generator.generate_absolute_pdf_url(output_path, base_url);
-        assert_eq!(absolute_url, "https://example.com/posts/document.pdf");
-
-        // Test absolute URL generation with trailing slash
-        let output_path = Path::new("/project/_site/pages/about.pdf");
-        let base_url = "https://example.com/";
-        let absolute_url = generator.generate_absolute_pdf_url(output_path, base_url);
-        assert_eq!(absolute_url, "https://example.com/pages/about.pdf");
-    }
-
-    #[test]
-    fn test_translation_system() {
-        let generator = PdfGenerator {
-            pandoc_path: PathBuf::from("pandoc"),
-            typst_path: PathBuf::from("typst"),
-        };
-
-        // Test English (default)
-        assert_eq!(
-            generator.translate_string("document_information", "en"),
-            "Document Information"
-        );
-        assert_eq!(
-            generator.translate_string("document_downloaded_from", "en"),
-            "This document was downloaded from"
-        );
-        assert_eq!(
-            generator.translate_string("generated_at", "en"),
-            "Generated at"
-        );
-
-        // Test Italian
-        assert_eq!(
-            generator.translate_string("document_information", "it"),
-            "Informazioni sul Documento"
-        );
-        assert_eq!(
-            generator.translate_string("document_downloaded_from", "it"),
-            "Questo documento è stato scaricato da"
-        );
-        assert_eq!(
-            generator.translate_string("generated_at", "it"),
-            "Generato il"
-        );
-
-        // Test Spanish
-        assert_eq!(
-            generator.translate_string("document_information", "es"),
-            "Información del Documento"
-        );
-        assert_eq!(
-            generator.translate_string("generated_at", "es"),
-            "Generado el"
-        );
-
-        // Test unknown language defaults to English
-        assert_eq!(
-            generator.translate_string("document_information", "unknown"),
-            "Document Information"
-        );
     }
 }

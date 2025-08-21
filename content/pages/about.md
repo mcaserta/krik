@@ -49,7 +49,7 @@ websites. Krik stands out by combining:
 
 - Filename-based language detection (`file.lang.md`)
 - Automatic language selector dropdown
-- Support for 10+ languages with proper native names
+- Support for 62 languages with proper native names
 - Seamless navigation between translations
 - Multi-language content organization
 

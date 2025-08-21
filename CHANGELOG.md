@@ -8,6 +8,29 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.25] - 2025-08-21
+
+### Changed
+
+- ♻️ **Test Organization**: Moved unit tests from source files to dedicated
+  tests/ directory
+  - Migrated tests from `src/generator/robots.rs` to `tests/robots_test.rs`
+  - Migrated tests from `src/generator/pdf.rs` to `tests/pdf_test.rs`
+  - Made necessary functions public for test access
+  - Improved test isolation and organization following Rust best practices
+
+- 🌍 **I18n Manager Enhancement**: Expanded translation support to all 62
+  supported languages
+  - Enhanced `translate_string` function to support complete SUPPORTED_LANGUAGES
+    set
+  - Added translations for "document_information", "document_downloaded_from",
+    and "generated_at"
+  - Comprehensive language coverage including RTL languages (Arabic, Hebrew,
+    Urdu)
+  - Support for complex scripts (Chinese, Japanese, Korean, Thai, Hindi, etc.)
+  - Improved PDF generation with proper multilingual appendix text
+  - Updated documentation to reflect expanded language support (62 languages)
+
 ## [0.1.24] - 2025-01-21
 
 ### Fixed

@@ -143,10 +143,9 @@ fn generate_sitemap_entry_for_group(
     if language_variants.len() > 1 {
         for variant in language_variants {
             let variant_url = generate_document_url(variant, site_config);
-            let hreflang = map_language_to_hreflang(&variant.language);
             entry.push_str(&format!(
                 "    <xhtml:link rel=\"alternate\" hreflang=\"{}\" href=\"{}\" />\n",
-                hreflang,
+                &variant.language,
                 escape_xml_url(&variant_url)
             ));
         }
@@ -193,23 +192,6 @@ fn is_post(document: &Document) -> bool {
         .and_then(|v| v.as_str())
         == Some("post")
         || document.file_path.starts_with("posts/")
-}
-
-/// Map language codes to hreflang values
-fn map_language_to_hreflang(language: &str) -> &str {
-    match language {
-        "en" => "en",
-        "it" => "it",
-        "es" => "es",
-        "fr" => "fr",
-        "de" => "de",
-        "pt" => "pt",
-        "ja" => "ja",
-        "zh" => "zh",
-        "ru" => "ru",
-        "ar" => "ar",
-        _ => language, // Fallback to the original language code
-    }
 }
 
 /// Escape XML special characters in URLs

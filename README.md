@@ -20,8 +20,8 @@ theming ✨
 
 - Light/dark mode with OS detection and manual toggle
 - Language detection from `file.lang.md` pattern (e.g., `post.it.md` → Italian)
-- Supported languages (via an internal language map): en, it, es, fr, de, pt,
-  ja, zh, ru, ar
+- Supported languages (via an internal language map): 62 languages including en,
+  it, es, fr, de, pt, ja, zh, ru, ar, and many more
 - Index selection rule: for multiple language variants of the same post base
   name, the index shows a single entry preferring the default language; if only
   a non-default language exists (e.g., only `foo.it.md`), it will be included

@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
-pub const DEFAULT_LANGUAGE: &str = "en";
+pub const DEFAULT_LANGUAGE: &'static str = "en";
 
 pub static SUPPORTED_LANGUAGES: Lazy<HashMap<&'static str, &'static str>> = Lazy::new(|| {
     HashMap::from([
@@ -74,23 +74,11 @@ pub static SUPPORTED_LANGUAGES: Lazy<HashMap<&'static str, &'static str>> = Lazy
 
 #[derive(Debug, Clone)]
 pub struct I18nManager {
-    default_language: String,
 }
 
-impl I18nManager {
-    pub fn new(default_language: String) -> Self {
-        let normalized = if SUPPORTED_LANGUAGES.contains_key(default_language.as_str()) {
-            default_language
-        } else {
-            DEFAULT_LANGUAGE.to_string()
-        };
-        Self {
-            default_language: normalized,
-        }
-    }
-
-    pub fn default_language(&self) -> &str {
-        &self.default_language
+impl I18nManager {  
+    pub fn default_language() -> &'static str {
+        DEFAULT_LANGUAGE   
     }
 
     pub fn is_supported_language(code: &str) -> bool {
@@ -102,5 +90,210 @@ impl I18nManager {
             .get(lang_code)
             .map(|s| s.to_string())
             .unwrap_or_else(|| lang_code.to_uppercase())
+    }
+
+    /// Translate strings based on document language
+    pub fn translate_string(key: &str, language: &str) -> String {
+        match (key, language) {
+            // Document Information
+            ("document_information", "af") => "Dokumentinligting".to_string(),
+            ("document_information", "am") => "የሰነድ መረጃ".to_string(),
+            ("document_information", "ar") => "معلومات الوثيقة".to_string(),
+            ("document_information", "az") => "Sənəd Məlumatı".to_string(),
+            ("document_information", "bg") => "Информация за документа".to_string(),
+            ("document_information", "bn") => "নথির তথ্য".to_string(),
+            ("document_information", "bs") => "Informacije o dokumentu".to_string(),
+            ("document_information", "ca") => "Informació del document".to_string(),
+            ("document_information", "cs") => "Informace o dokumentu".to_string(),
+            ("document_information", "cy") => "Gwybodaeth am y ddogfen".to_string(),
+            ("document_information", "da") => "Dokumentoplysninger".to_string(),
+            ("document_information", "de") => "Dokumentinformationen".to_string(),
+            ("document_information", "el") => "Πληροφορίες εγγράφου".to_string(),
+            ("document_information", "es") => "Información del Documento".to_string(),
+            ("document_information", "et") => "Dokumendi teave".to_string(),
+            ("document_information", "eu") => "Dokumentuaren informazioa".to_string(),
+            ("document_information", "fa") => "اطلاعات سند".to_string(),
+            ("document_information", "fi") => "Asiakirjan tiedot".to_string(),
+            ("document_information", "fr") => "Informations sur le Document".to_string(),
+            ("document_information", "gl") => "Información do documento".to_string(),
+            ("document_information", "gu") => "દસ્તાવેજની માહિતી".to_string(),
+            ("document_information", "he") => "מידע על המסמך".to_string(),
+            ("document_information", "hi") => "दस्तावेज़ की जानकारी".to_string(),
+            ("document_information", "hr") => "Informacije o dokumentu".to_string(),
+            ("document_information", "hu") => "Dokumentum információk".to_string(),
+            ("document_information", "id") => "Informasi Dokumen".to_string(),
+            ("document_information", "is") => "Skjalupplýsingar".to_string(),
+            ("document_information", "it") => "Informazioni sul Documento".to_string(),
+            ("document_information", "ja") => "ドキュメント情報".to_string(),
+            ("document_information", "kn") => "ದಾಖಲೆಯ ಮಾಹಿತಿ".to_string(),
+            ("document_information", "ko") => "문서 정보".to_string(),
+            ("document_information", "lt") => "Dokumento informacija".to_string(),
+            ("document_information", "lv") => "Dokumenta informācija".to_string(),
+            ("document_information", "mk") => "Информации за документот".to_string(),
+            ("document_information", "ml") => "ഡോക്യുമെന്റ് വിവരങ്ങൾ".to_string(),
+            ("document_information", "mr") => "दस्तऐवज माहिती".to_string(),
+            ("document_information", "ms") => "Maklumat Dokumen".to_string(),
+            ("document_information", "nl") => "Documentinformatie".to_string(),
+            ("document_information", "no") => "Dokumentinformasjon".to_string(),
+            ("document_information", "pa") => "ਦਸਤਾਵੇਜ਼ ਦੀ ਜਾਣਕਾਰੀ".to_string(),
+            ("document_information", "pl") => "Informacje o dokumencie".to_string(),
+            ("document_information", "pt") => "Informações do Documento".to_string(),
+            ("document_information", "ro") => "Informații despre document".to_string(),
+            ("document_information", "ru") => "Информация о документе".to_string(),
+            ("document_information", "si") => "ලේඛන තොරතුරු".to_string(),
+            ("document_information", "sk") => "Informácie o dokumente".to_string(),
+            ("document_information", "sl") => "Informacije o dokumentu".to_string(),
+            ("document_information", "sq") => "Informacion mbi dokumentin".to_string(),
+            ("document_information", "sr") => "Информације о документу".to_string(),
+            ("document_information", "sv") => "Dokumentinformation".to_string(),
+            ("document_information", "sw") => "Maelezo ya hati".to_string(),
+            ("document_information", "ta") => "ஆவண தகவல்".to_string(),
+            ("document_information", "te") => "పత్రం సమాచారం".to_string(),
+            ("document_information", "th") => "ข้อมูลเอกสาร".to_string(),
+            ("document_information", "tl") => "Impormasyon ng Dokumento".to_string(),
+            ("document_information", "tr") => "Belge Bilgileri".to_string(),
+            ("document_information", "uk") => "Інформація про документ".to_string(),
+            ("document_information", "ur") => "دستاویز کی معلومات".to_string(),
+            ("document_information", "vi") => "Thông tin tài liệu".to_string(),
+            ("document_information", "xh") => "Ulwazi loxwebhu".to_string(),
+            ("document_information", "yo") => "Alaye iwe".to_string(),
+            ("document_information", "zh") => "文档信息".to_string(),
+            ("document_information", "zu") => "Ulwazi lwedokhumenti".to_string(),
+            ("document_information", _) => "Document Information".to_string(),
+
+            // Document downloaded from
+            ("document_downloaded_from", "af") => "Hierdie dokument is afgelaai van".to_string(),
+            ("document_downloaded_from", "am") => "ይህ ሰነድ ከዚህ ተወርዷል".to_string(),
+            ("document_downloaded_from", "ar") => "تم تحميل هذه الوثيقة من".to_string(),
+            ("document_downloaded_from", "az") => "Bu sənəd buradan yüklənib".to_string(),
+            ("document_downloaded_from", "bg") => "Този документ е изтеглен от".to_string(),
+            ("document_downloaded_from", "bn") => "এই নথিটি ডাউনলোড করা হয়েছে".to_string(),
+            ("document_downloaded_from", "bs") => "Ovaj dokument je preuzet sa".to_string(),
+            ("document_downloaded_from", "ca") => "Aquest document s'ha descarregat de".to_string(),
+            ("document_downloaded_from", "cs") => "Tento dokument byl stažen z".to_string(),
+            ("document_downloaded_from", "cy") => "Lawrlwythwyd y ddogfen hon o".to_string(),
+            ("document_downloaded_from", "da") => "Dette dokument er downloadet fra".to_string(),
+            ("document_downloaded_from", "de") => "Dieses Dokument wurde heruntergeladen von".to_string(),
+            ("document_downloaded_from", "el") => "Αυτό το έγγραφο κατέβηκε από".to_string(),
+            ("document_downloaded_from", "es") => "Este documento fue descargado desde".to_string(),
+            ("document_downloaded_from", "et") => "See dokument on alla laaditud".to_string(),
+            ("document_downloaded_from", "eu") => "Dokumentu hau hemendik deskargatu da".to_string(),
+            ("document_downloaded_from", "fa") => "این سند از اینجا دانلود شده".to_string(),
+            ("document_downloaded_from", "fi") => "Tämä asiakirja on ladattu osoitteesta".to_string(),
+            ("document_downloaded_from", "fr") => "Ce document a été téléchargé depuis".to_string(),
+            ("document_downloaded_from", "gl") => "Este documento foi descargado de".to_string(),
+            ("document_downloaded_from", "gu") => "આ દસ્તાવેજ ડાઉનલોડ થયો છે".to_string(),
+            ("document_downloaded_from", "he") => "מסמך זה הורד מ".to_string(),
+            ("document_downloaded_from", "hi") => "यह दस्तावेज़ यहाँ से डाउनलोड किया गया".to_string(),
+            ("document_downloaded_from", "hr") => "Ovaj dokument je preuzet s".to_string(),
+            ("document_downloaded_from", "hu") => "Ez a dokumentum innen lett letöltve".to_string(),
+            ("document_downloaded_from", "id") => "Dokumen ini diunduh dari".to_string(),
+            ("document_downloaded_from", "is") => "Þetta skjal var halað niður frá".to_string(),
+            ("document_downloaded_from", "it") => "Questo documento è stato scaricato da".to_string(),
+            ("document_downloaded_from", "ja") => "このドキュメントはダウンロードされました".to_string(),
+            ("document_downloaded_from", "kn") => "ಈ ದಾಖಲೆಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ".to_string(),
+            ("document_downloaded_from", "ko") => "이 문서는 다음에서 다운로드되었습니다".to_string(),
+            ("document_downloaded_from", "lt") => "Šis dokumentas atsisiųstas iš".to_string(),
+            ("document_downloaded_from", "lv") => "Šis dokuments ir lejupielādēts no".to_string(),
+            ("document_downloaded_from", "mk") => "Овој документ е преземен од".to_string(),
+            ("document_downloaded_from", "ml") => "ഈ ഡോക്യുമെന്റ് ഇവിടെ നിന്ന് ഡൗൺലോഡ് ചെയ്തു".to_string(),
+            ("document_downloaded_from", "mr") => "हा दस्तऐवज येथून डाउनलोड केला गेला".to_string(),
+            ("document_downloaded_from", "ms") => "Dokumen ini dimuat turun dari".to_string(),
+            ("document_downloaded_from", "nl") => "Dit document is gedownload van".to_string(),
+            ("document_downloaded_from", "no") => "Dette dokumentet ble lastet ned fra".to_string(),
+            ("document_downloaded_from", "pa") => "ਇਹ ਦਸਤਾਵੇਜ਼ ਇੱਥੋਂ ਡਾਊਨਲੋਡ ਕੀਤਾ ਗਿਆ".to_string(),
+            ("document_downloaded_from", "pl") => "Ten dokument został pobrany z".to_string(),
+            ("document_downloaded_from", "pt") => "Este documento foi baixado de".to_string(),
+            ("document_downloaded_from", "ro") => "Acest document a fost descărcat de la".to_string(),
+            ("document_downloaded_from", "ru") => "Этот документ был загружен с".to_string(),
+            ("document_downloaded_from", "si") => "මෙම ලේඛනය අයින් කළේ".to_string(),
+            ("document_downloaded_from", "sk") => "Tento dokument bol stiahnutý z".to_string(),
+            ("document_downloaded_from", "sl") => "Ta dokument je bil prenesen z".to_string(),
+            ("document_downloaded_from", "sq") => "Ky dokument u shkarkua nga".to_string(),
+            ("document_downloaded_from", "sr") => "Овај документ је преузет са".to_string(),
+            ("document_downloaded_from", "sv") => "Detta dokument laddades ner från".to_string(),
+            ("document_downloaded_from", "sw") => "Hati hii imepakuliwa kutoka".to_string(),
+            ("document_downloaded_from", "ta") => "இந்த ஆவணம் இங்கிருந்து பதிவிறக்கம் செய்யப்பட்டது".to_string(),
+            ("document_downloaded_from", "te") => "ఈ పత్రం ఇక్కడ నుండి డౌన్‌లోడ్ చేయబడింది".to_string(),
+            ("document_downloaded_from", "th") => "เอกสารนี้ดาวน์โหลดจาก".to_string(),
+            ("document_downloaded_from", "tl") => "Ang dokumentong ito ay na-download mula sa".to_string(),
+            ("document_downloaded_from", "tr") => "Bu belge şuradan indirildi".to_string(),
+            ("document_downloaded_from", "uk") => "Цей документ було завантажено з".to_string(),
+            ("document_downloaded_from", "ur") => "یہ دستاویز یہاں سے ڈاؤن لوڈ کی گئی".to_string(),
+            ("document_downloaded_from", "vi") => "Tài liệu này được tải xuống từ".to_string(),
+            ("document_downloaded_from", "xh") => "Olu xwebhu lukhutshiwe kwi".to_string(),
+            ("document_downloaded_from", "yo") => "A gba iwe yii lati".to_string(),
+            ("document_downloaded_from", "zh") => "此文档下载自".to_string(),
+            ("document_downloaded_from", "zu") => "Lolu cwaningo lulandwe ku".to_string(),
+            ("document_downloaded_from", _) => "This document was downloaded from".to_string(),
+
+            // Generated at
+            ("generated_at", "af") => "Gegenereer op".to_string(),
+            ("generated_at", "am") => "የተፈጠረበት ጊዜ".to_string(),
+            ("generated_at", "ar") => "تم الإنشاء في".to_string(),
+            ("generated_at", "az") => "Yaradılıb".to_string(),
+            ("generated_at", "bg") => "Генериран на".to_string(),
+            ("generated_at", "bn") => "তৈরি হয়েছে".to_string(),
+            ("generated_at", "bs") => "Generirano u".to_string(),
+            ("generated_at", "ca") => "Generat el".to_string(),
+            ("generated_at", "cs") => "Vygenerováno".to_string(),
+            ("generated_at", "cy") => "Cynhyrchwyd ar".to_string(),
+            ("generated_at", "da") => "Genereret den".to_string(),
+            ("generated_at", "de") => "Erstellt am".to_string(),
+            ("generated_at", "el") => "Δημιουργήθηκε στις".to_string(),
+            ("generated_at", "es") => "Generado el".to_string(),
+            ("generated_at", "et") => "Loodud".to_string(),
+            ("generated_at", "eu") => "Sortua".to_string(),
+            ("generated_at", "fa") => "تولید شده در".to_string(),
+            ("generated_at", "fi") => "Luotu".to_string(),
+            ("generated_at", "fr") => "Généré le".to_string(),
+            ("generated_at", "gl") => "Xerado o".to_string(),
+            ("generated_at", "gu") => "પર બનાવેલ".to_string(),
+            ("generated_at", "he") => "נוצר ב".to_string(),
+            ("generated_at", "hi") => "पर उत्पन्न".to_string(),
+            ("generated_at", "hr") => "Generirano".to_string(),
+            ("generated_at", "hu") => "Létrehozva".to_string(),
+            ("generated_at", "id") => "Dibuat pada".to_string(),
+            ("generated_at", "is") => "Búið til".to_string(),
+            ("generated_at", "it") => "Generato il".to_string(),
+            ("generated_at", "ja") => "生成日時".to_string(),
+            ("generated_at", "kn") => "ನಲ್ಲಿ ರಚಿಸಲಾಗಿದೆ".to_string(),
+            ("generated_at", "ko") => "생성됨".to_string(),
+            ("generated_at", "lt") => "Sukurta".to_string(),
+            ("generated_at", "lv") => "Izveidots".to_string(),
+            ("generated_at", "mk") => "Генерирано на".to_string(),
+            ("generated_at", "ml") => "സൃഷ്ടിച്ചത്".to_string(),
+            ("generated_at", "mr") => "येथे तयार केले".to_string(),
+            ("generated_at", "ms") => "Dijana pada".to_string(),
+            ("generated_at", "nl") => "Gegenereerd op".to_string(),
+            ("generated_at", "no") => "Generert".to_string(),
+            ("generated_at", "pa") => "ਤੇ ਬਣਾਇਆ ਗਿਆ".to_string(),
+            ("generated_at", "pl") => "Wygenerowano".to_string(),
+            ("generated_at", "pt") => "Gerado em".to_string(),
+            ("generated_at", "ro") => "Generat la".to_string(),
+            ("generated_at", "ru") => "Создано".to_string(),
+            ("generated_at", "si") => "සාදන ලද්දේ".to_string(),
+            ("generated_at", "sk") => "Vygenerované".to_string(),
+            ("generated_at", "sl") => "Ustvarjeno".to_string(),
+            ("generated_at", "sq") => "Krijuar në".to_string(),
+            ("generated_at", "sr") => "Генерисано".to_string(),
+            ("generated_at", "sv") => "Skapad".to_string(),
+            ("generated_at", "sw") => "Imeundwa".to_string(),
+            ("generated_at", "ta") => "உருவாக்கப்பட்டது".to_string(),
+            ("generated_at", "te") => "వద్ద సృష్టించబడింది".to_string(),
+            ("generated_at", "th") => "สร้างเมื่อ".to_string(),
+            ("generated_at", "tl") => "Nalikha sa".to_string(),
+            ("generated_at", "tr") => "Oluşturuldu".to_string(),
+            ("generated_at", "uk") => "Створено".to_string(),
+            ("generated_at", "ur") => "میں بنایا گیا".to_string(),
+            ("generated_at", "vi") => "Được tạo vào".to_string(),
+            ("generated_at", "xh") => "Kudalwe ngo".to_string(),
+            ("generated_at", "yo") => "Ti ṣẹda ni".to_string(),
+            ("generated_at", "zh") => "生成时间".to_string(),
+            ("generated_at", "zu") => "Kudaliwe ngo".to_string(),
+            ("generated_at", _) => "Generated at".to_string(),
+
+            _ => key.to_string(),
+        }
     }
 }

@@ -1,5 +1,4 @@
 use crate::error::{GenerationError, GenerationErrorKind, KrikError, KrikResult};
-use crate::i18n::I18nManager;
 use crate::parser::Document;
 use crate::site::SiteConfig;
 use crate::theme::Theme;
@@ -68,10 +67,9 @@ impl RenderPhase {
         documents: &[Document],
         theme: &Theme,
         site_config: &SiteConfig,
-        i18n: &I18nManager,
         output_dir: &Path,
     ) -> KrikResult<()> {
-        super::templates::generate_index(documents, theme, site_config, i18n, output_dir).map_err(
+        super::templates::generate_index(documents, theme, site_config, output_dir).map_err(
             |e| {
                 KrikError::Generation(Box::new(GenerationError {
                     kind: GenerationErrorKind::OutputDirError(std::io::Error::new(

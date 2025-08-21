@@ -7,7 +7,8 @@ Fast Rust static site generator. Builds to `kk` executable.
 - GitHub Flavored Markdown with tables, footnotes, code blocks
 - YAML front matter with layout override
 - Light/dark mode with OS detection
-- i18n via `file.lang.md` (en, it, es, fr, de, pt, ja, zh, ru, ar)
+- i18n via `file.lang.md` (62 languages including en, it, es, fr, de, pt, ja,
+  zh, ru, ar)
 - Development server with live reload (can be disabled with `--no-live-reload`)
 - TOC generation, footnotes, scroll-to-top
 - Atom feeds, XML sitemap, robots.txt generation

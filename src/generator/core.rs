@@ -50,8 +50,6 @@ pub struct SiteGenerator {
     pub output_dir: PathBuf,
     /// Theme configuration and templates
     pub theme: Theme,
-    /// Internationalization manager for multi-language support
-    pub i18n: I18nManager,
     /// Site-wide configuration loaded from site.toml
     pub site_config: SiteConfig,
     /// Parsed documents ready for processing
@@ -146,8 +144,6 @@ impl SiteGenerator {
                 })
         };
 
-        let i18n = I18nManager::new("en".to_string());
-
         // Load site configuration with proper error handling
         let site_config = SiteConfig::load_from_path(&source_dir).unwrap_or_else(|e| {
             warn!(
@@ -161,7 +157,6 @@ impl SiteGenerator {
             source_dir,
             output_dir,
             theme,
-            i18n,
             site_config,
             documents: Vec::new(),
             document_cache: HashMap::new(),
@@ -245,7 +240,6 @@ impl SiteGenerator {
             &documents,
             &self.theme,
             &self.site_config,
-            &self.i18n,
             &self.output_dir,
         )?;
 
@@ -339,8 +333,7 @@ impl SiteGenerator {
                 if let Some(dot_pos) = stem.rfind('.') {
                     let potential_lang = &stem[dot_pos + 1..];
                     // Check if it's a known language code
-                    if ["en", "it", "es", "fr", "de", "pt", "ja", "zh", "ru", "ar"]
-                        .contains(&potential_lang)
+                    if I18nManager::is_supported_language(&potential_lang)
                     {
                         &stem[..dot_pos] // Remove language part
                     } else {
@@ -430,7 +423,6 @@ impl SiteGenerator {
             &self.documents,
             &self.theme,
             &self.site_config,
-            &self.i18n,
             &self.output_dir,
         )?;
         emit.emit_feed(&self.documents, &self.site_config, &self.output_dir)?;
