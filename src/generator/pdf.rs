@@ -16,34 +16,29 @@ use crate::I18nManager;
 
 /// PDF generation using pandoc with typst engine
 pub struct PdfGenerator {
-    pandoc_path: PathBuf,
-    typst_path: PathBuf,
+    pandoc_path: Option<PathBuf>,
+    typst_path: Option<PathBuf>,
 }
 
 impl PdfGenerator {
     /// Create a new PDF generator, checking for required tools
     pub fn new() -> KrikResult<Self> {
-        let pandoc_path = Self::find_executable("pandoc").ok_or_else(|| {
-            KrikError::Generation(Box::new(GenerationError {
-                kind: GenerationErrorKind::FeedError(
-                    "Pandoc not found in PATH. Install pandoc to enable PDF generation."
-                        .to_string(),
-                ),
-                context: "Initializing PDF generator".to_string(),
-            }))
-        })?;
+        let pandoc_path = Self::find_executable("pandoc").map_or_else(|| {
+            warn!("Pandoc not found in PATH. Install pandoc to enable PDF generation.");
+            None
+        }, |path| {
+            Some(path)
+        });
 
-        let typst_path = Self::find_executable("typst").ok_or_else(|| {
-            KrikError::Generation(Box::new(GenerationError {
-                kind: GenerationErrorKind::FeedError(
-                    "Typst not found in PATH. Install typst to enable PDF generation.".to_string(),
-                ),
-                context: "Initializing PDF generator".to_string(),
-            }))
-        })?;
+        let typst_path = Self::find_executable("typst").map_or_else(|| {
+            warn!("Typst not found in PATH. Install typst to enable PDF generation.");
+            None
+        }, |path| {
+            Some(path)
+        });
 
-        debug!("Pandoc path: {}", pandoc_path.display());
-        debug!("Typst path: {}", typst_path.display());
+        debug!("Pandoc path: {}", pandoc_path.clone().unwrap().display());
+        debug!("Typst path: {}", typst_path.clone().unwrap().display());
 
         Ok(Self {
             pandoc_path,
@@ -70,6 +65,10 @@ impl PdfGenerator {
         site_config: &SiteConfig,
         document_language: &str,
     ) -> KrikResult<()> {
+        if self.pandoc_path.is_none() {
+            warn!("Pandoc not found in PATH. Install pandoc to enable PDF generation.");
+            return Ok(());
+        }
         // Ensure the output directory exists
         if let Some(parent) = output_path.parent() {
             fs::create_dir_all(parent).map_err(|e| {
@@ -91,7 +90,7 @@ impl PdfGenerator {
         )?;
 
         // Run pandoc with typst engine on the temporary file
-        let mut cmd = Command::new(&self.pandoc_path);
+        let mut cmd = Command::new(&self.pandoc_path.clone().unwrap());
         cmd.arg(&temp_md_file)
             .arg("--from=gfm")
             .arg("--pdf-engine=typst")
@@ -447,8 +446,8 @@ impl PdfGenerator {
 
     /// Get version information for diagnostics
     pub fn version_info(&self) -> KrikResult<(String, String)> {
-        let pandoc_version = self.get_tool_version(&self.pandoc_path, &["--version"])?;
-        let typst_version = self.get_tool_version(&self.typst_path, &["--version"])?;
+        let pandoc_version = self.get_tool_version(&self.pandoc_path.clone().unwrap(), &["--version"])?;
+        let typst_version = self.get_tool_version(&self.typst_path.clone().unwrap(), &["--version"])?;
 
         Ok((pandoc_version, typst_version))
     }
