@@ -148,6 +148,7 @@ jobs:
           echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
           
       - name: Build binary
+        shell: bash
         env:
           # Use rustls instead of OpenSSL to avoid cross-compilation issues
           CARGO_NET_GIT_FETCH_WITH_CLI: true
