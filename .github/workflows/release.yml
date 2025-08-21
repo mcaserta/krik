@@ -89,12 +89,6 @@ jobs:
             name: kk-linux-x86_64
             cross: false
 
-          # Linux ARM64 (for ARM servers)
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-latest  
-            name: kk-linux-aarch64
-            cross: true
-
           # macOS Intel
           - target: x86_64-apple-darwin
             os: macos-latest
@@ -105,12 +99,6 @@ jobs:
           - target: aarch64-apple-darwin
             os: macos-latest
             name: kk-macos-aarch64
-            cross: false
-
-          # Windows x86_64
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-            name: kk-windows-x86_64.exe
             cross: false
 
     steps:
