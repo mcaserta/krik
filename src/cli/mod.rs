@@ -187,8 +187,10 @@ impl KrikCli {
         Arg::new("verbose")
             .short('v')
             .long("verbose")
-            .help("Enable verbose logging output")
-            .action(clap::ArgAction::SetTrue)
+            .help("Enable verbose logging with optional log level (trace, debug, info, warn, error)")
+            .value_name("LEVEL")
+            .num_args(0..=1)
+            .default_missing_value("info")
     }
 
     /// Helper method to create directory arguments with consistent structure
@@ -213,9 +215,9 @@ impl KrikCli {
 
     /// Run the CLI application
     pub async fn run(self) -> KrikResult<()> {
-        // Initialize logging based on verbose flag
-        let verbose = self.matches.get_flag("verbose");
-        logging::init_logging(verbose);
+        // Initialize logging based on verbose flag - quiet is now the default
+        let verbose_level = self.matches.get_one::<String>("verbose");
+        logging::init_logging(verbose_level);
 
         match self.matches.subcommand() {
             Some(("server", server_matches)) => commands::handle_server(server_matches).await,
