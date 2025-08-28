@@ -60,6 +60,11 @@
 - [x] Add CONTRIBUTING.md with coding standards, testing strategy, and release
       steps
 
+### 🎨 Themes
+
+- [ ] new theme based on https://codepen.io/mikemai2awesome/pen/KKvMZVz
+- [ ] new theme based on https://mikemai.net/mcss/
+
 ### 🚀 Release readiness
 
 - [ ] Update CHANGELOG with parallelization, index fix, error-handling
