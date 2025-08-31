@@ -123,9 +123,8 @@ impl DevServer {
     }
 
     fn generate_site(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let mut generator =
+        let generator =
             SiteGenerator::new(&self.input_dir, &self.output_dir, self.theme_dir.as_ref())?;
-        generator.scan_files()?;
         generator.generate_site()?;
 
         // Conditionally inject live reload script into HTML files

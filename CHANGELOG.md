@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.27] - 2025-08-31
+
+### Fixed
+
+- ⚡ **Performance**: Eliminated redundant file scanning during site generation
+  - Removed duplicate scan that caused "File scan completed" message to appear
+    twice
+  - Site generation now ~50% faster during the scanning phase
+  - Fixed unnecessary double I/O operations and markdown parsing
+  - Cleaned up unused imports in CLI commands module
+
 ## [0.1.26] - 2025-08-21
 
 ### Fixed

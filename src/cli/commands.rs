@@ -2,9 +2,7 @@ use super::validate::{
     ensure_directory, normalize_path, parse_port, validate_directory, validate_theme_dir,
 };
 use crate::content::{create_page, create_post};
-use crate::error::{
-    GenerationError, GenerationErrorKind, KrikError, KrikResult, ServerError, ServerErrorKind,
-};
+use crate::error::{KrikError, KrikResult, ServerError, ServerErrorKind};
 use crate::generator::SiteGenerator;
 use crate::init::init_site;
 use crate::lint::{generate_html_report, lint_content, lint_content_with_links};
@@ -328,7 +326,7 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
         theme_dir.as_ref().map(|p| p.display())
     );
 
-    let mut generator = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref())
+    let generator = SiteGenerator::new(&input_dir, &output_dir, theme_dir.as_ref())
         .map_err(|e| match &e {
             KrikError::Theme(theme_err) => {
                 error!("Theme Error: {theme_err}");
@@ -338,30 +336,31 @@ pub fn handle_generate(matches: &ArgMatches) -> KrikResult<()> {
             _ => e,
         })?;
 
-    generator.scan_files().map_err(|e| {
-        error!("Scan Error: {e}");
+    generator.generate_site().map_err(|e| {
         match &e {
+            KrikError::Generation(gen_err) => match &gen_err.kind {
+                crate::error::GenerationErrorKind::NoContent => {
+                    error!("No Content Error: {e}");
+                    error!("Suggestion: Check that the content directory contains markdown files");
+                }
+                _ => {
+                    error!("Generation Error: {e}");
+                }
+            },
             KrikError::Io(_) => {
-                error!("Suggestion: Check that the content directory exists and is readable");
+                error!("IO Error: {e}");
+                error!("Suggestion: Check file permissions and disk space");
             }
             KrikError::Markdown(_) => {
+                error!("Markdown Error: {e}");
                 error!("Suggestion: Fix the markdown or front matter syntax error");
             }
-            _ => {}
+            _ => {
+                error!("Error: {e}");
+            }
         }
         e
     })?;
-
-    if generator.documents.is_empty() {
-        return Err(KrikError::Generation(Box::new(GenerationError {
-            kind: GenerationErrorKind::NoContent,
-            context: format!("No markdown files found in {}", input_dir.display()),
-        })));
-    }
-
-    info!("Found {} documents", generator.documents.len());
-
-    generator.generate_site()?;
     info!("Site generated successfully!");
 
     Ok(())
