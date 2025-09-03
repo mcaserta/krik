@@ -15,7 +15,17 @@ create beautiful, fast static websites with minimal setup.
 
 ### Quick Install (Recommended)
 
-The fastest way to get started is installing Krik from crates.io:
+#### From Homebrew (macOS/Linux)
+
+The easiest way to install Krik on macOS or Linux:
+
+```bash
+brew install mcaserta/krik/krik
+```
+
+#### From Crates.io
+
+Alternatively, install directly from Rust's package manager:
 
 ```bash
 cargo install krik

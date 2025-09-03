@@ -13,7 +13,14 @@ generator.
 
 ### Installation
 
-#### From Crates.io (Recommended)
+#### From Homebrew (macOS/Linux) - Recommended
+
+```bash
+# Install from homebrew tap
+brew install mcaserta/krik/krik
+```
+
+#### From Crates.io
 
 ```bash
 # Install globally from crates.io

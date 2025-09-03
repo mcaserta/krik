@@ -85,6 +85,12 @@ sudo mv kk-macos-aarch64 /usr/local/bin/kk
 # https://github.com/mcaserta/krik/releases/latest/download/kk-windows-x86_64.exe
 ```
 
+### From Homebrew (macOS/Linux)
+
+```bash
+brew install mcaserta/krik/krik
+```
+
 ### From Cargo
 
 ```bash
