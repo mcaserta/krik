@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
     <loc>https://krik.mirkocaserta.com</loc>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://krik.mirkocaserta.com/pages/about.html</loc>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="it" href="https://krik.mirkocaserta.com/pages/about.it.html" />
@@ -16,13 +16,13 @@
   </url>
   <url>
     <loc>https://krik.mirkocaserta.com/pages/contact.html</loc>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://krik.mirkocaserta.com/pages/documentation.html</loc>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
