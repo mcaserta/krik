@@ -66,6 +66,7 @@
 - [ ] new theme based on <https://codepen.io/mikemai2awesome/pen/KKvMZVz>
 - [ ] new theme based on <https://mikemai.net/mcss/>
 - [ ] new theme based on <https://picocss.com/>
+- [ ] new theme based on <https://edwardtufte.github.io/tufte-css/>
 
 ## 🚀 Release readiness
 
