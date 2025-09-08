@@ -1,6 +1,6 @@
-## Krik TODO / Roadmap
+# Krik TODO / Roadmap
 
-### ✅ Recently completed (this branch)
+## ✅ Recently completed (this branch)
 
 - [x] Robust error handling: removed `unwrap/expect` across CLI, server, init,
       lint, templates, markdown, PDF; logging init no longer panics
@@ -30,12 +30,12 @@
       features), `notify` to 8.2.0, and `serde` to 1.0.219; verified via
       `cargo test` and `cargo run --`
 
-### 🔺 High-priority next steps
+## 🔺 High-priority next steps
 
 - [x] Incremental build cache: maintain a path → `Document` cache in
       `SiteGenerator` and update on change to avoid full rescans
 
-### 🧪 Testing
+## 🧪 Testing
 
 - [x] Add integration test: index selection when both default and non-default
       language variants exist (ensure default wins)
@@ -43,11 +43,12 @@
 - [x] Expand content fixtures to cover nested posts, TOC edge-cases, and PDF
       toggles
 
-### ⚙️ Performance & concurrency
+## ⚙️ Performance & concurrency
 
 - [x] avoid redundant stat calls in asset copying
 
-- ### 🧼 Code quality & API
+## 🧼 Code quality & API
+
 - [x] Introduce `Theme::builder()` to encapsulate defaults, auto-escape, reload
       behavior, and error handling
 - [x] Normalize public functions to return `KrikResult<T>`; removed silent
@@ -55,17 +56,18 @@
 - [x] Remove remaining duplicated logic covered by `i18n::I18nManager` and
       `templates::paths` (parser uses `I18nManager` for language validation)
 
-### 📚 Docs & DX
+## 📚 Docs & DX
 
 - [x] Add CONTRIBUTING.md with coding standards, testing strategy, and release
       steps
 
-### 🎨 Themes
+## 🎨 Themes
 
-- [ ] new theme based on https://codepen.io/mikemai2awesome/pen/KKvMZVz
-- [ ] new theme based on https://mikemai.net/mcss/
+- [ ] new theme based on <https://codepen.io/mikemai2awesome/pen/KKvMZVz>
+- [ ] new theme based on <https://mikemai.net/mcss/>
+- [ ] new theme based on <https://picocss.com/>
 
-### 🚀 Release readiness
+## 🚀 Release readiness
 
 - [ ] Update CHANGELOG with parallelization, index fix, error-handling
       improvements
