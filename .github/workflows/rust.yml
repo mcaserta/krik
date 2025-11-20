@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Cache Cargo registry and build artifacts
       uses: Swatinem/rust-cache@v2
     - name: Build
