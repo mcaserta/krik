@@ -38,7 +38,7 @@ clap = { version = "4.0", features = ["derive"] }
 walkdir = "2.3"
 chrono = { version = "0.4", features = ["serde"] }
 tera = "1.20"
-toml = "0.9.5"
+toml = "1.0.0"
 regex = "1.10"
 # Resolve external tool paths (pandoc, typst)
 which = "8.0.0"
