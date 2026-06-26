@@ -37,7 +37,7 @@ pulldown-cmark = "0.13.0"
 clap = { version = "4.0", features = ["derive"] }
 walkdir = "2.3"
 chrono = { version = "0.4", features = ["serde"] }
-tera = "1.20"
+tera = "2.0"
 toml = "0.9.5"
 regex = "1.10"
 # Resolve external tool paths (pandoc, typst)
